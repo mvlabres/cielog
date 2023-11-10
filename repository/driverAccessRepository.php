@@ -28,14 +28,17 @@ class DriverAccessRepository{
                                     dr_a.created_date AS access_created_date,
                                     dr_a.modified_date AS access_modified_date,
                                     dr_a.created_by AS access_created_by,
+                                    us_2.name AS access_created_by_name,
                                     dr_a.modified_by AS access_modified_by,
-                                    us_2.name AS access_modified_name,
+                                    us_3.name AS access_modified_name,
+                                    us_1.id AS access_outbound_id,
                                     us_1.name AS access_outbound_name
                               FROM driver_access AS dr_a 
                               INNER JOIN driver AS dr ON dr.id = driver_id
                               INNER JOIN client AS cl ON cl.id = business_id
                               INNER JOIN user AS us_1 ON us_1.id = user_outbound_id
-                              INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by';
+                              INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
+                              INNER JOIN user AS us_3 ON us_3.id = dr_a.modified_by';
 
     public function __construct($mySql){
         $this->mySql = $mySql;
