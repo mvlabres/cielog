@@ -72,7 +72,7 @@ if(isset($_GET['content'])) {
     <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
 </head>
 
-<body>
+<body onload="setTableLength()">
     <div id="wrapper" class="schedule-body">
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-brand">
@@ -85,7 +85,9 @@ if(isset($_GET['content'])) {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.php">CIELOG</a>
+                <div class="box-img-link">
+                    <a href="index.php"><img class="img-link" src="../images/logo_sem_texto.png" /></a>
+                </div>
             </div>
 
             <ul class="nav navbar-top-links navbar-right">
@@ -95,9 +97,9 @@ if(isset($_GET['content'])) {
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="../home.php?conteudo=trocar-senha.php"><i class="fa fa-pencil fa-fw"></i> Alterar senha</a></li>
+                        <li><a href="../home.php?content=trocar-senha.php"><i class="fa fa-pencil fa-fw"></i> Alterar senha</a></li>
                         <li class="divider"></li>
-                        <li><a href="index.php?conteudo=logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="index.php?content=logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                 </li>
@@ -107,33 +109,48 @@ if(isset($_GET['content'])) {
             <div class="navbar-default sidebar vertical-menu" id="menu-nav-bar" role="navigation" >
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" >
-                        <li <?=$_SESSION['FUNCTION_ACCESS']['users'] ?>>
-                            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Usuários</a>
-                            <ul class="collapse nav nav-second-level" id="pageSubmenu1">
-                                <li>
-                                    <a href="#">Novo</a>
-                                </li>
-                                <li>
-                                    <a href="#">Pesquisar</a>
-                                </li>
-                            </ul>
+                        <li>
+                            <a href="index.php">Home</a>
                         </li>
                         <li <?=$_SESSION['FUNCTION_ACCESS']['access'] ?>>
                             <a href="#pageSubmenu2" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i></i> Acesso </a>
                             <ul class="collapse nav nav-second-level" id="pageSubmenu2">
-                                <li <?=$_SESSION['FUNCTION_ACCESS']['access_new'] ?> >
-                                    <a href="index.php?conteudo=newSchedule.php&function=new">Novo</a>
+                                <li>
+                                    <a href="index.php?content=employeeList.php">Colaborador</a>
                                 </li>
-                                <li <?=$_SESSION['FUNCTION_ACCESS']['access_list'] ?>>
-                                    <a href="index.php?conteudo=searchSchedule.php">Pesquisar</a>
+                                <li>
+                                    <a href="index.php?conteudo=driverList.php">Veículos</a>
                                 </li>
                             </ul>
                         </li>
                         <li <?=$_SESSION['FUNCTION_ACCESS']['register'] ?>>
                             <a href="#pageSubmenu3"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i></i> Cadastros</a>
                             <ul class="collapse nav nav-second-level" id="pageSubmenu3">
-                                <li <?=$_SESSION['FUNCTION_ACCESS']['register_operation_type'] ?>>
-                                    <a href="index.php?conteudo=newOperationType.php">Empresa cliente</a>
+                                <li <?=$_SESSION['FUNCTION_ACCESS']['register_client'] ?>>
+                                    <a href="index.php?content=newClient.php">Empresa cliente</a>
+                                </li>
+                                <li <?=$_SESSION['FUNCTION_ACCESS']['register_employee'] ?>>
+                                    <a href="index.php?content=employeeList.php">Colaborador</a>
+                                </li>
+                                <li <?=$_SESSION['FUNCTION_ACCESS']['register_driver'] ?>>
+                                    <a href="index.php?content=driverList.php">Motorista</a>
+                                </li>
+                                <li <?=$_SESSION['FUNCTION_ACCESS']['register_vehicle_type'] ?>>
+                                    <a href="index.php?content=newVehicleType.php">Tipo de veículo</a>
+                                </li>
+                                <li <?=$_SESSION['FUNCTION_ACCESS']['register_shipping_company'] ?>>
+                                    <a href="index.php?content=newShippingCompany.php">Transportadora</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li <?=$_SESSION['FUNCTION_ACCESS']['users'] ?>>
+                            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Usuários</a>
+                            <ul class="collapse nav nav-second-level" id="pageSubmenu1">
+                                <li>
+                                    <a href="index.php?content=newUser.php">Novo</a>
+                                </li>
+                                <li>
+                                    <a href="index.php?content=userList.php">Pesquisar</a>
                                 </li>
                             </ul>
                         </li>

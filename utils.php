@@ -23,15 +23,9 @@
 
   // declaração de variáveis globais
 
-  $GLOBAL_USER_TYPES = [
-    ['key'=> 'adm',       'value' => 'Administrador'],
-    ['key'=> 'client',    'value' => 'Cliente'],
-    ['key'=> 'operator',  'value' => 'Operador']
-  ];
-
+  $GLOBAL_USER_TYPES = ['adm' => 'Administrador', 'client' => 'Cliente', 'operator' => 'Operador'];
   $GLOBAL_MONTHS = ['01'=>'JANEIRO', '02'=>'FEVEREIRO', '03'=>'MARÇO', '04'=>'ABRIL', '05'=>'MAIO', '06'=>'JUNHO', '07'=>'JULHO', '08'=>'AGOSTO', '09'=>'SETEMBRO', '10'=>'OUTUBRO', '11'=>'NOVEMBRO', '12'=>'DEZEMBRO'];
 
-  $GLOBAL_FUNCTION_ACCESS = [
-    'user'=> 'hidden'
-];
+  $DRIVER_RECORD_TYPES = ['driver'=> 'Motorista', 'guest'=> 'Visitante', 'other'=> 'Outros'];
+  $DRIVER_STATUS = ['active'=> 'Ativo', 'block'=> 'Bloqueado'];
 ?>

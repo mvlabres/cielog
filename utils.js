@@ -64,6 +64,17 @@ jQuery(function($){
     
 });
 
+const cpfMask = (element) => {
+
+    let cpfValue = element.value;
+
+    cpfValue = cpfValue.replace(/\D/g,"")
+    cpfValue = cpfValue.replace(/(\d{3})(\d)/,"$1.$2")
+    cpfValue = cpfValue.replace(/(\d{3})(\d)/,"$1.$2")
+    cpfValue = cpfValue.replace(/(\d{3})(\d{1,2})$/,"$1-$2")
+    element.value = cpfValue;
+}
+
 const errorReportValidate = (action) => {
 
     if(action != 'edit'){
@@ -108,25 +119,16 @@ const resetNewTruck = () =>{
     document.getElementById('action').value = 'save';
 }
 
-const editOperationType = (id, name, operationSource) => {
-
-    document.getElementById('id').value = id;
-    document.getElementById('name').value = name;
-    document.getElementById('operationSource').value = operationSource;
-    document.getElementById('action').value = 'edit';
-    document.getElementById('title').innerHTML = 'Tipo de Operação - Editar';
-}
-
-const editOperationSource = (id, name) => {
+const editForm = (id, name) => {
 
     document.getElementById('id').value = id;
     document.getElementById('name').value = name;
     document.getElementById('action').value = 'edit';
-    document.getElementById('title').innerHTML = 'Natureza da Operação - Editar';
+    document.getElementById('title').innerHTML = 'Editar';
 }
 
-const resetOperationType = () =>{
-    document.getElementById('title').innerHTML = 'Tipo de Operação - Novo';
+const resetForm = () =>{
+    document.getElementById('title').innerHTML = 'Criar';
     document.getElementById('id').value = null;
     document.getElementById('action').value = 'save';
 }
@@ -584,4 +586,131 @@ const navigateToSearch = (scheduleStatus) => {
 
 const backHistory = () => {
     history.back()
+}
+
+const checkPassword = (password2) => {
+    
+    const feedbackLabel = document.getElementById('passwordFeedback');
+    const saveBtn = document.getElementById('user-save-btn');
+    const passwordValue = document.getElementById('password').value;
+
+
+    if(passwordValue == password2.value){
+        feedbackLabel.innerHTML = 'Senhas iguais';
+        saveBtn.disabled = false;
+        return;
+    }
+    
+
+    feedbackLabel.innerHTML = 'Senhas não conferem';
+    saveBtn.disabled = true;
+}
+
+const checkUserType = (element) => {
+
+    const clientSelectField = document.getElementById('business');
+
+    if(element.value == 'client') {
+        clientSelectField.disabled = false;
+        clientSelectField.required = true;
+        return;
+    }
+
+    clientSelectField.disabled = true;
+    clientSelectField.required = false;
+    clientSelectField.selectedIndex = 0;
+}
+
+const manageVehiclePlate = (element) => {
+
+    const vehiclePlateField = document.getElementById('vehiclePlate');
+
+    if(element.value.length > 0) {
+
+        vehiclePlateField.disabled = false;
+        vehiclePlateField.required = true;
+        return;
+    }
+
+    vehiclePlateField.disabled = true;
+    vehiclePlateField.required = false;
+}
+
+const manageVehicleTypes = (element) => {
+
+    const vehiclePlateField = document.getElementById('vehiclePlate');
+    const vehiclePlateField2 = document.getElementById('vehiclePlate2');
+    const vehiclePlateField3 = document.getElementById('vehiclePlate3');
+
+    if(element.value) {
+
+        vehiclePlateField.disabled = false;
+        vehiclePlateField.required = true;
+
+        vehiclePlateField2.disabled = false;
+        vehiclePlateField3.disabled = false;
+        return;
+    }
+
+    vehiclePlateField.disabled = true;
+    vehiclePlateField.required = false;
+
+    vehiclePlateField2.disabled = true;
+    vehiclePlateField3.disabled = true; 
+}
+
+const manegeFieldViewByValue = (element, idFieldView, isRequired, value) => {
+
+    const field = document.getElementById(idFieldView);
+
+    if(value){
+        if(element.value == value) {
+    
+            field.disabled = false;
+            field.required = isRequired;
+            return;
+        }
+    } else{
+        if(element.value) {
+    
+            field.disabled = false;
+            field.required = isRequired;
+            return;
+        }
+    }
+
+    field.disabled = true;
+    field.required = false;
+}
+
+const manageCnhValidation = (element, valueToValidation) => {
+
+    const requiredCnh = document.getElementById('requiredCnh');
+    const requiredCnhExpiration = document.getElementById('requiredCnhExpiration');
+
+    if(element.value != valueToValidation){
+        requiredCnh.hidden = true;
+        requiredCnh.required = false;
+
+        requiredCnhExpiration.hidden = true;
+        requiredCnhExpiration.required = false;
+        return;
+    }
+
+    requiredCnh.required = true;
+    requiredCnh.hidden = false;
+
+    requiredCnhExpiration.required = true;
+    requiredCnhExpiration.hidden = false;
+}
+
+const setTableLength = () => {
+
+    const tables = document.getElementsByName('dataTables-example_length');
+    
+    if(!tables) return;
+
+    tables.forEach(element => {
+        element.value = '100';
+    });
 }

@@ -26,7 +26,7 @@ function sec_session_start() {
     
 }
 
-$pagesNotClearPost = [];
+$pagesNotClearPost = ['newUser.php', 'newEmployee.php'];
 
 sec_session_start();
 
@@ -71,10 +71,7 @@ function login($username, $password, $mysqli) {
                 $_SESSION['username'] = $base_username;
                 $_SESSION['type'] = $type;
 
-                if($client != null) $_SESSION['client_id'] = $clientId;
-                else $_SESSION['client_id'] = 'ALL';
-
-                // getAccess($mysqli);
+                getAccess($mysqli);
                 return true;
 
             } else return false;
@@ -86,19 +83,32 @@ function login($username, $password, $mysqli) {
 
 function getAccess($mysqli){
 
+    $functionAccess = [
+        'users'=> 'hidden',
+        'access'=> 'hidden',
+        'access_new'=> 'hidden',
+        'access_list'=> 'hidden',
+        'register'=> 'hidden',
+        'register_client'=> 'hidden',
+        'register_employee'=> 'hidden',
+        'register_shipping_company' => 'hidden',
+        'register_vehicle_type' => 'hidden',
+        'register_driver' => 'hidden',
+        'new_employee' => 'hidden'
+    ];
+
     $sql = "SELECT id, user_type, function_name
             FROM user_access 
-            WHERE userType = '".$_SESSION['type'] ."'";
-
-                    
+            WHERE user_type = '".$_SESSION['type'] ."'";
+               
     $result = $mysqli->query($sql);
 
     while ($data = $result->fetch_assoc()){ 
-        $GLOBAL_FUNCTION_ACCESS[$data['function_name']] = '';
+        $functionAccess[$data['function_name']] = '';
 
     }
 
-    $_SESSION['FUNCTION_ACCESS'] = $GLOBAL_FUNCTION_ACCESS;
+    $_SESSION['FUNCTION_ACCESS'] = $functionAccess;
 }
 
 function login_check($mysqli) {
