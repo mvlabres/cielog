@@ -28,7 +28,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
 
 ?>
 
-<div class="row row-space-between">
+<div class="row row-space-between"  onload="setTableLength(100)">
     <div class="col-lg-12">
         <h3 class="page-header" >Motoristas, visitantes e outros</h3>
     </div>  
@@ -68,7 +68,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
                             if(!$driverResult->hasError){
                                 foreach ($driverResult->result as $driver) {
                                     echo '<tr class="odd gradeX">';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=edit"><span class="fa fa-hand-o-right text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverId='.$driver->getId().'"><span class="fa fa-hand-o-right text-primary"></span></a></td>';
                                     echo '<td class="text-center clickble"><a href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=edit"><span class="fa fa-search text-primary"></span></a></td>';
                                     echo '<td class="text-center clickble"><a href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                                     echo '<td>'.$driver->getName().'</td>';

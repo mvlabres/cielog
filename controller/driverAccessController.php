@@ -78,7 +78,7 @@ class DriverAccessController{
         $driverAccess->setVehiclePlate($post['vehiclePlate']);
         $driverAccess->setVehiclePlate2($post['vehiclePlate2']);
         $driverAccess->setVehiclePlate3($post['vehiclePlate3']);
-        $driverAccess->setBusinessId($post['blockReason']);
+        $driverAccess->setBusinessId($post['business']);
         $driverAccess->setInboundInvoice($post['inboundInvoice']);
         $driverAccess->setOutboundInvoice($post['outboundInvoice']);
         $driverAccess->setOperationType($post['operationType']);

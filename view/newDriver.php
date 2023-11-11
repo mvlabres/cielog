@@ -61,7 +61,7 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
 
 <div class="row">
     <div class="col-lg-12">
-    <h3 class="page-header" >Motorista - <span id="title"><?=$title ?></span></h3>
+        <h3 class="page-header" >Motorista - <span id="title"><?=$title ?></span></h3>
     </div>                
 </div>
 <div class="row">

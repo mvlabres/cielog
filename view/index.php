@@ -72,7 +72,7 @@ if(isset($_GET['content'])) {
     <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
 </head>
 
-<body onload="setTableLength()">
+<body onload="setTableLength(100)">
     <div id="wrapper" class="schedule-body">
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-brand">

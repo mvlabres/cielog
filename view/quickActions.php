@@ -13,7 +13,7 @@ require_once('../utils.php');
             </div>
         </div>
         <div class="panel-home">
-                <a href="#" class="quick-action-box box-orange0">
+                <a href="index.php?content=driverList.php" class="quick-action-box box-orange0">
                     <div class="box-home-header">
                         <p>Acessos veículos</p>
                     </div>

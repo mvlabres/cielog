@@ -704,13 +704,15 @@ const manageCnhValidation = (element, valueToValidation) => {
     requiredCnhExpiration.hidden = false;
 }
 
-const setTableLength = () => {
+const setTableLength = (qtde) => {
 
     const tables = document.getElementsByName('dataTables-example_length');
     
     if(!tables) return;
 
+    if(document.getElementById('search-table')) qtde = 10;
+
     tables.forEach(element => {
-        element.value = '100';
+        element.value = qtde;
     });
 }
