@@ -1,5 +1,9 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once('../conn.php');
 require_once('../session.php');
 require_once('../utils.php');
@@ -19,7 +23,11 @@ if(isset($_GET['content'])) {
         session_destroy();  
         header('Location:../index.php');
     }
-}   
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
+    successAlert('Registro salvo com sucesso!');
+}
 
 ?>
 <!DOCTYPE html>

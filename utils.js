@@ -681,6 +681,8 @@ const manegeFieldViewByValue = (element, idFieldView, isRequired, value) => {
 
     field.disabled = true;
     field.required = false;
+
+    field.value = '';
 }
 
 const manageCnhValidation = (element, valueToValidation) => {
@@ -715,4 +717,20 @@ const setTableLength = (qtde) => {
     tables.forEach(element => {
         element.value = qtde;
     });
+}
+
+const checkDriverAccessSubmit = () => {
+    return document.getElementById('driverId').value; 
+}
+
+const manageEndDate = (element) => {
+
+    const btn = document.getElementById('user-save-btn');
+
+    if(element.value.length == 0){
+        btn.innerHTML = 'Criar acesso';
+        return;
+    }
+
+    btn.innerHTML = 'Encerrar acesso';
 }

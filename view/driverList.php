@@ -73,7 +73,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
                                     echo '<td class="text-center clickble"><a href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                                     echo '<td>'.$driver->getName().'</td>';
                                     echo '<td>'.$driver->getCpf().'</td>';
-                                    echo '<td>'.$driver->getRecordType().'</td>';
+                                    echo '<td>'.$DRIVER_RECORD_TYPES[$driver->getRecordType()].'</td>';
                                     echo '<td>'.$driver->getCnh().'</td>';
                                     echo '<td>'.$driver->getCnhExpiration().'</td>';
                                     echo '<td>'.$driver->getShippingCompany().'</td>';
@@ -81,7 +81,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
                                     echo '<td>'.$driver->getVehiclePlate().'</td>';
                                     echo '<td>'.$driver->getVehiclePlate2().'</td>';
                                     echo '<td>'.$driver->getVehiclePlate3().'</td>';
-                                    echo '<td>'.$driver->getStatus().'</td>';
+                                    echo '<td>'.$DRIVER_STATUS[$driver->getStatus()].'</td>';
                                     echo '<td>'.$driver->getBlockReason().'</td>';
                                     echo '<td class="text-center clickble" data-toggle="modal" data-target="#'.$driver->getId().'"><span class="fa fa-trash text-primary"></span></td>';
                                     echo '</tr>';

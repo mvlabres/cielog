@@ -85,7 +85,11 @@ class VehicleTypeController{
             $vehicleType->setId($data['id']);
             $vehicleType->setName($data['name']);
             $vehicleType->setCreatedDate(date("d/m/Y", strtotime($data['created_date'])));
-            $vehicleType->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
+
+            if( !is_null($data['modified_date'])){
+                $vehicleType->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
+            }
+            
             $vehicleType->setCreatedBy( $data['created_by']);
             $vehicleType->setModifiedBy($data['modified_by']);
             

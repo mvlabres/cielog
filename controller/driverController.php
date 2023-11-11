@@ -111,7 +111,11 @@ class DriverController{
             $driver->setStatus($data['status']);
             $driver->setBlockReason($data['block_reason']);
             $driver->setCreatedDate(date("d/m/Y", strtotime($data['created_date'])));
-            $driver->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
+
+            if(!is_null($data['modified_date'])){
+                $driver->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
+            }
+            
             $driver->setCreatedBy( $data['created_by']);
             $driver->setModifiedBy($data['modified_by']);
             

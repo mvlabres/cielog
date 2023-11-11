@@ -87,7 +87,10 @@ class shippingCompanyController{
             $shippingCompany->setId($data['id']);
             $shippingCompany->setName($data['name']);
             $shippingCompany->setCreatedDate(date("d/m/Y", strtotime($data['created_date'])));
-            $shippingCompany->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
+
+            if(!is_null($data['modified_date'])){
+                $shippingCompany->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
+            }
             $shippingCompany->setCreatedBy( $data['created_by']);
             $shippingCompany->setModifiedBy($data['modified_by']);
             

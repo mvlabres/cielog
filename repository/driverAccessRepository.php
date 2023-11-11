@@ -19,7 +19,7 @@ class DriverAccessRepository{
                                     dr_a.vehicle_plate2 AS driver_vehicle_plate2,
                                     dr_a.vehicle_plate3 AS driver_vehicle_plate3,
                                     cl.id AS business_id,
-                                    cl.id AS business_name
+                                    cl.name AS business_name,
                                     inbound_invoice,
                                     outbound_invoice,
                                     operation_type,
@@ -38,7 +38,7 @@ class DriverAccessRepository{
                               INNER JOIN client AS cl ON cl.id = business_id
                               INNER JOIN user AS us_1 ON us_1.id = user_outbound_id
                               INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
-                              INNER JOIN user AS us_3 ON us_3.id = dr_a.modified_by';
+                              INNER JOIN user AS us_3 ON (us_3.id = dr_a.modified_by OR ISNULL(dr_a.modified_by )) ';
 
     public function __construct($mySql){
         $this->mySql = $mySql;
@@ -47,9 +47,9 @@ class DriverAccessRepository{
     public function findAll(){
 
         try{
-            $sql = $this->standardQuery . ' ORDER BY start_datetime DESC';
-            return new ErrorHandler($this->mySql->query($sql), false, null);
+            $sql = $this->standardQuery . ' GROUP BY dr_a.id ORDER BY start_datetime DESC';
 
+            return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
         }
@@ -58,11 +58,11 @@ class DriverAccessRepository{
     public function findById($id){
 
         try{
-            $sql = $this->standardQuery . 'WHERE id = '.$id;
+            $sql = $this->standardQuery . 'WHERE dr_a.id = '.$id;
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){
-            return new ErrorHandler('Error ao buscar acesso - ', true, $ex->getMessage());
+            return new ErrorHandler('Erro ao buscar acesso - ', true, $ex->getMessage());
         }
     }
 
@@ -82,10 +82,12 @@ class DriverAccessRepository{
                 "'.$driverAccess->getInboundInvoice().'", 
                 "'.$driverAccess->getOutboundInvoice().'", 
                 "'.$driverAccess->getOperationType().'", 
-                '.$driverAccess->getUserOutboundId().', 
+                '.$_SESSION['id'].', 
                 "'.date("Y-m-d").'", 
                 '.$_SESSION['id'].' 
             )';
+
+            echo $sql;
 
             $result = $this->mySql->query($sql);
             return new ErrorHandler('Acesso criado com sucesso!', false, null);
@@ -98,22 +100,23 @@ class DriverAccessRepository{
     public function update($driverAccess){
         try {
             $sql = 'UPDATE driver_access 
-                        SET start_datetime = "'.$driverAccess->getName().'",
-                        end_datetime = "'.$driverAccess->getCnh().'", 
-                        driver_id = '.$driverAccess->getCpf().', 
-                        business_id = '.$driverAccess->getShippingCompany().', 
+                        SET start_datetime = "'.$driverAccess->getStartDatetime().'",
+                        end_datetime = "'.$driverAccess->getEndDatetime().'", 
+                        driver_id = '.$driverAccess->getDriverId().', 
+                        business_id = '.$driverAccess->getBusinessId().', 
                         vehicle_type = "'.$driverAccess->getVehicleType().'", 
                         vehicle_plate = "'.$driverAccess->getVehiclePlate().'", 
                         vehicle_plate2 = "'.$driverAccess->getVehiclePlate2().'", 
                         vehicle_plate3 = "'.$driverAccess->getVehiclePlate3().'", 
-                        inbound_invoice = "'.$driverAccess->getRecordType().'", 
-                        outbound_invoice = "'.$driverAccess->getStatus().'", 
-                        operation_type = "'.$driverAccess->getBlockReason().'",
+                        inbound_invoice = "'.$driverAccess->getInboundInvoice().'", 
+                        outbound_invoice = "'.$driverAccess->getOutboundInvoice().'", 
+                        operation_type = "'.$driverAccess->getOperationType().'",
                         user_outbound_id = '.$_SESSION['id'].',
                         modified_by = '.$_SESSION['id'].',
                         modified_date = "'.date("Y-m-d").'" 
                          WHERE id = '.$driverAccess->getId();
 
+            echo $sql;
             $result = $this->mySql->query($sql);
             return new ErrorHandler('Acesso atualizado com sucesso!', false, null);
 

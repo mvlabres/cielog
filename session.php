@@ -26,7 +26,7 @@ function sec_session_start() {
     
 }
 
-$pagesNotClearPost = ['newUser.php', 'newEmployee.php'];
+$pagesNotClearPost = ['newUser.php', 'newEmployee.php', 'newDriverAccess.php'];
 
 sec_session_start();
 

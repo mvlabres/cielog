@@ -2,6 +2,7 @@
 
 require_once('../repository/driverAccessRepository.php');
 require_once('../model/driverAccess.php');
+require_once('../model/driver.php');
 
 class DriverAccessController{
 
@@ -70,9 +71,13 @@ class DriverAccessController{
     
     public function setFields($post, $driverAccess){
 
-        if($post['id'] && $post['id'] != null) $driverAccess->setId($post['id']);
+        if($post['accessId'] && $post['accessId'] != null) $driverAccess->setId($post['accessId']);
         $driverAccess->setStartDatetime(date("Y-m-d H:i", strtotime(str_replace('/', '-', $post['startDate'] ))));
-        $driverAccess->setEndDatetime(date("Y-m-d H:i", strtotime(str_replace('/', '-', $post['endDate'] ))));
+
+        if(!is_null($post['endDate'])){
+            $driverAccess->setEndDatetime(date("Y-m-d H:i", strtotime(str_replace('/', '-', $post['endDate'] ))));
+        }
+
         $driverAccess->setDriverId($post['driverId'] );
         $driverAccess->setVehicleType($post['vehicleType']);
         $driverAccess->setVehiclePlate($post['vehiclePlate']);
@@ -83,7 +88,7 @@ class DriverAccessController{
         $driverAccess->setOutboundInvoice($post['outboundInvoice']);
         $driverAccess->setOperationType($post['operationType']);
 
-        return $driver;
+        return $driverAccess;
     }
 
     public function loadData($records){
@@ -93,13 +98,21 @@ class DriverAccessController{
         while ($data = $records->fetch_assoc()){ 
             $driverAccess = new DriverAccess();
             $driverAccess->setId($data['access_id']);
-            $driverAccess->setStartDatetime(date("d/m/Y HH:mm", strtotime($data['start_datetime'])));
-            $driverAccess->setEndDatetime( date("d/m/Y HH:mm", strtotime($data['end_datetime'])));
+            $driverAccess->setStartDatetime(date("d/m/Y H:i", strtotime($data['start_datetime'])));
+
+            if(!is_null($data['end_datetime']) && !str_contains($data['end_datetime'], '0000')){
+                $driverAccess->setEndDatetime( date("d/m/Y H:i", strtotime($data['end_datetime'])));
+            }
+
             $driverAccess->setDriverId($data['driver_id']);
             $driverAccess->setDriverName($data['driver_name']);
             $driverAccess->setCpf($data['driver_cpf']);
             $driverAccess->setCnh($data['driver_cnh']);
-            $driverAccess->setCnhExpiration(date("d/m/Y", strtotime($data['driver_cnh_expiration'])));
+
+            if(!is_null($data['driver_cnh_expiration']) && !str_contains($data['driver_cnh_expiration'], '0000')){
+                $driverAccess->setCnhExpiration(date("d/m/Y", strtotime($data['driver_cnh_expiration'])));
+            }
+
             $driverAccess->setShippingCompany($data['driver_shipping_company']);
             $driverAccess->setVehicleType($data['driver_vehicle_type']);
             $driverAccess->setVehiclePlate($data['driver_vehicle_plate']);
@@ -119,6 +132,25 @@ class DriverAccessController{
             $driverAccess->setCreatedBy($data['access_created_by']);
             $driverAccess->setCreatedByName($data['blockReason']);
             $driverAccess->setModifiedBy($data['access_modified_by']);
+
+            //popular motorista
+            $driver = new Driver();
+            $driver->setId($data['driver_id']);
+            $driver->setName($data['driver_name']);
+            $driver->setCnh($data['driver_cnh']);
+            if(!is_null($driver->getCnh())){
+                $driver->setCnhExpiration(date("d/m/Y", strtotime($data['driver_cnh_expiration'])));
+            }
+            $driver->setCpf($data['driver_cpf']);
+            $driver->setShippingCompany($data['driver_shipping_company']);
+            $driver->setVehicleType($data['driver_vehicle_type']);
+            $driver->setVehiclePlate($data['driver_vehicle_plate']);
+            $driver->setVehiclePlate2($data['driver_vehicle_plate2']);
+            $driver->setVehiclePlate3($data['driver_vehicle_plate3']);
+            $driver->setStatus($data['driver_access_status']);
+            $driver->setBlockReason($data['driver_block_reason']);
+
+            $driverAccess->setDriver($driver);
             
             array_push($driverAccessList, $driverAccess);
         }

@@ -5,6 +5,7 @@ class DriverAccess{
     private $id;
     private $startDatetime;
     private $endDatetime;
+    private $driver; 
     private $driverId;
     private $driverName;
     private $cpf;
@@ -49,6 +50,13 @@ class DriverAccess{
     }
     public function getEndDatetime(){
         return $this->endDatetime;
+    }
+
+    public function setDriver($driver){
+        $this->driver = $driver;
+    }
+    public function getDriver(){
+        return $this->driver;
     }
 
     public function setDriverId($driverId){
