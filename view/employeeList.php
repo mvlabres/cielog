@@ -1,9 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once('../model/errorHandler.php');
 require_once('../model/employee.php');
 require_once('../model/client.php');
@@ -94,13 +90,15 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                         <thead>
                             <tr>
+                                <td scope="column" class="td-30">Acesso</td>
+                                <td scope="column" class="td-30">Detalhes</td>
+                                <td scope="column" class="td-30">Editar</td>
                                 <th scope="column" class="td-70">Nome</th>
                                 <th scope="column" class="td-70">Matrícula</th>
                                 <th scope="column" class="td-70">CPF</th>
                                 <th scope="column" class="td-70">Empresa</th>
                                 <th scope="column" class="td-70">Veículo</th>
                                 <th scope="column" class="td-70">Placa Veículo</th>
-                                <th scope="column" class="td-30">Editar</th>
                                 <th scope="column" class="td-30">Excluir</th>
                             </tr>
                         </thead>
@@ -110,13 +108,15 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             if(!$employeeResult->hasError){
                                 foreach ($employeeResult->result as $employee) {
                                     echo '<tr class="odd gradeX">';
+                                    echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeId='.$employee->getId().'"><span class="fa fa-hand-o-right text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=edit"><span class="fa fa-search text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                                     echo '<td>'.$employee->getName().'</td>';
                                     echo '<td>'.$employee->getRegistration().'</td>';
                                     echo '<td>'.$employee->getCpf().'</td>';
                                     echo '<td>'.$employee->getBusinessName().'</td>';
                                     echo '<td>'.$employee->getVehicle().'</td>';
                                     echo '<td>'.$employee->getVehiclePlate().'</td>';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                                     echo '<td class="text-center clickble" data-toggle="modal" data-target="#'.$employee->getId().'"><span class="fa fa-trash text-primary"></span></td>';
                                     echo '</tr>';
                                     echo '<div class="modal fade" id="'.$employee->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

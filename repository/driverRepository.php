@@ -56,7 +56,7 @@ class driverRepository{
             )';
 
             $result = $this->mySql->query($sql);
-            return new ErrorHandler('Motorista criada com sucesso!', false, null);
+            return new ErrorHandler($this->mySql->insert_id, false, null);
 
         } catch (Exception $ex) {
             return new ErrorHandler('Erro ao criar motorista! - ', true, $ex->getMessage());
@@ -84,7 +84,7 @@ class driverRepository{
                          WHERE id = '.$driver->getId();
 
             $result = $this->mySql->query($sql);
-            return new ErrorHandler('Motorista atualizado com sucesso!', false, null);
+            return new ErrorHandler($driver->getId(), false, null);
 
         } catch (Exception $ex) {
             return new ErrorHandler('Erro ao atualizar motorista! - ', true, $ex->getMessage());

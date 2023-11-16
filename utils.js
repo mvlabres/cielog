@@ -1,4 +1,10 @@
 let selectedElement;
+let cameraList = [];
+let selectedCamera = {video: true, audio:false};
+let cameraToSwap = {video: true, audio:false};
+
+let hasCameraChanged = false;
+let currentStream = null;
 
 let activeScheduleColumnsSearch = [];
 let inactiveScheduleColumnsSearch = [];
@@ -63,6 +69,11 @@ jQuery(function($){
 
     
 });
+
+const init = () =>{
+    setTableLength(100);
+    manageListAccess();
+}
 
 const cpfMask = (element) => {
 
@@ -723,6 +734,10 @@ const checkDriverAccessSubmit = () => {
     return document.getElementById('driverId').value; 
 }
 
+const checkEmployeeAccessSubmit = () => {
+    return document.getElementById('employeeId').value; 
+}
+
 const manageEndDate = (element) => {
 
     const btn = document.getElementById('user-save-btn');
@@ -733,4 +748,179 @@ const manageEndDate = (element) => {
     }
 
     btn.innerHTML = 'Encerrar acesso';
+}
+
+const manageRedirect = (formId) =>{
+    document.getElementById('redirect').value = 'redirect';
+    const form = document.getElementById(formId);
+
+    if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+    }
+
+    if(checkImageProfile()){
+        document.getElementById(formId).submit();
+    }
+}
+
+const getCameras = async () => {
+
+    cameraList = [];
+    selectedCamera = {video: true, audio:false};
+    cameraToSwap = {video: true, audio:false};
+
+    hasCameraChanged = false;
+    currentStream = null;
+
+    if (navigator.mediaDevices.getUserMedia) {
+
+        await navigator.mediaDevices.enumerateDevices({}).then(gotDevices => {
+            gotDevices.forEach( (camera) => {
+                if(camera.kind === 'videoinput'){
+
+                    const cameraDetail = {};
+                    cameraDetail.deviceId = camera.deviceId;
+                    cameraDetail.label = (camera.label.includes('Integrated')) ? 'Câmera integrada' : 'camera ' + (cameraList.length + 1);
+                    cameraList.push(cameraDetail);
+                }
+            });
+        });
+    }
+}
+
+const startCamera = async () => {
+    await getCameras();
+
+    const firstConstraint = { deviceId: null };
+    const secondConstraint = { deviceId: null };
+
+    if(cameraList.length < 1) {
+        console.log('Não foram encontradas câmeras conectadas');
+        closeCamera();
+        return;
+    }
+
+    if(cameraList.length > 1){
+
+        document.querySelector('#swap-camera').style.display = 'block';
+
+        cameraList.forEach(element => {
+
+            if(element.label === 'Câmera integrada'){
+                firstConstraint.deviceId = element.deviceId;
+                cameraToSwap.video = firstConstraint;
+            } 
+            else {
+                secondConstraint.deviceId = element.deviceId;
+                selectedCamera.video = secondConstraint;
+                openCamera(selectedCamera);
+            }
+        });
+
+    }else{
+        document.querySelector('#swap-camera').style.display = 'none';
+        firstConstraint.deviceId = cameraList[0].deviceId;
+        selectedCamera.video = firstConstraint;
+        openCamera(selectedCamera);
+    } 
+}
+
+const openCamera = (cameraToShow) => {
+    const video = document.querySelector("#videoElement");
+    navigator.mediaDevices.getUserMedia(cameraToShow)
+    .then( (stream) => {
+        currentStream = stream;
+        video.srcObject = stream;
+    })
+    .catch((error) => {
+        console.log("Erro ao abrir a câmera", error);
+    });
+}
+
+const swapCamera = () => {
+
+    if(!hasCameraChanged) {
+        hasCameraChanged = true;
+        closeCamera();
+        openCamera(cameraToSwap);
+    }else{
+        hasCameraChanged = false;
+        closeCamera();
+        openCamera(selectedCamera);
+    }
+}
+
+const closeCamera = () => {
+
+    const video = document.querySelector("#videoElement").srcObject;
+
+    if(video){
+        const tracks = video.getTracks();
+    
+        tracks[0].stop();
+        tracks.forEach(track => track.stop())
+    }
+}
+
+const closeModal = () => {
+    $(".close").click();
+}
+
+const takepicture = () => {
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext("2d");
+    const video = document.querySelector("#videoElement");
+    const photo = document.getElementById('profile-image');
+
+    const width = 270;
+    const height = 200;
+
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(video, 0, 0, width, height);
+
+    const data = canvas.toDataURL("image/png");
+    photo.setAttribute("src", data);
+    document.getElementsByName('image-profile')[0].value = data;
+
+    document.getElementById('image-profile-feedback').style.display = 'none';
+
+    closeCamera();
+    closeModal();
+}
+
+const manageListAccess = () => {
+
+    setTimeout(() => {
+        const toogle = document.getElementById('access-type-toogle');
+
+        const vehicleAccess = document.getElementsByClassName('vehicle-access');
+        const employeeAccess = document.getElementsByClassName('employee-access');
+    
+        const label = document.getElementById('access-type-label');
+    
+        for(let x = 0; x < 2; x++){
+    
+            if(!toogle.checked){
+                vehicleAccess[x].hidden = true;
+                employeeAccess[x].hidden = false; 
+                label.innerHTML = 'COLABORADORES';
+            }else{
+                vehicleAccess[x].hidden = false;
+                employeeAccess[x].hidden = true; 
+                label.innerHTML = 'VEÍCULOS';
+            }
+        }
+    }, 100);
+}
+
+const checkImageProfile = () => {
+
+    const element = document.getElementById('image-profile');
+    if(element.value && element.value != '../images/profile.jpg') return true;
+
+    document.getElementById('image-profile-feedback').style.display = 'block';
+
+    return false;
 }

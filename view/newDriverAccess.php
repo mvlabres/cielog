@@ -31,6 +31,8 @@ $btnLabel = 'Criar acesso';
 $dateNow = date("d/m/Y H:i");
 $endDate = null;
 
+$rotation = setRotation();
+
 if(isset($_GET['action']) && $_GET['action'] != null){
     $action = $_GET['action'];
     $disabledEndDate = '';
@@ -66,7 +68,7 @@ if(isset($_POST['driverId']) && $_POST['driverId'] != null){
     $result = $driverAccessController->save($_POST, $action);
 
     if($result->hasError) errorAlert($result->result.$result->errorMessage);
-    else echo "<script>window.location='index.php?action=access-save'</script>";
+    else echo "<script>window.location='index.php?action=access-save&list-type=driver'</script>";
 }
 
 //verifica a entrada via get, quando vem da tela de lista de motoristas
@@ -81,12 +83,17 @@ if(isset($_GET['driverId']) && $_GET['driverId'] != null){
     
     $driver = $result->result;
 
+    $driverAccess->setVehicleType($driver->getVehicleType());
+    $driverAccess->setVehiclePlate($driver->getVehiclePlate());
+    $driverAccess->setVehiclePlate2($driver->getVehiclePlate2());
+    $driverAccess->setVehiclePlate3($driver->getVehiclePlate3());
+
     if($driver->getStatus() == 'block'){
         warningAlert('Motorista bloqueado');
         $blockDisabled = 'disabled';
     }
 
-    $cnhExpirationDate = date('Y-m-d', strtotime($driver->getCnhExpiration()));
+    $cnhExpirationDate = date("Y-m-d", strtotime(str_replace('/', '-', $driver->getCnhExpiration() )));
 
     if($cnhExpirationDate < date("Y-m-d")){
         warningAlert('Motorista com CNH vencida!');
@@ -115,13 +122,14 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
             <form method="post" action="#" onsubmit="return checkDriverAccessSubmit()">
                 <div class="row">
                     <div class="col-lg-12">
-                        <input  type="hidden" name="accessId" value="<?=$driverAccess->getId() ?>" >
-                        <input  type="hidden" name="driverId" value="<?=$driver->getId() ?>" >
-                        <input  type="hidden" name="action" value="<?=$action ?>" >
+                        <input type="hidden" name="accessId" value="<?=$driverAccess->getId() ?>" >
+                        <input type="hidden" name="driverId" value="<?=$driver->getId() ?>" >
+                        <input type="hidden" name="action" value="<?=$action ?>" >
+                        <input type="hidden" name="rotation" value="<?=(is_null($driverAccess->getRotation())) ? $rotation : $driverAccess->getRotation() ?>">
                         <div class="col-lg-6">
                             <div class="col-lg-4">
-                                <div>
-                                    <img class="profile-image" src="../images/profile.jpg"/>
+                                <div class="photo-box-action">
+                                    <img class="profile-image" src="<?=$driver->getImageProfilePath() ?>"/>
                                 </div>
                                 <div class="form-group">
                                     <label>CNH</label>
@@ -151,6 +159,10 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                     } 
                             
                                 ?>
+                                <div class="form-group">
+                                    <label>Turno</label>
+                                    <p><?=(is_null($driverAccess->getRotation())) ? $rotation : $driverAccess->getRotation() ?></p>
+                                </div>
                                 <div class="form-group">
                                     <label>Nome</label>
                                     <input class="form-control"  value="<?=$driver->getName()  ?>" disabled>

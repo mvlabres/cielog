@@ -385,6 +385,7 @@ td{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    width: 100%;
 }
 
 .vertical-menu{
@@ -478,6 +479,14 @@ td{
     flex-direction: row;
     justify-content: flex-end;
     margin-bottom: 20px;
+}
+
+.box-btn-center{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
 }
 
 .btn-group-end > a{
@@ -709,7 +718,8 @@ select[readonly] {
 }
 
 .profile-image{
-    margin-left: 20px;
+    width: 270px;
+    max-width: 270px;
     max-height:200px;
     width: auto;
     height: auto;
@@ -721,6 +731,73 @@ select[readonly] {
 
 .color-gray{
     background-color: #f8f8f8;
+}
+
+.photo-box-action{
+    display: flex;
+    flex-direction: column;
+}
+
+.photo-box-action > button{
+    margin-top: 20px;
+}
+
+#camera-container{
+    height: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+
+}
+
+#camera-container > video{
+    height: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.camera-action{
+    width: 60px !important;
+    min-width: 60px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    border-radius: 30px !important;
+}
+
+.camera-action:hover{
+    background-color: #5b8cb7;
+    text-decoration: none !important;
+    transform: scale(1.05); 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+}
+
+#canvas {
+    display: none;
+}
+
+.box-group{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.box-group > .box-btn-center{
+    margin-left: 25%;
+}
+
+.box-group > .box-btn-center + div{
+    width: 25%;
+    justify-content: end;
+}
+
+.quick-actions{
+    margin-bottom: 30px;
+}
+
+#image-profile-feedback{
+    color: #dc3545 !important;
+    display: none;
 }
 
 @media (max-width: 1750px){

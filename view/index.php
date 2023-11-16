@@ -1,9 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once('../conn.php');
 require_once('../session.php');
 require_once('../utils.php');
@@ -55,6 +51,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
     <!-- JS scripts -->
     <script src="../vendor/raphael/raphael.min.js"></script>
@@ -78,9 +75,10 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 </head>
 
-<body onload="setTableLength(100)">
+<body onload="init()">
     <div id="wrapper" class="schedule-body">
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-brand">
@@ -148,6 +146,17 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
                                 </li>
                                 <li <?=$_SESSION['FUNCTION_ACCESS']['register_shipping_company'] ?>>
                                     <a href="index.php?content=newShippingCompany.php">Transportadora</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li <?=$_SESSION['FUNCTION_ACCESS']['reports'] ?>>
+                            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Relatórios</a>
+                            <ul class="collapse nav nav-second-level" id="pageSubmenu1">
+                                <li>
+                                    <a href="index.php?content=driverAccessList.php">Acesso veículos</a>
+                                </li>
+                                <li>
+                                    <a href="index.php?content=employeeAccessList.php">Acesso colaboradores</a>
                                 </li>
                             </ul>
                         </li>

@@ -15,6 +15,7 @@ class Driver{
     private $recordType;
     private $status;
     private $blockReason;
+    private $imageProfilePath;
     private $createdDate;
     private $modifiedDate;
     private $createdBy;
@@ -116,6 +117,13 @@ class Driver{
     }
     public function getCreatedDate(){
         return $this->createdDate;
+    }
+
+    public function setImageProfilePath($imageProfilePath){
+        $this->imageProfilePath = $imageProfilePath;
+    }
+    public function getImageProfilePath(){
+        return ($this->imageProfilePath != null) ? $this->imageProfilePath : '../images/profile.jpg';
     }
 
     public function setModifiedDate($modifiedDate){

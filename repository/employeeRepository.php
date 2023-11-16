@@ -62,10 +62,10 @@ class EmployeeRepository{
             )';
 
             $result = $this->mySql->query($sql);
-            return new ErrorHandler('Colaborador criado com sucesso!', false, null);
+            return new ErrorHandler($this->mySql->insert_id, false, null);
 
         } catch (Exception $ex) {
-            return new ErrorHandler('Erro ao criar colaborador! - ', true, $ex->getMessage());
+            throw $ex;
         } 
     }
 
@@ -84,7 +84,7 @@ class EmployeeRepository{
                          WHERE id = '.$employee->getId();
 
             $result = $this->mySql->query($sql);
-            return new ErrorHandler('Colaborador atualizado com sucesso!', false, null);
+            return new ErrorHandler($employee->getId(), false, null);
 
         } catch (Exception $ex) {
             return new ErrorHandler('Erro ao atualizar Colaborador! - ', true, $ex->getMessage());

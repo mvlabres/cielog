@@ -139,6 +139,7 @@ CREATE TABLE `driver_access` (
   `outbound_invoice` varchar(20) DEFAULT NULL,
   `operation_type` varchar(20) DEFAULT NULL,
   `user_outbound_id` int(21) DEFAULT NULL,
+  `rotation` varchar(30) DEFAULT NULL,
   `created_date` date NOT NULL,
   `modified_date` date DEFAULT NULL,
   `created_by` int(21) NOT NULL,
@@ -147,5 +148,24 @@ CREATE TABLE `driver_access` (
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_da_cb` FOREIGN KEY (created_by) REFERENCES user(id);
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_da_mb` FOREIGN KEY (modified_by) REFERENCES user(id);
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_da_di` FOREIGN KEY (driver_id) REFERENCES driver(id);
-ALTER TABLE `driver_access` ADD CONSTRAINT `fk_da_bi` FOREIGN KEY (business_id) REFERENCES client(id);
+ALTER TABLE `driver_access` ADD CONSTRAINT `fk_da_bi`    KEY (business_id) REFERENCES client(id);
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_da_uoi` FOREIGN KEY (user_outbound_id) REFERENCES user(id);
+
+CREATE TABLE `employee_access` (
+  `id` int(21) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `start_datetime` datetime NOT NULL,
+  `end_datetime` datetime DEFAULT NULL,
+  `employee_id` int(21) NOT NULL,
+  `vehicle` varchar(50) DEFAULT NULL,
+  `vehicle_plate` varchar(10) DEFAULT NULL,
+  `user_outbound_id` int(21) DEFAULT NULL,
+  `rotation` varchar(30) DEFAULT NULL,
+  `created_date` date NOT NULL,
+  `modified_date` date DEFAULT NULL,
+  `created_by` int(21) NOT NULL,
+  `modified_by` int(21) DEFAULT NULL
+);
+ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_cb` FOREIGN KEY (created_by) REFERENCES user(id);
+ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_mb` FOREIGN KEY (modified_by) REFERENCES user(id);
+ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_di` FOREIGN KEY (driver_id) REFERENCES driver(id);
+ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_uoi` FOREIGN KEY (user_outbound_id) REFERENCES user(id);

@@ -1,9 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once('../utils.php');
 require_once('../model/driver.php');
 require_once('../model/shippingCompany.php');
@@ -52,9 +48,6 @@ if(isset($_POST['name']) && $_POST['name'] != null){
     else echo "<script>window.location='index.php?content=driverList.php&action=save'</script>";
 }
 
-$driversResult = $driverController->findAll();
-if($driversResult->hasError) errorAlert($driversResult->result.$driversResult->errorMessage);
-
 $shippingCompanysResult = $shippingCompanyController->findAll();
 if($shippingCompanysResult->hasError) errorAlert($shippingCompanysResult->result.$shippingCompanysResult->errorMessage);
 
@@ -64,57 +57,76 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
 ?>
 
 <div class="row">
-    <div class="col-lg-12">
-        <h3 class="page-header" >Motorista - <span id="title"><?=$title ?></span></h3>
-    </div>                
+    <div class="row row-space-between"  onload="setTableLength(100)">
+        <div class="col-lg-12">
+            <h3 class="page-header" >Motorista - <span id="title"><?=$title ?></span></h3>
+        </div>  
+        <div class="center-box">
+            <a href="index.php?content=driverList.php" type="button" class="btn btn-primary" id="user-save-btn">Lista de motoristas</a>
+        </div>             
+    </div>                    
 </div>
 <div class="row">
     <div class="col-lg-12">
          <div class="panel panel-default">
             <div class="panel-body">
-                <form method="post" action="#">
+                <form id="new-driver-post" method="post" action="#">
                     <div class="row">
                         <div class="col-lg-6">
                             <input  type="hidden" name="id" value="<?=$driver->getId() ?>" >
-                            <input  type="hidden" name="redirect" value="redirect" >
+                            <input  type="hidden" name="redirect" id="redirect" value="no-redirect" >
                             <input  type="hidden" name="action" value="<?=$action ?>" >
-                            <div class="form-group">
-                                <label>Nome</label><span class="required-icon">*<span>
-                                <input class="form-control" name="name" placeholder="Nome" maxlength="100" value="<?=$driver->getName()  ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label>CPF</label><span class="required-icon">*<span>
-                                <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$driver->getCpf() ?>" onkeyup="cpfMask(this)" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Tipo de cadastro</label><span class="required-icon">*<span>
-                                <select name="recordType" class="form-control" onchange="manageCnhValidation(this, 'MOTORISTA')" required>
-                                    <option value="">Selecione...</option>
-
-                                    <?php 
-                                    foreach ($DRIVER_RECORD_TYPES as $key => $value) {
-                                        $selected = null;
-
-                                        if($driver->getRecordType() == $key) $selected = 'selected';
-                                        echo '<option value="'.$key.'" '.$selected.' >'.$value.'</option>';
-
-                                    }
-                                    
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>CNH</label><span id="requiredCnh" class="required-icon" hidden>*</span>
-                                <input class="form-control" name="cnh" maxlength="20" placeholder="CNH" value="<?=$driver->getCnh() ?>" >
-                            </div>
-                            <div class="form-group">
-                                <label>Vencimento CNH</label><span id="requiredCnhExpiration" class="required-icon" hidden>*</span>
-                                <div class='input-group date' id='datetimepicker1'>
-                                    <input type='text' data-date-format="DD/MM/YYYY" class="form-control" value="<?=$driver->getCnhExpiration() ?>" name="cnhExpiration" id="cnhExpiration" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19"/>
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                            <input  type="hidden" name="image-profile" id="image-profile" value="<?=$driver->getImageProfilePath() ?>" >
+                            <div class="col-lg-4">
+                                <div class="photo-box-action">
+                                    <img class="profile-image" id="profile-image" src="<?=$driver->getImageProfilePath() ?>"/>
+                                    <p id="image-profile-feedback">Favor registrar foto para poder prosseguir</p>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#camera" onclick="startCamera()"><i class="fa fa-camera" aria-hidden="true"></i>&nbsp Capturar imagem</button>
                                 </div>
                             </div>
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label>Tipo de cadastro</label><span class="required-icon">*<span>
+                                    <select name="recordType" class="form-control" onchange="manageCnhValidation(this, 'MOTORISTA')" required>
+                                        <option value="">Selecione...</option>
+
+                                        <?php 
+                                        foreach ($DRIVER_RECORD_TYPES as $key => $value) {
+                                            $selected = null;
+
+                                            if($driver->getRecordType() == $key) $selected = 'selected';
+
+
+                                            if(is_null($driver->getRecordType()) && $key == 'driver') $selected = 'selected';
+                                            echo '<option value="'.$key.'" '.$selected.' >'.$value.'</option>';
+
+                                        }
+                                        
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nome</label><span class="required-icon">*<span>
+                                    <input class="form-control" name="name" placeholder="Nome" maxlength="100" value="<?=$driver->getName()  ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>CPF</label><span class="required-icon">*<span>
+                                    <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$driver->getCpf() ?>" onkeyup="cpfMask(this)" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>CNH</label><span id="requiredCnh" class="required-icon" hidden>*</span>
+                                    <input class="form-control" name="cnh" maxlength="20" placeholder="CNH" value="<?=$driver->getCnh() ?>" >
+                                </div>
+                                <div class="form-group">
+                                    <label>Vencimento CNH</label><span id="requiredCnhExpiration" class="required-icon" hidden>*</span>
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input type='text' data-date-format="DD/MM/YYYY" class="form-control" value="<?=$driver->getCnhExpiration() ?>" name="cnhExpiration" id="cnhExpiration" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19"/>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             
                             <div class="form-group">
                                 <label>Transportadora</label>
@@ -180,6 +192,8 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                                         $selected = null;
 
                                         if($driver->getStatus() == $key) $selected = 'selected';
+
+                                        if(is_null($driver->getStatus()) && $key == 'active') $selected = 'selected';
                                         echo '<option value="'.$key.'" '.$selected.' >'.$value.'</option>';
 
                                     }
@@ -197,10 +211,36 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                     </div> 
                     <div class="btn-group-end">
                         <button type="submit" class="btn btn-primary" id="user-save-btn">Salvar</button>
-                        <button type="button" class="btn btn-primary" id="user-save-btn" onclick="manageRedirect()">Salvar e criar acesso</button>
+                        <button type="button" class="btn btn-primary" id="user-save-btn" onclick="manageRedirect('new-driver-post')">Salvar e criar acesso</button>
                         <button type="reset" class="btn btn-danger">Cancelar</button>
                     </div>   
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="camera" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeCamera()"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div id="camera-container">
+                <canvas id="canvas"></canvas>
+                <video autoplay="true" id="videoElement"></video>
+            </div>
+            <div class="modal-footer">
+                <div class="box-group">
+                    <div class="box-btn-center">
+                        <button class="camera-action btn btn-primary" type="button" onclick="takepicture()"><i class="fa fa-camera" aria-hidden="true"></i></button>
+                    </div>
+                    <div id="swap-camera">
+                        <a title="Trocar câmera" data-toggle="tooltip" onclick="swapCamera()"><i class="fa fa-refresh fa-2x" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div>
+
+                </div>
             </div>
         </div>
     </div>

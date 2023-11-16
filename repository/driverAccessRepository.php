@@ -23,6 +23,7 @@ class DriverAccessRepository{
                                     inbound_invoice,
                                     outbound_invoice,
                                     operation_type,
+                                    rotation,
                                     dr.status AS driver_access_status,
                                     dr.block_reason AS driver_block_reason,
                                     dr_a.created_date AS access_created_date,
@@ -55,6 +56,37 @@ class DriverAccessRepository{
         }
     }
 
+    public function findByNullEndDate(){
+
+        try{
+            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY dr_a.id ORDER BY start_datetime DESC";
+
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $businessId){
+
+        try{
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' GROUP BY dr_a.id ORDER BY start_datetime DESC';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function findByStartDateAndEndDate($startDate, $endDate){
+
+        try{
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" GROUP BY dr_a.id ORDER BY start_datetime DESC';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
     public function findById($id){
 
         try{
@@ -69,7 +101,7 @@ class DriverAccessRepository{
     public function save($driverAccess){
 
         try {
-            $sql = 'INSERT INTO driver_access (start_datetime,end_datetime,driver_id,business_id,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,inbound_invoice,outbound_invoice,operation_type,user_outbound_id,created_date,created_by)
+            $sql = 'INSERT INTO driver_access (start_datetime,end_datetime,driver_id,business_id,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,inbound_invoice,outbound_invoice,operation_type,rotation,user_outbound_id,created_date,created_by)
             VALUES(
                 "'.$driverAccess->getStartDatetime().'", 
                 "'.$driverAccess->getEndDatetime().'", 
@@ -82,6 +114,7 @@ class DriverAccessRepository{
                 "'.$driverAccess->getInboundInvoice().'", 
                 "'.$driverAccess->getOutboundInvoice().'", 
                 "'.$driverAccess->getOperationType().'", 
+                "'.$driverAccess->getRotation().'",
                 '.$_SESSION['id'].', 
                 "'.date("Y-m-d").'", 
                 '.$_SESSION['id'].' 
@@ -111,12 +144,12 @@ class DriverAccessRepository{
                         inbound_invoice = "'.$driverAccess->getInboundInvoice().'", 
                         outbound_invoice = "'.$driverAccess->getOutboundInvoice().'", 
                         operation_type = "'.$driverAccess->getOperationType().'",
+                        rotation = "'.$driverAccess->getRotation().'",
                         user_outbound_id = '.$_SESSION['id'].',
                         modified_by = '.$_SESSION['id'].',
                         modified_date = "'.date("Y-m-d").'" 
                          WHERE id = '.$driverAccess->getId();
-
-            echo $sql;
+                         
             $result = $this->mySql->query($sql);
             return new ErrorHandler('Acesso atualizado com sucesso!', false, null);
 

@@ -14,6 +14,7 @@ class Employee{
     private $modifiedDate;
     private $createdBy;
     private $modifiedBy;
+    private $imageProfilePath;
     
     public function setId($id){
         $this->id = $id;
@@ -98,6 +99,14 @@ class Employee{
     public function getModifiedBy(){
         return $this->modifiedBy;
     }
+
+    public function setImageProfilePath($imageProfilePath){
+        $this->imageProfilePath = $imageProfilePath;
+    }
+    public function getImageProfilePath(){
+        return ($this->imageProfilePath != null) ? $this->imageProfilePath : '../images/profile.jpg';
+    }
+
 }
 
 ?>

@@ -25,6 +25,7 @@ class DriverAccess{
     private $userOutboundName;
     private $driverStatus;
     private $driverBlockReason;
+    private $rotation;
     private $createdDate;
     private $modifiedDate;
     private $createdBy;
@@ -190,6 +191,13 @@ class DriverAccess{
     }
     public function getDriverBlockReason(){
         return $this->driverBlockReason;
+    }
+
+    public function setRotation($rotation){
+        $this->rotation = $rotation;
+    }
+    public function getRotation(){
+        return $this->rotation;
     }
 
     public function setCreatedDate($createdDate){

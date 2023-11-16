@@ -3,17 +3,20 @@
 require_once('../repository/driverAccessRepository.php');
 require_once('../model/driverAccess.php');
 require_once('../model/driver.php');
+require_once('driverController.php');
 
 class DriverAccessController{
 
     private $driverAccess;
     private $driverAccessRepository;
+    private $driverController;
     private $mySql;
 
     public function __construct($mySql){
 
         $this->mySql = $mySql;
         $this->driverAccessRepository = new DriverAccessRepository($this->mySql);
+        $this->driverController = new DriverController($this->mySql);
     }
 
     public function save($post, $action){
@@ -45,16 +48,15 @@ class DriverAccessController{
         return new ErrorHandler($data, false, null);
     }
 
-    public function delete($id){
-        try {
+    public function findByNullEndDate(){
 
-            return $this->driverAccessRepository->delete($id);
+        $result = $this->driverAccessRepository->findByNullEndDate();
 
-        } catch (Exception $e) {
+        if($result->hasError) return $result;
 
-            $description = $e->getMessage() . '- ' . $e->getTraceAsString();
-            return new ErrorHandler('Erro ao deletar registro de acesso! - ', true, $description);
-        }
+        $data = $this->loadData($result->result);
+
+        return new ErrorHandler($data, false, null);
     }
 
     public function findById($id){
@@ -67,6 +69,32 @@ class DriverAccessController{
 
         if(count($data) > 0) return new ErrorHandler($data[0], false, null);
         else return new ErrorHandler(new DriverAccess(), false, null);
+    }
+
+    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $business){
+
+        $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
+        $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
+
+        if(is_null($business) ||  $business == 'all') $result = $this->driverAccessRepository->findByStartDateAndEndDate($startDate, $endDate);
+        else $result = $this->driverAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business); 
+
+        if($result->hasError) return $result;
+
+        $data = $this->loadData($result->result);
+        return new ErrorHandler($data, false, null);
+    }
+
+    public function delete($id){
+        try {
+
+            return $this->driverAccessRepository->delete($id);
+
+        } catch (Exception $e) {
+
+            $description = $e->getMessage() . '- ' . $e->getTraceAsString();
+            return new ErrorHandler('Erro ao deletar registro de acesso! - ', true, $description);
+        }
     }
     
     public function setFields($post, $driverAccess){
@@ -87,7 +115,7 @@ class DriverAccessController{
         $driverAccess->setInboundInvoice($post['inboundInvoice']);
         $driverAccess->setOutboundInvoice($post['outboundInvoice']);
         $driverAccess->setOperationType($post['operationType']);
-
+        $driverAccess->setRotation($post['rotation']);
         return $driverAccess;
     }
 
@@ -127,10 +155,11 @@ class DriverAccessController{
             $driverAccess->setUserOutboundName($data['access_outbound_name']);
             $driverAccess->setDriverStatus($data['driver_access_status']);
             $driverAccess->setDriverBlockReason($data['driver_block_reason']);
+            $driverAccess->setRotation($data['rotation']);
             $driverAccess->setCreatedDate($data['access_created_date']);
             $driverAccess->setModifiedDate($data['access_modified_date']);
             $driverAccess->setCreatedBy($data['access_created_by']);
-            $driverAccess->setCreatedByName($data['blockReason']);
+            $driverAccess->setCreatedByName($data['access_created_by_name']);
             $driverAccess->setModifiedBy($data['access_modified_by']);
 
             //popular motorista
@@ -149,6 +178,8 @@ class DriverAccessController{
             $driver->setVehiclePlate3($data['driver_vehicle_plate3']);
             $driver->setStatus($data['driver_access_status']);
             $driver->setBlockReason($data['driver_block_reason']);
+
+            $driver = $this->driverController->setImagePath($driver);
 
             $driverAccess->setDriver($driver);
             

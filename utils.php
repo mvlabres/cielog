@@ -20,6 +20,18 @@
     </div>';
   }
 
+  function setRotation(){
+
+    $ROTATION_TYPES = ['07:00 às 19:00hr', '19:00 às 07:00hr'];
+
+    $rotationAStart = date("H:i", strtotime('07:00'));
+    $rotationAEnd = date("H:i", strtotime('19:00'));
+
+    $timeNow = date("H:i");
+
+    return ($timeNow >= $rotationAStart && $timeNow < $rotationAEnd ) ? $ROTATION_TYPES[0] : $ROTATION_TYPES[1];
+  }
+
 
   // declaração de variáveis globais
 

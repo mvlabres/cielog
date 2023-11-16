@@ -8,6 +8,7 @@ class DriverController{
     private $driver;
     private $driverRepository;
     private $mySql;
+    public $defaultImagePath = '../image-profile/driver/id-00';
 
     public function __construct($mySql){
 
@@ -17,14 +18,47 @@ class DriverController{
 
     public function save($post, $action){
 
+        $recordId = null;
+
         try {
 
             $driver = new Driver();
-            
             $driver = $this->setFields($post, $driver);
 
-            if($action == 'save') return $this->driverRepository->save($driver);  
-            else return $this->driverRepository->update($driver); 
+            if($action == 'save') {
+
+                if($post['redirect'] == 'redirect') {
+                    $result = $this->driverRepository->save($driver);
+                    $recordId = $result->result; 
+                }else {
+                    $result = $this->driverRepository->save($driver);
+                    $recordId = $result->result;
+                    $result->result = 'Registro salvo com sucesso!';
+                }
+            }  
+            else {
+                if($post['redirect'] == 'redirect') {
+                    $result = $this->driverRepository->update($driver);
+                    $recordId = $result->result;
+
+                }else {
+                    $result = $this->driverRepository->update($driver);
+                    $recordId = $result->result;
+                    $result->result = 'Registro atualizado com sucesso!';
+                }
+            }
+
+            if($_POST['image-profile'] != null){
+
+                try {
+                    $this->saveBase64Image($_POST['image-profile'], $recordId);
+                } catch (Exception $ex) {
+                    throw $ex;
+                }  
+            }
+
+            if($post['redirect'] == 'redirect') echo '<script>window.location="index.php?content=newDriverAccess.php&driverId='.$result->result.'"</script>';
+            else return $result;
             
         } catch (Exception $e) {
 
@@ -39,7 +73,7 @@ class DriverController{
 
         if($result->hasError) return $result;
 
-        $data = $this->loadData($result->result);
+        $data = $this->loadData($result->result, false);
 
         return new ErrorHandler($data, false, null);
     }
@@ -62,7 +96,7 @@ class DriverController{
 
         if($result->hasError) return $result;
 
-        $data = $this->loadData($result->result);
+        $data = $this->loadData($result->result, true);
 
         if(count($data) > 0) return new ErrorHandler($data[0], false, null);
         else return new ErrorHandler(new Employee(), false, null);
@@ -89,7 +123,7 @@ class DriverController{
         return $driver;
     }
 
-    public function loadData($records){
+    public function loadData($records, $withFile){
 
         $drivers = array();
 
@@ -111,18 +145,37 @@ class DriverController{
             $driver->setStatus($data['status']);
             $driver->setBlockReason($data['block_reason']);
             $driver->setCreatedDate(date("d/m/Y", strtotime($data['created_date'])));
-
+            
             if(!is_null($data['modified_date'])){
                 $driver->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
             }
             
             $driver->setCreatedBy( $data['created_by']);
             $driver->setModifiedBy($data['modified_by']);
+
+            if($withFile) $driver = $this->setImagePath($driver);
             
             array_push($drivers, $driver);
         }
 
         return $drivers;
+    }
+
+    public function setImagePath($driver){
+        
+        $filename = $this->defaultImagePath.$driver->getId().'.png';
+
+        if (file_exists($filename)) $driver->setImageProfilePath($filename);
+        else $driver->setImageProfilePath('../images/profile.jpg');
+
+        return $driver;
+    }
+
+    public function saveBase64Image($base64, $recordId){
+        $base64 = str_replace('data:image/png;base64,', '', $base64);
+        $base64 = str_replace(' ', '+', $base64);
+        $data = base64_decode($base64);
+        file_put_contents($this->defaultImagePath.$recordId.'.png', $data);
     }
 }
 
