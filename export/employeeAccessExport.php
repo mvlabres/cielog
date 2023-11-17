@@ -76,13 +76,13 @@ while ($data = $employeeAccess->fetch_assoc()){
     $file .= '<td>'.utf8_decode($data['employee_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['business_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['employee_registration']).'</td>';
-    $endDate = (str_contains($data['end_datetime'], '0000')) ? '' : date("d/m/Y H:i", strtotime($data['end_datetime'])); 
+    $endDate = (strpos($data['end_datetime'], '0000') === false) ? date("d/m/Y H:i", strtotime($data['end_datetime'])) : ''; 
     $file .= '<td>'.utf8_decode( $endDate ).'</td>';
     $file .= '<td>'.utf8_decode( $data['employee_vehicle'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['employee_vehicle_plate'] ).'</td>';
 
     $file .= '<td>'.utf8_decode( $data['access_created_by_name'] ).'</td>';
-    if(!str_contains($data['end_datetime'], '0000')){
+    if(strpos($data['end_datetime'], '0000') === false){
         $file .= '<td>'.utf8_decode( $data['access_outbound_name'] ).'</td>';
     }else{
         $file .= '<td></td>';

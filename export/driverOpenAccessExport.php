@@ -78,7 +78,7 @@ while ($data = $driverAccess->fetch_assoc()){
     $file .= '<td>'.utf8_decode($data['driver_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['business_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['driver_cnh']).'</td>';
-    if(!str_contains($data['driver_cnh_expiration'], '0000') && !is_null($data['driver_cnh_expiration'])){
+    if(strpos($data['driver_cnh_expiration'], '0000') === false && !is_null($data['driver_cnh_expiration'])){
         $file .= '<td>'.utf8_decode(date("d/m/Y", strtotime( $data['driver_cnh_expiration']))).'</td>';
     }else{
         $file .= '<td></td>';

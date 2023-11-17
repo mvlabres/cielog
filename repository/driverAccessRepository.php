@@ -141,8 +141,6 @@ class DriverAccessRepository{
                 '.$_SESSION['id'].' 
             )';
 
-            echo $sql;
-
             $result = $this->mySql->query($sql);
             return new ErrorHandler('Acesso criado com sucesso!', false, null);
 

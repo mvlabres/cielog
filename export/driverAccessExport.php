@@ -92,7 +92,7 @@ while ($data = $driverAccess->fetch_assoc()){
     $file .= '<td>'.utf8_decode($data['driver_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['business_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['driver_cnh']).'</td>';
-    if(!str_contains($data['driver_cnh_expiration'], '0000') && !is_null($data['driver_cnh_expiration'])){
+    if(!strpos($data['driver_cnh_expiration'], '0000') && !is_null($data['driver_cnh_expiration'])){
         $file .= '<td>'.utf8_decode(date("d/m/Y", strtotime( $data['driver_cnh_expiration']))).'</td>';
     }else{
         $file .= '<td></td>';
@@ -100,7 +100,7 @@ while ($data = $driverAccess->fetch_assoc()){
     
     $file .= '<td>'.utf8_decode($data['driver_shipping_company']).'</td>';
     
-    $endDate = (str_contains($data['end_datetime'], '0000')) ? '' : date("d/m/Y H:i", strtotime($data['end_datetime'])); 
+    $endDate = (strpos($data['end_datetime'], '0000') === false) ? date("d/m/Y H:i", strtotime($data['end_datetime'])) : ''; 
     $file .= '<td>'.utf8_decode( $endDate ).'</td>';
     $file .= '<td>'.utf8_decode( $data['driver_vehicle_type'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate'] ).'</td>';
@@ -110,7 +110,7 @@ while ($data = $driverAccess->fetch_assoc()){
     $file .= '<td>'.utf8_decode( $data['inbound_invoice'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['outbound_invoice'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['access_created_by_name'] ).'</td>';
-    if(!str_contains($data['end_datetime'], '0000')){
+    if(strpos($data['end_datetime'], '0000') === false){
         $file .= '<td>'.utf8_decode( $data['access_outbound_name'] ).'</td>';
     }else{
         $file .= '<td></td>';

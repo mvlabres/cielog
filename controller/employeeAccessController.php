@@ -128,7 +128,7 @@ class EmployeeAccessController{
             $employeeAccess->setId($data['access_id']);
             $employeeAccess->setStartDatetime(date("d/m/Y H:i", strtotime($data['start_datetime'])));
 
-            if(!is_null($data['end_datetime']) && !str_contains($data['end_datetime'], '0000')){
+            if(!is_null($data['end_datetime']) && strpos($data['end_datetime'], '0000')  === false){
                 $employeeAccess->setEndDatetime( date("d/m/Y H:i", strtotime($data['end_datetime'])));
             }
 

@@ -135,7 +135,7 @@ class DriverAccessController{
             $driverAccess->setId($data['access_id']);
             $driverAccess->setStartDatetime(date("d/m/Y H:i", strtotime($data['start_datetime'])));
 
-            if(!is_null($data['end_datetime']) && !str_contains($data['end_datetime'], '0000')){
+            if(!is_null($data['end_datetime']) && strpos($data['end_datetime'], '0000') === false){
                 $driverAccess->setEndDatetime( date("d/m/Y H:i", strtotime($data['end_datetime'])));
             }
 
@@ -144,7 +144,7 @@ class DriverAccessController{
             $driverAccess->setCpf($data['driver_cpf']);
             $driverAccess->setCnh($data['driver_cnh']);
 
-            if(!is_null($data['driver_cnh_expiration']) && !str_contains($data['driver_cnh_expiration'], '0000')){
+            if(!is_null($data['driver_cnh_expiration']) && strpos($data['driver_cnh_expiration'], '0000') === false){
                 $driverAccess->setCnhExpiration(date("d/m/Y", strtotime($data['driver_cnh_expiration'])));
             }
 

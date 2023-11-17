@@ -114,13 +114,13 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                                     <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$driver->getCpf() ?>" onkeyup="cpfMask(this)" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>CNH</label><span id="requiredCnh" class="required-icon" hidden>*</span>
-                                    <input class="form-control" name="cnh" maxlength="20" placeholder="CNH" value="<?=$driver->getCnh() ?>" >
+                                    <label>CNH</label><span id="requiredCnh" class="required-icon">*</span>
+                                    <input class="form-control" name="cnh" maxlength="20" placeholder="CNH" value="<?=$driver->getCnh() ?>" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Vencimento CNH</label><span id="requiredCnhExpiration" class="required-icon" hidden>*</span>
+                                    <label>Vencimento CNH</label><span id="requiredCnhExpiration" class="required-icon">*</span>
                                     <div class='input-group date' id='datetimepicker1'>
-                                        <input type='text' data-date-format="DD/MM/YYYY" class="form-control" value="<?=$driver->getCnhExpiration() ?>" name="cnhExpiration" id="cnhExpiration" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19"/>
+                                        <input type='text' data-date-format="DD/MM/YYYY" class="form-control" value="<?=$driver->getCnhExpiration() ?>" name="cnhExpiration" id="cnhExpiration" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" required/>
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                                     </div>
@@ -150,8 +150,8 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Tipo de veículo</label>
-                                <select name="vehicleType" class="form-control" onchange="manageVehicleTypes(this)">
+                                <label>Tipo de veículo</label><span id="requiredCnh" class="required-icon">*</span>
+                                <select name="vehicleType" class="form-control" onchange="manageVehicleTypes(this)" required>
                                     <option value="">Selecione...</option>
                                     <?php
 
