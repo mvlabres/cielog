@@ -7,15 +7,9 @@ $startDate = null;
 $endDate = null;
 $business = null;
 
-if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['endDate']) && $_GET['endDate'] != null)){
+if(isset($_GET['business']) && $_GET['business'] != null){
 
-    $startDate = $_GET['startDate'];
-    $endDate = $_GET['endDate'];
     $business = $_GET['business'];
-    $openAccess = $_GET['open-access'];
-
-    $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
-    $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
 
     $standardQuery = 'SELECT dr_a.id AS access_id,
                             dr.id AS driver_id,
@@ -52,15 +46,9 @@ if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['en
                         INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
                         INNER JOIN user AS us_3 ON (us_3.id = dr_a.modified_by OR ISNULL(dr_a.modified_by )) ';
 
-    if( !is_null($business) && $business != '' && $business != 'all' ){
-        if( $openAccess == 'false') $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC';
-        else $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' GROUP BY dr_a.id ORDER BY start_datetime DESC';
-
-    }else {
-        if( $openAccess == 'false') $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC'; 
-        else $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" GROUP BY dr_a.id ORDER BY start_datetime DESC'; 
-    }
-
+    if( $business != 'all' ) $sql = $standardQuery . ' WHERE cl.id = '.$business.' AND end_datetime LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC';
+    else $sql = $standardQuery . ' WHERE end_datetime LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC'; 
+       
     $driverAccess = $MySQLi->query($sql);
 }
 
@@ -74,7 +62,6 @@ $file .= '<th>Empresa visitada</th>';
 $file .= '<th>CNH</th>';
 $file .= '<th>Vencimento CNH</th>';
 $file .= '<th>Transportadora</th>';
-$file .= '<th>'.utf8_decode("Saída").'</th>';
 $file .= '<th>'.utf8_decode("Tipo veículo").'</th>';
 $file .= '<th>'.utf8_decode("Placa veículo").'</th>';
 $file .= '<th>Segunda placa</th>';
@@ -83,7 +70,6 @@ $file .= '<th>'.utf8_decode("Operação").'</th>';
 $file .= '<th>NF entrada</th>';
 $file .= '<th>'.utf8_decode("NF saída").'</th>';
 $file .= '<th>'.utf8_decode("Usuário (entrada)").'</th>';
-$file .= '<th>'.utf8_decode("Usuário (saída)").'</th>';
 
 while ($data = $driverAccess->fetch_assoc()){ 
     $file .= '<tr>';
@@ -99,9 +85,6 @@ while ($data = $driverAccess->fetch_assoc()){
     }
     
     $file .= '<td>'.utf8_decode($data['driver_shipping_company']).'</td>';
-    
-    $endDate = (str_contains($data['end_datetime'], '0000')) ? '' : date("d/m/Y H:i", strtotime($data['end_datetime'])); 
-    $file .= '<td>'.utf8_decode( $endDate ).'</td>';
     $file .= '<td>'.utf8_decode( $data['driver_vehicle_type'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate2'] ).'</td>';
@@ -110,11 +93,6 @@ while ($data = $driverAccess->fetch_assoc()){
     $file .= '<td>'.utf8_decode( $data['inbound_invoice'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['outbound_invoice'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['access_created_by_name'] ).'</td>';
-    if(!str_contains($data['end_datetime'], '0000')){
-        $file .= '<td>'.utf8_decode( $data['access_outbound_name'] ).'</td>';
-    }else{
-        $file .= '<td></td>';
-    }
     $file .= '</tr>';
 }
 
@@ -125,7 +103,7 @@ header ("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
 header ("Cache-Control: no-cache, must-revalidate");
 header ("Pragma: no-cache");
 header ("Content-type: application/x-msexcel"); 
-header ("Content-Disposition: attachment; filename=Acessos de veiculos-".date('Y-m-d').".xls" );
+header ("Content-Disposition: attachment; filename=Acessos de veiculos em aberto-".date('Y-m-d').".xls" );
 header ("Content-Description: PHP Generated Data" );
 
 echo $file;

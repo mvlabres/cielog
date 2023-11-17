@@ -1,9 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once('../utils.php');
 require_once('../model/driver.php');
 require_once('../controller/driverController.php');
@@ -30,23 +26,32 @@ $btnLabel = 'Criar acesso';
 
 $dateNow = date("d/m/Y H:i");
 $endDate = null;
+$hiddenComponents = '';
 
 $rotation = setRotation();
 
 if(isset($_GET['action']) && $_GET['action'] != null){
     $action = $_GET['action'];
-    $disabledEndDate = '';
-    $endDate = $dateNow;
 }
 
 if(isset($_GET['action']) && $_GET['action'] == 'edit'){
-    $endDate = $dateNow;
-    $btnLabel = 'Encerrar acesso';
+    $btnLabel = 'Salvar';
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'edit-all'){
+    $btnLabel = 'Salvar';
+    $disabledEndDate = '';
 }
 
 if(isset($_GET['action']) && $_GET['action'] == 'view'){
-    $endDate = null;
-    $blockDisabled = 'disabled';
+    $viewMode = 'disabled';
+    $hiddenComponents = 'hidden';
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'close'){
+    $endDate = $dateNow;
+    $btnLabel = 'Encerrar acesso';
+    $disabledEndDate = '';
 }
 
 if(isset($_GET['driverAccessId']) && $_GET['driverAccessId'] != null){
@@ -113,7 +118,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <h3 class="page-header" >Acesso</h3>
+        <h1 class="page-header" >Acesso de veículos</h1>
     </div>
 </div>
 <div class="row">
@@ -151,7 +156,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             <div class="col-lg-8">
 
                                 <?php
-                                    if($action != 'edit'){
+                                    if($action != 'edit' && $action != 'view' && $action != 'edit-all'){
                                         echo '<div class="btn-group-start">
                                             <a href="index.php?content=driverList.php" class="btn btn-outline-primary">Alterar motorista</a>
                                             <a href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=edit" class="btn btn-outline-primary">Editar dados motorista</a>
@@ -185,7 +190,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label>Tipo de veículo</label>
-                                    <select name="vehicleType" class="form-control" <?=$blockDisabled ?>>
+                                    <select name="vehicleType" class="form-control" <?=$blockDisabled ?> <?=$viewMode ?>>
                                         <option value="">Selecione...</option>
                                         <?php
 
@@ -206,22 +211,22 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                 </div>
                                 <div class="form-group">
                                     <label>Placa do veículo</label>
-                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$driverAccess->getVehiclePlate() ?>" <?=$blockDisabled ?>>
+                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$driverAccess->getVehiclePlate() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Placa do veículo (segunda placa)</label>
-                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate2" id="vehiclePlate2" maxlength="10" placeholder="Segunda placa" value="<?=$driverAccess->getVehiclePlate2() ?>" <?=$blockDisabled ?>>
+                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate2" id="vehiclePlate2" maxlength="10" placeholder="Segunda placa" value="<?=$driverAccess->getVehiclePlate2() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Placa do veículo (terceira placa)</label>
-                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate3" id="vehiclePlate3" maxlength="10" placeholder="Terceira placa" value="<?=$driverAccess->getVehiclePlate3() ?>" <?=$blockDisabled ?>>
+                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate3" id="vehiclePlate3" maxlength="10" placeholder="Terceira placa" value="<?=$driverAccess->getVehiclePlate3() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Empresa visitada</label><span class="required-icon">*</span>
-                                    <select name="business" class="form-control" <?=$blockDisabled ?> required>
+                                    <select name="business" class="form-control" <?=$blockDisabled ?> <?=$viewMode ?> required>
                                         <option value="">Selecione...</option>
                                         <?php
 
@@ -242,7 +247,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label>Tipo de operação</label><span class="required-icon">*</span>
-                                    <select name="operationType" class="form-control" <?=$blockDisabled ?> required>
+                                    <select name="operationType" class="form-control" <?=$blockDisabled ?> <?=$viewMode ?> required>
                                         <option value="">Selecione...</option>
                                         <?php
 
@@ -259,11 +264,11 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                 </div>
                                 <div class="form-group">
                                     <label>NF de entrada</label>
-                                    <input class="form-control" name="inboundInvoice" id="inboundInvoice" maxlength="20" placeholder="NF de entrada" value="<?=$driverAccess->getInboundInvoice() ?>" <?=$blockDisabled ?>>
+                                    <input class="form-control" name="inboundInvoice" id="inboundInvoice" maxlength="20" placeholder="NF de entrada" value="<?=$driverAccess->getInboundInvoice() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
                                 <div class="form-group">
                                     <label>NF de saída</label>
-                                    <input class="form-control" name="outboundInvoice" id="outboundInvoice" maxlength="20" placeholder="NF de saída" value="<?=$driverAccess->getOutboundInvoice() ?>" <?=$blockDisabled ?>>
+                                    <input class="form-control" name="outboundInvoice" id="outboundInvoice" maxlength="20" placeholder="NF de saída" value="<?=$driverAccess->getOutboundInvoice() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
                                 <div class="panel panel-default">
                                     <div class="panel-body color-gray">
@@ -272,7 +277,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                                 <div class="form-group">
                                                     <label>Data/hora entrada</label><span class="required-icon">*</span>
                                                     <div class='input-group date' id='datetimepicker1'>
-                                                        <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($driverAccess->getStartDatetime())) ? $dateNow : $driverAccess->getStartDatetime() ?>" name="startDate" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" <?=$blockDisabled ?>/>
+                                                        <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($driverAccess->getStartDatetime())) ? $dateNow : $driverAccess->getStartDatetime() ?>" name="startDate" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" <?=$blockDisabled ?> <?=$viewMode ?>/>
                                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                                         </span>
                                                     </div>
@@ -280,7 +285,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                                 <div class="form-group">
                                                     <label>Data/hora saída</label>
                                                     <div class='input-group date' id='datetimepicker1'>
-                                                        <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($driverAccess->getEndDatetime())) ? $endDate : $driverAccess->getEndDatetime() ?>" name="endDate" onblur="dateTimeHandleBlur(this)" onkeyup="manageEndDate(this)" minlength="19" maxlength="19" <?=$blockDisabled ?> <?=$disabledEndDate ?>/>
+                                                        <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($driverAccess->getEndDatetime())) ? $endDate : $driverAccess->getEndDatetime() ?>" name="endDate" onblur="dateTimeHandleBlur(this)" onkeyup="manageEndDate(this)" minlength="19" maxlength="19" <?=$blockDisabled ?> <?=$disabledEndDate ?> <?=$viewMode ?>/>
                                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                                         </span>
                                                     </div>
@@ -293,8 +298,8 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         </div>
                     </div>
                 </div> 
-                <div class="btn-group-end">
-                    <button type="submit" class="btn btn-primary" id="user-save-btn" <?=$blockDisabled ?>><?=$btnLabel ?></button>
+                <div class="btn-group-end" <?=$hiddenComponents ?>>
+                    <button type="submit" class="btn btn-primary" id="user-save-btn" <?=$blockDisabled ?> <?=$viewMode ?>><?=$btnLabel ?></button>
                     <button type="reset" class="btn btn-danger">Cancelar</button>
                 </div>   
             </form>

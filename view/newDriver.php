@@ -57,7 +57,7 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
 ?>
 
 <div class="row">
-    <div class="row row-space-between"  onload="setTableLength(100)">
+    <div class="row row-space-between">
         <div class="col-lg-12">
             <h3 class="page-header" >Motorista - <span id="title"><?=$title ?></span></h3>
         </div>  
@@ -70,7 +70,7 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
     <div class="col-lg-12">
          <div class="panel panel-default">
             <div class="panel-body">
-                <form id="new-driver-post" method="post" action="#">
+                <form id="new-driver-post" method="post" action="#" onsubmit="return checkImageProfile()">
                     <div class="row">
                         <div class="col-lg-6">
                             <input  type="hidden" name="id" value="<?=$driver->getId() ?>" >
@@ -129,8 +129,8 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                             
                             
                             <div class="form-group">
-                                <label>Transportadora</label>
-                                <select name="shippingCompany" class="form-control">
+                                <label>Transportadora</label><span id="requiredCnhExpiration" class="required-icon" hidden>*</span>
+                                <select name="shippingCompany" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <?php
 

@@ -48,6 +48,8 @@ insert into user_access(user_type, function_name) values ('adm', 'register_clien
 insert into user_access(user_type, function_name) values ('adm', 'register_shipping_company');
 insert into user_access(user_type, function_name) values ('adm', 'register_vehicle_type');
 insert into user_access(user_type, function_name) values ('adm', 'register_driver');
+insert into user_access(user_type, function_name) values ('adm', 'delete_access');
+insert into user_access(user_type, function_name) values ('adm', 'edit_access');
 
 insert into user_access(user_type, function_name) values ('client', 'access');
 insert into user_access(user_type, function_name) values ('client', 'access_list');
@@ -60,6 +62,7 @@ insert into user_access(user_type, function_name) values ('operator', 'register_
 insert into user_access(user_type, function_name) values ('operator', 'register_shipping_company');
 insert into user_access(user_type, function_name) values ('operator', 'register_vehicle_type');
 insert into user_access(user_type, function_name) values ('operator', 'register_driver');
+insert into user_access(user_type, function_name) values ('operator', 'edit_access');
 
 CREATE TABLE `employee` (
   `id` int(21) NOT NULL AUTO_INCREMENT PRIMARY KEY,

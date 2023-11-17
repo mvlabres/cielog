@@ -13,8 +13,29 @@ $employeeAccessController = new EmployeeAccessController($MySQLi);
 
 $listType = 'checked';
 
+$businessId = getClientIfContains();
+$business = (is_null($businessId)) ? 'all': $businessId;
+
 if($_GET['list-type'] && $_GET['list-type'] != null){
-    if($_GET['list-type'] == 'employee') $listType = null;
+    if($_GET['list-type'] == 'employee') {
+        $listType = null;
+    }
+}
+
+if(isset($_POST['action']) && $_POST['action'] == 'driver-delete'){
+    $driverAccessId = $_POST['driverAccessId'];
+    $result = $driverAccessController->delete($driverAccessId);
+
+    if($result->hasError) errorAlert($result->result.$result->errorMessage);
+    else successAlert($result->result);
+}
+
+if(isset($_POST['action']) && $_POST['action'] == 'employee-delete'){
+    $employeeAccessId = $_POST['employeeAccessId'];
+    $result = $employeeAccessController->delete($employeeAccessId);
+
+    if($result->hasError) errorAlert($result->result.$result->errorMessage);
+    else successAlert($result->result);
 }
 
 $driversAccessResult = $driverAccessController->findByNullEndDate();
@@ -23,9 +44,17 @@ if($driversAccessResult->hasError) errorAlert($driversAccessResult->result.$driv
 $employeesAccessResult = $employeeAccessController->findByNullEndDate();
 if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$employeesAccessResult->errorMessage);
 
+$hiddenComponents = '';
+$componentsClass = 'row quick-action-toogle-margin';
+
+if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
+    $hiddenComponents = 'hidden';
+    $componentsClass = 'row quick-action-toogle-top';
+}
+
 ?>
-<body>
-    <div class="row quick-actions" >
+<body class="table-quick-actions">
+    <div class="quick-actions" <?=$hiddenComponents  ?> >
         <div class="col-lg-12">
             <div class="panel-title">
                 <h3 class="display-2">Ações rápidas</h3>
@@ -54,20 +83,33 @@ if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$
                 </a>
             </div>
     </div>
-    <div class="row">
-        <input type="checkbox" id="access-type-toogle" <?=$listType ?> data-toggle="toggle" data-on="Veículos" data-off="Colaboradores" data-onstyle="success" data-offstyle="primary" onchange="manageListAccess()">
+    <div class="functions-group">
+        <div class="<?=$componentsClass ?>">
+            <input type="checkbox" id="access-type-toogle" <?=$listType ?> data-toggle="toggle" data-on="Veículos" data-off="Colaboradores" data-onstyle="success" data-offstyle="primary" onchange="manageListAccess()">
+        </div>
+        <div class="btn-functions-group <?=$componentsClass ?>" >
+            <a id="driverExport" href="../export/driverOpenAccessExport.php?business=<?=$business?>"><button type="button" class="btn btn-secondary" ><i class="fa fa-file-excel-o"></i> Exportar</button></a>
+            <a id="employeeExport" href="../export/employeeOpenAccessExport.php?business=<?=$business?>"><button type="button" class="btn btn-secondary"><i class="fa fa-file-excel-o"></i> Exportar</button></a>
+        </div>
     </div>
-    <div class="row">
+
+    <div class="row table-quick-actions">
         <div class="col-lg-12">
             <div class="panel-title">
                 <h3 class="display-2">Acessos de <b id="access-type-label">VEÍCULOS</b> em aberto</h3>
             </div>
-            <table width="3290px" class="table table-striped table-bordered table-hover" id="dataTables-example">
+            <table width="3500px" class="table table-striped table-bordered table-hover" id="dataTables-example">
                 <thead class="vehicle-access">
                     <tr>
-                        <th scope="column" class="td-30">Finalizar</th>
-                        <th scope="column" class="td-30">Detalhes</th>
-                        <th scope="column" class="td-40">Turno</th>
+                        <?php
+                            if($hiddenComponents != 'hidden'){
+                                echo '<th scope="column" class="td-40">Finalizar</th>';
+                                echo '<th scope="column" class="td-30">Editar</th>';
+                            }
+                        ?>
+                        <th scope="column" class="td-40">Detalhes</th>
+                        <th scope="column" class="td-70">Tempo Total</th>
+                        <th scope="column" class="td-30">Turno</th>
                         <th scope="column" class="td-40">Entrada</th>
                         <th scope="column" class="td-40">CPF</th>
                         <th scope="column" class="td-100">Nome</th>
@@ -84,13 +126,24 @@ if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$
                         <th scope="column" class="td-70">NF entrada</th>
                         <th scope="column" class="td-70">NF saída</th>
                         <th scope="column" class="td-70">Usuário (entrada)</th>
+                        <?php
+                            if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
+                                echo '<th scope="column" class="td-40">Excluir</th>';
+                            }
+                        ?>
 
                     </tr>
                 </thead>
                 <thead class="employee-access" hidden>
                     <tr>
-                        <th scope="column" class="td-30">Finalizar</th>
-                        <th scope="column" class="td-30">Detalhes</th>
+                        <?php
+                            if($hiddenComponents != 'hidden'){
+                                echo '<th scope="column" class="td-40">Finalizar</th>';
+                                echo '<th scope="column" class="td-30">Editar</th>';
+                            }
+                        ?>
+                        <th scope="column" class="td-40">Detalhes</th>
+                        <th scope="column" class="td-30">Tempo Total</th>
                         <th scope="column" class="td-30">Turno</th>
                         <th scope="column" class="td-40">Entrada</th>
                         <th scope="column" class="td-40">CPF</th>
@@ -101,6 +154,11 @@ if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$
                         <th scope="column" class="td-70">Veículo</th>
                         <th scope="column" class="td-70">Placa veículo</th>
                         <th scope="column" class="td-70">Usuário (entrada)</th>
+                        <?php
+                            if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
+                                echo '<th scope="column" class="td-40">Excluir</th>';
+                            }
+                        ?>
 
                     </tr>
                 </thead>
@@ -109,9 +167,26 @@ if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$
                     <?php
                     if(!$driversAccessResult->hasError){
                         foreach ($driversAccessResult->result as $driverAccess) {
+
+                            if(!checkClientDataPermission($driverAccess->getBusinessId())) continue;
+
+                            $now = new DateTime();
+                            $startTime = new DateTime(date("Y-m-d H:i", strtotime(str_replace('/', '-', $driverAccess->getStartDatetime() ))));
+
+                            $total = ($now->getTimestamp() - $startTime->getTimestamp()) /60;
+                            $hours = floor($total/60);
+                            $minutes = round($total - ($hours*60));
+
+                            $time = $hours.':'.$minutes.' hr';
+
                             echo '<tr class="odd gradeX">';
-                            echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=edit"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
+
+                            if($hiddenComponents != 'hidden'){
+                                echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=close"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
+                                echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
+                            }
                             echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
+                            echo '<td>'.$time.'</td>';
                             echo '<td>'.$driverAccess->getRotation().'</td>';
                             echo '<td>'.$driverAccess->getStartDatetime().'</td>';
                             echo '<td>'.$driverAccess->getCpf().'</td>';
@@ -129,6 +204,31 @@ if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$
                             echo '<td>'.$driverAccess->getInboundInvoice().'</td>';
                             echo '<td>'.$driverAccess->getOutboundInvoice().'</td>';
                             echo '<td>'.$driverAccess->getCreatedByName().'</td>';
+                            if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
+                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#driver-'.$driverAccess->getId().'"><span class="fa fa-trash text-primary"></span></td>';
+                            }
+                            echo '</tr>';
+                            echo '<div class="modal fade" id="driver-'.$driverAccess->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form role="form-delete" method="post" action="#">
+                                                <input type="hidden" name="driverAccessId" value="'.$driverAccess->getId().'">
+                                                <input type="hidden" name="action" value="driver-delete" >
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                    <h4 class="modal-title" id="myModalLabel">Excluir</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja deletar o acesso em aberto de '.$driverAccess->getDriverName().'?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Não</button>
+                                                    <button type="submit" class="btn btn-primary" id="confirm">Sim</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>';
                         }
                     }
                     ?>
@@ -140,10 +240,25 @@ if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$
                         foreach ($employeesAccessResult->result as $employeeAccess) {
 
                             $employee = $employeeAccess->getEmployee();
+                            
+                            if(!checkClientDataPermission($employee->getBusinessId())) continue;
+
+                            $now = new DateTime();
+                            $startTime = new DateTime(date("Y-m-d H:i", strtotime(str_replace('/', '-', $employeeAccess->getStartDatetime() ))));
+
+                            $total = ($now->getTimestamp() - $startTime->getTimestamp()) /60;
+                            $hours = floor($total/60);
+                            $minutes = round($total - ($hours*60));
+
+                            $time = $hours.':'.$minutes.' hr';
 
                             echo '<tr class="odd gradeX">';
-                            echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=edit"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
+                            if($hiddenComponents != 'hidden'){
+                                echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=close"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
+                                echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
+                            }
                             echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
+                            echo '<td>'.$time.'</td>';
                             echo '<td>'.$employeeAccess->getRotation().'</td>';
                             echo '<td>'.$employeeAccess->getStartDatetime().'</td>';
                             echo '<td>'.$employee->getCpf().'</td>';
@@ -154,6 +269,31 @@ if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$
                             echo '<td>'.$employeeAccess->getVehicle().'</td>';
                             echo '<td>'.$employeeAccess->getVehiclePlate().'</td>';
                             echo '<td>'.$employeeAccess->getCreatedByName().'</td>';
+                            if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
+                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#emplyee-'.$employeeAccess->getId().'"><span class="fa fa-trash text-primary"></span></td>';
+                            }
+                            echo '</tr>';
+                            echo '<div class="modal fade" id="emplyee-'.$employeeAccess->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form role="form-delete" method="post" action="#">
+                                                <input type="hidden" name="employeeAccessId" value="'.$employeeAccess->getId().'">
+                                                <input type="hidden" name="action" value="employee-delete" >
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                    <h4 class="modal-title" id="myModalLabel">Excluir</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja deletar o acesso em aberto de '.$employee->getName().'?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Não</button>
+                                                    <button type="submit" class="btn btn-primary" id="confirm">Sim</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>';
                         }
                     }
                     ?>

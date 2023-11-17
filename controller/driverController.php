@@ -25,7 +25,13 @@ class DriverController{
             $driver = new Driver();
             $driver = $this->setFields($post, $driver);
 
+            
             if($action == 'save') {
+                $result = $this->driverRepository->findByCpf($driver->getCpf());
+    
+                if($result->hasError) return new ErrorHandler('Erro ao verificar se a empresa já existe na base', true, ' - '. $result->errorMessage);
+    
+                if($result->result->num_rows > 0) return new ErrorHandler('Já existe um registro com esse CPF', true, '');
 
                 if($post['redirect'] == 'redirect') {
                     $result = $this->driverRepository->save($driver);

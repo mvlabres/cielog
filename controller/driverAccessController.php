@@ -71,13 +71,20 @@ class DriverAccessController{
         else return new ErrorHandler(new DriverAccess(), false, null);
     }
 
-    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $business){
+    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $business, $openAccess){
 
         $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
         $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
 
-        if(is_null($business) ||  $business == 'all') $result = $this->driverAccessRepository->findByStartDateAndEndDate($startDate, $endDate);
-        else $result = $this->driverAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business); 
+        if(is_null($business) ||  $business == 'all') {
+            if($openAccess) $result = $this->driverAccessRepository->findByStartDateAndEndDate($startDate, $endDate);
+            else $result = $this->driverAccessRepository->findByStartDateAndEndDateAndClosedAccess($startDate, $endDate);
+            
+        }
+        else {
+            if($openAccess) $result = $this->driverAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business);
+            else $result = $this->driverAccessRepository->findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $business); 
+        }
 
         if($result->hasError) return $result;
 

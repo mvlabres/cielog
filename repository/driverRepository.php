@@ -34,6 +34,17 @@ class driverRepository{
         }
     }
 
+    public function findByCpf($cpf){
+
+        try{
+            $sql = $this->standardQuery . 'WHERE cpf = "'.$cpf.'" ';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar motoristas - ', true, $ex->getMessage());
+        }
+    }
+
     public function save($driver){
 
         try {

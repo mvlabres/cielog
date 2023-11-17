@@ -268,6 +268,11 @@ td{
     align-items: end !important;
 }
 
+.box-full-heigth{
+    background-color: red;
+    height: 100% !important;
+}
+
 .row-element-group > .form-group{
     margin-right: 20px !important;
 }
@@ -286,6 +291,10 @@ td{
 
 #menu-nav-bar{
     display: none;
+}
+
+#page-wrapper{
+    margin-top: 90px !important;
 }
 
 .schedule-body > #page-wrapper{
@@ -390,6 +399,7 @@ td{
 
 .vertical-menu{
     background-color: #e0e0e0 !important;
+    z-index: 9999999999999 !important;
 }
 
 .files-name{
@@ -793,12 +803,34 @@ select[readonly] {
 
 .quick-actions{
     margin-bottom: 30px;
+    position: fixed !important;
+    width: 98% !important;
+    z-index: 99 !important;
+    background-color: #fff;
+    top: 80px !important;
+    right: 30px;
+    left: 30px;
+    height: 250px !important;
+}
+
+.table-quick-actions{
+    margin-bottom: 40px !important;
 }
 
 #image-profile-feedback{
     color: #dc3545 !important;
     display: none;
 }
+
+.quick-action-toogle-margin{
+    margin-top: 330px;
+}
+
+.quick-action-toogle-top{
+    margin-top: 20px;
+}
+
+
 
 @media (max-width: 1750px){
 
@@ -946,6 +978,12 @@ select[readonly] {
     border-radius: 0;
     margin-bottom: 40px;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    position: fixed !important;
+    top: 0px !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 80px !important;
+    min-height: 80px !important;
 }
 
 .navbar-btn {

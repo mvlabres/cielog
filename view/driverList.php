@@ -15,7 +15,10 @@ if(isset($_GET['action']) && $_GET['action'] != null){
 if(isset($_POST['action']) && $_POST['action'] == 'delete'){
 
     $driverId = $_POST['idDelete'];
-    $driverResult = $driverController->delete($driverId);
+    $result = $driverController->delete($driverId);
+
+    if($result->hasError) errorAlert($result->result.$result->errorMessage);
+    else successAlert($result->result);
 }
 
 $driverResult = $driverController->findAll();
@@ -24,7 +27,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
 
 ?>
 
-<div class="row row-space-between"  onload="setTableLength(100)">
+<div class="row row-space-between">
     <div class="col-lg-12">
         <h3 class="page-header" >Motoristas, visitantes e outros</h3>
     </div>  

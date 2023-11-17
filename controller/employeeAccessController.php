@@ -70,13 +70,19 @@ class EmployeeAccessController{
         else return new ErrorHandler(new EmployeeAccess(), false, null);
     }
 
-    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $business){
+    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $business, $openAccess){
 
         $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
         $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
 
-        if(is_null($business) ||  $business == 'all') $result = $this->employeeAccessRepository->findByStartDateAndEndDate($startDate, $endDate);
-        else $result = $this->employeeAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business); 
+        if(is_null($business) ||  $business == 'all') {
+            if($openAccess) $result = $this->employeeAccessRepository->findByStartDateAndEndDate($startDate, $endDate);
+            else $result = $this->employeeAccessRepository->findByStartDateAndEndDateAndClosedAccess($startDate, $endDate);
+        }
+        else {
+            if($openAccess) $result = $this->employeeAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business);
+            else $result = $this->employeeAccessRepository->findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $business);  
+        }
 
         if($result->hasError) return $result;
 
@@ -144,7 +150,7 @@ class EmployeeAccessController{
             $employee->setName($data['employee_name']);
             $employee->setRegistration($data['employee_registration']);
             $employee->setCpf($data['employee_cpf']);
-            $employee->setVehicle($data['employee_vehemployee_vehicleicle_type']);
+            $employee->setVehicle($data['employee_vehicle']);
             $employee->setVehiclePlate($data['employee_vehicle_plate']);
             $employee->setBusinessId($data['business_id']);
             $employee->setBusinessName($data['business_name']);

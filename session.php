@@ -26,7 +26,7 @@ function sec_session_start() {
     
 }
 
-$pagesNotClearPost = ['newUser.php', 'newEmployee.php', 'newDriverAccess.php', 'driverAccessList.php'];
+$pagesNotClearPost = ['newUser.php', 'newEmployee.php', 'newDriverAccess.php', 'driverAccessList.php', 'employeeAccessList.php'];
 
 sec_session_start();
 
@@ -70,6 +70,7 @@ function login($username, $password, $mysqli) {
                 $_SESSION['name'] = $name;
                 $_SESSION['username'] = $base_username;
                 $_SESSION['type'] = $type;
+                $_SESSION['client'] = $clientId;
 
                 getAccess($mysqli);
                 return true;
@@ -94,7 +95,9 @@ function getAccess($mysqli){
         'register_shipping_company' => 'hidden',
         'register_vehicle_type' => 'hidden',
         'register_driver' => 'hidden',
-        'new_employee' => 'hidden'
+        'new_employee' => 'hidden',
+        'delete_access' => 'hidden',
+        'edit_access' => 'hidden'
     ];
 
     $sql = "SELECT id, user_type, function_name

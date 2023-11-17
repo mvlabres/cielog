@@ -40,7 +40,7 @@ class EmployeeAccessRepository{
     public function findAll(){
 
         try{
-            $sql = $this->standardQuery . ' GROUP BY em_a.id ORDER BY start_datetime DESC';
+            $sql = $this->standardQuery . ' GROUP BY em_a.id ORDER BY start_datetime ASC';
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -51,7 +51,7 @@ class EmployeeAccessRepository{
     public function findByNullEndDate(){
 
         try{
-            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY em_a.id ORDER BY start_datetime DESC";
+            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY em_a.id ORDER BY start_datetime ASC";
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -62,17 +62,38 @@ class EmployeeAccessRepository{
     public function findByStartDateEndDateAndBusiness($startDate, $endDate, $businessId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' GROUP BY em_a.id ORDER BY start_datetime DESC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' GROUP BY em_a.id ORDER BY start_datetime ASC';
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
         }
     }
 
+    public function findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $businessId){
+
+        try{
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%" GROUP BY em_a.id ORDER BY start_datetime ASC';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+
     public function findByStartDateAndEndDate($startDate, $endDate){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" GROUP BY em_a.id ORDER BY start_datetime DESC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" GROUP BY em_a.id ORDER BY start_datetime ASC';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function findByStartDateAndEndDateAndClosedAccess($startDate, $endDate){
+
+        try{
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY em_a.id ORDER BY start_datetime ASC';
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());

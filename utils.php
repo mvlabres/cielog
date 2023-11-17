@@ -32,6 +32,20 @@
     return ($timeNow >= $rotationAStart && $timeNow < $rotationAEnd ) ? $ROTATION_TYPES[0] : $ROTATION_TYPES[1];
   }
 
+  function checkClientDataPermission($clientId){
+
+    if(checkUserPermission()) return true;
+    return $_SESSION['client'] == $clientId;
+  }
+
+  function checkUserPermission(){
+    return ($_SESSION['type'] == 'adm' || $_SESSION['type'] == 'operator');
+  }
+
+  function getClientIfContains(){
+    return (is_null($_SESSION['client'])) ? null : $_SESSION['client']; 
+  }
+
 
   // declaração de variáveis globais
 

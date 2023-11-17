@@ -21,6 +21,10 @@ if(isset($_GET['content'])) {
     }
 }
 
+if($_GET['user'] && $_GET['user'] == 'success' ){
+    successAlert('Senha alterada com sucesso!');
+}
+
 if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
     successAlert('Registro salvo com sucesso!');
 }
@@ -103,7 +107,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="../home.php?content=trocar-senha.php"><i class="fa fa-pencil fa-fw"></i> Alterar senha</a></li>
+                        <li><a href="index.php?content=userChangePassword.php"><i class="fa fa-pencil fa-fw"></i> Alterar senha</a></li>
                         <li class="divider"></li>
                         <li><a href="index.php?content=logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
@@ -161,8 +165,8 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
                             </ul>
                         </li>
                         <li <?=$_SESSION['FUNCTION_ACCESS']['users'] ?>>
-                            <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Usuários</a>
-                            <ul class="collapse nav nav-second-level" id="pageSubmenu1">
+                            <a href="#pageSubmenu4" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Usuários</a>
+                            <ul class="collapse nav nav-second-level" id="pageSubmenu4">
                                 <li>
                                     <a href="index.php?content=newUser.php">Novo</a>
                                 </li>

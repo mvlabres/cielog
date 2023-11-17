@@ -71,7 +71,7 @@ jQuery(function($){
 });
 
 const init = () =>{
-    setTableLength(100);
+    // setTableLength(100);
     manageListAccess();
 }
 
@@ -725,9 +725,13 @@ const setTableLength = (qtde) => {
 
     if(document.getElementById('search-table')) qtde = 10;
 
-    tables.forEach(element => {
-        element.value = qtde;
-    });
+    setTimeout(() => {
+        tables.forEach(element => {
+            element.value = qtde;
+            element.dispatchEvent(new Event("change"));
+        });
+    }, 200);
+
 }
 
 const checkDriverAccessSubmit = () => {
@@ -906,13 +910,17 @@ const manageListAccess = () => {
                 vehicleAccess[x].hidden = true;
                 employeeAccess[x].hidden = false; 
                 label.innerHTML = 'COLABORADORES';
+                document.getElementById('employeeExport').hidden = false;
+                document.getElementById('driverExport').hidden = true;
             }else{
                 vehicleAccess[x].hidden = false;
                 employeeAccess[x].hidden = true; 
                 label.innerHTML = 'VEÍCULOS';
+                document.getElementById('employeeExport').hidden = true;
+                document.getElementById('driverExport').hidden = false;
             }
         }
-    }, 100);
+    }, 20);
 }
 
 const checkImageProfile = () => {

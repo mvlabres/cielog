@@ -20,7 +20,10 @@ if(isset($_GET['action']) && $_GET['action'] != null){
 if(isset($_POST['action']) && $_POST['action'] == 'delete'){
 
     $employeeId = $_POST['idDelete'];
-    $employeeResult = $employeeController->delete($employeeId);
+    $result = $employeeController->delete($employeeId);
+
+    if($result->hasError) errorAlert($result->result.$result->errorMessage);
+    else successAlert($result->result);
 }
 
 if($employeeResult->hasError) errorAlert($employeeResult->result.$employeeResult->errorMessage);

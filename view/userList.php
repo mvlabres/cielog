@@ -16,7 +16,10 @@ if(isset($_GET['action']) && $_GET['action'] != null){
 if(isset($_POST['action']) && $_POST['action'] == 'delete'){
 
     $userId = $_POST['idDelete'];
-    $usersResult = $userController->delete($userId);
+    $result = $userController->delete($userId);
+
+    if($result->hasError) errorAlert($result->result.$result->errorMessage);
+    else successAlert($result->result);
 }
 
 $usersResult = $userController->findAll();

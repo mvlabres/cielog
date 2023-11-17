@@ -19,21 +19,35 @@ $btnLabel = 'Criar acesso';
 $dateNow = date("d/m/Y H:i");
 $endDate = null;
 
+$viewMode = '';
+$hiddenComponents = '';
+
 $rotation = setRotation();
 
 if(isset($_GET['action']) && $_GET['action'] != null){
     $action = $_GET['action'];
-    $disabledEndDate = '';
-    $endDate = $dateNow;
-}
-
-if(isset($_GET['action']) && $_GET['action'] == 'edit'){
-    $endDate = $dateNow;
-    $btnLabel = 'Encerrar acesso';
 }
 
 if(isset($_GET['action']) && $_GET['action'] == 'view'){
+    $viewMode = 'disabled';
+    $hiddenComponents = 'hidden';
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'edit'){
     $endDate = null;
+    $btnLabel = 'Salvar';
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'edit-all'){
+    $btnLabel = 'Salvar';
+    $disabledEndDate = '';
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'close'){
+    $endDate = $dateNow;
+    $btnLabel = 'Encerrar acesso';
+    $disabledEndDate = '';
+    $endDate = $dateNow;
 }
 
 if(isset($_GET['employeeAccessId']) && $_GET['employeeAccessId'] != null){
@@ -78,7 +92,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header" >Acesso</h1>
+        <h1 class="page-header" >Acesso de colaboradores</h1>
     </div>
 </div>
 <div class="row">
@@ -100,7 +114,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                             <div class="col-lg-9">
 
                                 <?php
-                                    if($action != 'edit'){
+                                    if($action != 'edit' && $action != 'view' && $action != 'edit-all'){
                                         echo '<div class="btn-group-start">
                                             <a href="index.php?content=employeeList.php" class="btn btn-outline-primary">Alterar colaborador</a>
                                             <a href="index.php?content=newemployee.php&employeeId='.$employee->getId().'&action=edit" class="btn btn-outline-primary">Editar dados colaborador</a>
@@ -133,11 +147,11 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>Veículo</label>
-                                <input class="form-control" name="vehicle" value="<?=$employee->getVehicle() ?>" maxlength="50">
+                                <input class="form-control" name="vehicle" value="<?=$employee->getVehicle() ?>" maxlength="50" disabled>
                             </div>
                             <div class="form-group">
                                 <label>Placa do veículo</label>
-                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>">
+                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>" disabled>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-body color-gray">
@@ -146,7 +160,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                                             <div class="form-group">
                                                 <label>Data/hora entrada</label><span class="required-icon">*</span>
                                                 <div class='input-group date' id='datetimepicker1'>
-                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getStartDatetime())) ? $dateNow : $employeeAccess->getStartDatetime() ?>" name="startDate" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" />
+                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getStartDatetime())) ? $dateNow : $employeeAccess->getStartDatetime() ?>" name="startDate" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" <?=$viewMode ?>/>
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
                                                 </div>
@@ -154,7 +168,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                                             <div class="form-group">
                                                 <label>Data/hora saída</label>
                                                 <div class='input-group date' id='datetimepicker1'>
-                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getEndDatetime())) ? $endDate : $employeeAccess->getEndDatetime() ?>" name="endDate" onblur="dateTimeHandleBlur(this)" onkeyup="manageEndDate(this)" minlength="19" maxlength="19" <?=$disabledEndDate ?>/>
+                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getEndDatetime())) ? $endDate : $employeeAccess->getEndDatetime() ?>" name="endDate" onblur="dateTimeHandleBlur(this)" onkeyup="manageEndDate(this)" minlength="19" maxlength="19" <?=$disabledEndDate ?> <?=$viewMode ?>/>
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
                                                 </div>
@@ -166,8 +180,8 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                         </div>
                     </div>
                 </div> 
-                <div class="btn-group-end">
-                    <button type="submit" class="btn btn-primary" id="user-save-btn"><?=$btnLabel ?></button>
+                <div class="btn-group-end" <?=$hiddenComponents ?>>
+                    <button type="submit" class="btn btn-primary" id="user-save-btn" <?=$viewMode ?>><?=$btnLabel ?></button>
                     <button type="reset" class="btn btn-danger">Cancelar</button>
                 </div>   
             </form>

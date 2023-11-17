@@ -50,7 +50,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
 ?>
 
 <div class="row">
-    <div class="row row-space-between" onload="setTableLength(100)">
+    <div class="row row-space-between">
         <div class="col-lg-12">
             <h3 class="page-header" >Colaborador - <span id="title"><?=$title ?></span></h3>
         </div>  
