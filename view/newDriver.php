@@ -19,9 +19,16 @@ $action = 'save';
 $title = 'Criar';
 $disabledBlockReasonField = 'disabled';
 $disabledPlateFields = 'disabled';
+$viewMode = '';
+$hiddenComponents = '';
 
 if(isset($_GET['action']) && $_GET['action'] != null){
     $action = $_GET['action'];
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'view'){
+    $viewMode = 'disabled';
+    $hiddenComponents = 'hidden';
 }
 
 if(isset($_GET['driverId']) && $_GET['driverId'] != null){
@@ -87,7 +94,7 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                             <div class="col-lg-8">
                                 <div class="form-group">
                                     <label>Tipo de cadastro</label><span class="required-icon">*<span>
-                                    <select name="recordType" class="form-control" onchange="manageCnhValidation(this, 'MOTORISTA')" required>
+                                    <select name="recordType" class="form-control" onchange="manageCnhValidation(this, 'MOTORISTA')" <?=$viewMode ?> required>
                                         <option value="">Selecione...</option>
 
                                         <?php 
@@ -107,51 +114,53 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                                 </div>
                                 <div class="form-group">
                                     <label>Nome</label><span class="required-icon">*<span>
-                                    <input class="form-control" name="name" placeholder="Nome" maxlength="100" value="<?=$driver->getName()  ?>" required>
+                                    <input class="form-control" name="name" placeholder="Nome" maxlength="100" value="<?=$driver->getName()  ?>" <?=$viewMode ?> required>
                                 </div>
                                 <div class="form-group">
                                     <label>CPF</label><span class="required-icon">*<span>
-                                    <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$driver->getCpf() ?>" onkeyup="cpfMask(this)" required>
+                                    <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$driver->getCpf() ?>" onkeyup="cpfMask(this)" <?=$viewMode ?> required>
                                 </div>
                                 <div class="form-group">
                                     <label>CNH</label><span id="requiredCnh" class="required-icon">*</span>
-                                    <input class="form-control" name="cnh" maxlength="20" placeholder="CNH" value="<?=$driver->getCnh() ?>" required>
+                                    <input class="form-control" name="cnh" maxlength="20" placeholder="CNH" value="<?=$driver->getCnh() ?>" <?=$viewMode ?> required>
                                 </div>
                                 <div class="form-group">
                                     <label>Vencimento CNH</label><span id="requiredCnhExpiration" class="required-icon">*</span>
                                     <div class='input-group date' id='datetimepicker1'>
-                                        <input type='text' data-date-format="DD/MM/YYYY" class="form-control" value="<?=$driver->getCnhExpiration() ?>" name="cnhExpiration" id="cnhExpiration" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" required/>
+                                        <input type='text' data-date-format="DD/MM/YYYY" class="form-control" value="<?=$driver->getCnhExpiration() ?>" name="cnhExpiration" id="cnhExpiration" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" <?=$viewMode ?> required/>
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                                     </div>
                                 </div>
+                                <div class="form-field-action">
+                                    <div class="form-group">
+                                        <label>Transportadora</label><span id="requiredCnhExpiration" class="required-icon">*</span>
+                                        <select name="shippingCompany" id="shippingCompany" class="form-control" <?=$viewMode ?> required>
+                                            <option value="">Selecione...</option>
+                                            <?php
+        
+                                            if(!$shippingCompanysResult->hasError){
+                                                foreach ($shippingCompanysResult->result as $shippingCompany) {
+                                                    $selected = null;
+                                                    if($driver->getShippingCompany() == $shippingCompany->getName()) $selected = 'selected';
+        
+                                                    echo '<option value="'.$shippingCompany->getName().'" '.$selected.' >'.$shippingCompany->getName().'</option>';
+        
+                                                }
+                                            }
+                                                
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new-shipping-company">Criar</button>
+                                </div>
                             </div>
                             
-                            
-                            <div class="form-group">
-                                <label>Transportadora</label><span id="requiredCnhExpiration" class="required-icon" hidden>*</span>
-                                <select name="shippingCompany" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <?php
-
-                                    if(!$shippingCompanysResult->hasError){
-                                        foreach ($shippingCompanysResult->result as $shippingCompany) {
-                                            $selected = null;
-                                            if($driver->getShippingCompany() == $shippingCompany->getName()) $selected = 'selected';
-
-                                            echo '<option value="'.$shippingCompany->getName().'" '.$selected.' >'.$shippingCompany->getName().'</option>';
-
-                                        }
-                                    }
-                                        
-                                    ?>
-                                </select>
-                            </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Tipo de veículo</label><span id="requiredCnh" class="required-icon">*</span>
-                                <select name="vehicleType" class="form-control" onchange="manageVehicleTypes(this)" required>
+                                <select name="vehicleType" class="form-control" onchange="manageVehicleTypes(this)" <?=$viewMode ?> required>
                                     <option value="">Selecione...</option>
                                     <?php
 
@@ -170,22 +179,22 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                             </div>
                             <div class="form-group">
                                 <label>Placa do veículo</label>
-                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$driver->getVehiclePlate() ?>" <?=$disabledPlateFields ?> >
+                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$driver->getVehiclePlate() ?>" <?=$disabledPlateFields ?> <?=$viewMode ?>>
                             </div>
 
                             <div class="form-group">
                                 <label>Placa do veículo (segunda placa)</label>
-                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate2" id="vehiclePlate2" maxlength="10" placeholder="Segunda placa" value="<?=$driver->getVehiclePlate2() ?>" <?=$disabledPlateFields ?> >
+                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate2" id="vehiclePlate2" maxlength="10" placeholder="Segunda placa" value="<?=$driver->getVehiclePlate2() ?>" <?=$disabledPlateFields ?> <?=$viewMode ?>>
                             </div>
 
                             <div class="form-group">
                             <label>Placa do veículo (terceira placa)</label>
-                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate3" id="vehiclePlate3" maxlength="10" placeholder="Terceira placa" value="<?=$driver->getVehiclePlate3() ?>" <?=$disabledPlateFields ?> >
+                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate3" id="vehiclePlate3" maxlength="10" placeholder="Terceira placa" value="<?=$driver->getVehiclePlate3() ?>" <?=$disabledPlateFields ?> <?=$viewMode ?>>
                             </div>
 
                             <div class="form-group">
                                 <label>Status</label><span class="required-icon">*<span>
-                                <select name="status" class="form-control" onchange="manegeFieldViewByValue(this, 'blockReason', true, 'block')" required>
+                                <select name="status" class="form-control" onchange="manegeFieldViewByValue(this, 'blockReason', true, 'block')" <?=$viewMode ?> required>
                                     <option value="">Selecione...</option>
                                     <?php 
                                     foreach ($DRIVER_STATUS as $key => $value) {
@@ -204,12 +213,12 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
 
                             <div class="form-group">
                                 <label>Motivo do bloqueio</label>
-                                <textarea class="form-control" name="blockReason" id="blockReason" maxlength="200" placeholder="Motivo de bloqueio" <?=$disabledBlockReasonField ?>><?=$driver->getBlockReason() ?></textarea>
+                                <textarea class="form-control" name="blockReason" id="blockReason" maxlength="200" placeholder="Motivo de bloqueio" <?=$disabledBlockReasonField ?> <?=$viewMode ?>><?=$driver->getBlockReason() ?></textarea>
                                 <p class="help-block">Descreva por qual motivo esse cadastro foi bloqueado.</p>
                             </div>
                         </div>
                     </div> 
-                    <div class="btn-group-end">
+                    <div class="btn-group-end" <?=$hiddenComponents ?>>
                         <button type="submit" class="btn btn-primary" id="user-save-btn">Salvar</button>
                         <button type="button" class="btn btn-primary" id="user-save-btn" onclick="manageRedirect('new-driver-post')">Salvar e criar acesso</button>
                         <button type="reset" class="btn btn-danger">Cancelar</button>
@@ -245,5 +254,28 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="new-shipping-company" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Nova transportadora</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome da transportadora</label>
+                    <input style="text-transform: uppercase" class="form-control" id="new-shipping-company-name" placeholder="Nome" maxlength="50" value="" onkeyup="checkFieldHasValue(this, 'modalButton')">
+                    <p class="feedback" id="feedback-modal"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">fechar</button>
+                <button type="button" class="btn btn-primary" id="modalButton" onclick="ajaxNewShippingCompany()" disabled>Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
        

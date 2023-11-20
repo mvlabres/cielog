@@ -26,13 +26,36 @@ class shippingCompanyRepository{
     public function findById($id){
 
         try{
-            $sql = $this->standardQuery . 'WHERE id = '.$id.' ORDER BY name';
+            $sql = $this->standardQuery . ' WHERE id = '.$id.' ORDER BY name';
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar transportadoras - ', true, $ex->getMessage());
         }
     }
+
+    public function findByName($name){
+
+        try{
+            $sql = $this->standardQuery . ' WHERE name = "'.$name.'" LIMIT 1';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar transportadoras - ', true, $ex->getMessage());
+        }
+    }
+
+    public function findLastCreated(){
+
+        try{
+            $sql = $this->standardQuery . ' ORDER BY id DESC LIMIT 1';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar transportadoras - ', true, $ex->getMessage());
+        }
+    }
+
 
     public function save($shippingCompany){
 

@@ -15,9 +15,16 @@ $employee = new Employee();
 $action = 'save';
 $title = 'Criar';
 $disabledField = 'disabled';
+$viewMode = '';
+$hiddenComponents = '';
 
 if(isset($_GET['action']) && $_GET['action'] != null){
     $action = $_GET['action'];
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'view'){
+    $viewMode = 'disabled';
+    $hiddenComponents = 'hidden';
 }
 
 if(isset($_GET['employeeId']) && $_GET['employeeId'] != null){
@@ -80,16 +87,16 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             <div class="col-lg-8">
                                 <div class="form-group">
                                     <label>Nome</label>
-                                    <input class="form-control" name="name" placeholder="Nome" maxlength="100" value="<?=$employee->getName()  ?>" required>
+                                    <input class="form-control" name="name" placeholder="Nome" maxlength="100" value="<?=$employee->getName()  ?>" <?=$viewMode ?> required>
                                     <p class="help-block">Insira o nome completo do novo colaborador.</p>
                                 </div>
                                 <div class="form-group">
                                     <label>Matrícula</label>
-                                    <input class="form-control" name="registration" maxlength="50" placeholder="Matrícula" value="<?=$employee->getRegistration() ?>" required>
+                                    <input class="form-control" name="registration" maxlength="50" placeholder="Matrícula" value="<?=$employee->getRegistration() ?>" <?=$viewMode ?> required>
                                 </div>
                                 <div class="form-group">
                                     <label>CPF</label>
-                                    <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$employee->getCpf() ?>" onkeyup="cpfMask(this)" required>
+                                    <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$employee->getCpf() ?>" onkeyup="cpfMask(this)" <?=$viewMode ?> required>
                                 </div>
                                 
                             </div>
@@ -97,16 +104,16 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Veículo</label>
-                                <input class="form-control" name="vehicle" maxlength="50" placeholder="Veículo" onkeyup="manageVehiclePlate(this)" value="<?=$employee->getVehicle() ?>">
+                                <input class="form-control" name="vehicle" maxlength="50" placeholder="Veículo" onkeyup="manageVehiclePlate(this)" value="<?=$employee->getVehicle() ?> " <?=$viewMode ?>>
                                 <p class="help-block">Informe uma breve descrição do veículo do colaborador.</p>
                             </div>
                             <div class="form-group">
                                 <label>Placa do veículo</label>
-                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="50" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>" <?=$disabledField ?> >
+                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="50" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>" <?=$disabledField ?> <?=$viewMode ?>>
                             </div>
                             <div class="form-group">
                                 <label>Empresa</label>
-                                <select name="business" id="business" class="form-control" required>
+                                <select name="business" id="business" class="form-control" <?=$viewMode ?> required>
                                     <option value="">Selecione...</option>
                                     <?php
 
@@ -123,7 +130,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                     ?>
                                 </select>
                             </div>
-                            <div class="btn-group-end">
+                            <div class="btn-group-end" <?=$hiddenComponents ?>>
                                 <button type="submit" class="btn btn-primary" id="user-save-btn">Salvar</button>
                                 <button type="button" class="btn btn-primary" id="user-save-btn" onclick="manageRedirect('new-employee-post')">Salvar e criar acesso</button>
                                 <button type="reset" class="btn btn-danger">Cancelar</button>

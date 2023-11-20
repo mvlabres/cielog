@@ -122,7 +122,7 @@ class EmployeeController{
         $employee->setRegistration($post['registration']);
         $employee->setCpf($post['cpf']);
         $employee->setVehicle($post['vehicle']);
-        $employee->setVehiclePlate(strtoupper($post['vehiclePlate']));
+        $employee->setVehiclePlate(mb_strtoupper($post['vehiclePlate']));
         $employee->setBusinessId($post['business']);
         
         return $employee;

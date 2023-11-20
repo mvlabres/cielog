@@ -74,7 +74,7 @@ class ClientController{
     public function setFields($post, $client){
 
         if($post['id'] && $post['id'] != null) $client->setId($post['id']);
-        $client->setName(strtoupper($post['name']));
+        $client->setName(mb_strtoupper($post['name']));
 
         return $client;
     }

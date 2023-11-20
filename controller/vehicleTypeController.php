@@ -71,7 +71,7 @@ class VehicleTypeController{
     public function setFields($post, $vehicleType){
 
         if($post['id'] && $post['id'] != null) $vehicleType->setId($post['id']);
-        $vehicleType->setName(strtoupper($post['name']));
+        $vehicleType->setName(mb_strtoupper($post['name']));
         
         return $vehicleType;
     }

@@ -191,6 +191,17 @@ html, body {
 
 .clickble{
     cursor: pointer;
+    padding: 0px !important;
+}
+
+.cell-action{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 35px !important;
+    min-height: 35px !important;
+    text-decoration: none !important;
 }
 
 .full-container{
@@ -395,6 +406,24 @@ td{
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+}
+
+.form-field-action{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    align-items: flex-end;
+}
+
+.form-field-action > .form-group{
+    width: 85%;
+    margin-bottom: 0px !important;
+}
+
+.feedback{
+    color: red;
+    display: none;
 }
 
 .vertical-menu{
@@ -802,7 +831,6 @@ select[readonly] {
 }
 
 .quick-actions{
-    margin-bottom: 30px;
     position: fixed !important;
     width: 98% !important;
     z-index: 99 !important;
@@ -823,7 +851,7 @@ select[readonly] {
 }
 
 .quick-action-toogle-margin{
-    margin-top: 330px;
+    margin-top: 260px;
 }
 
 .quick-action-toogle-top{
@@ -856,6 +884,10 @@ select[readonly] {
 
     .panel-progress{
         margin-top: 5% !important;
+    }
+
+    .login-container{
+        height: 70%;
     }
 }
 
@@ -943,6 +975,72 @@ select[readonly] {
     }
 }
 
+@media (max-width: 550px){
+
+    .login-container{
+        height: 100%;
+        width: 100%;
+        min-height: 100%;
+        border-radius: 0px;
+    }
+
+    .quick-actions{
+        display: none;
+    }
+
+    .quick-action-toogle-margin{
+        margin-top: 30px;
+    }
+
+    .navbar {
+        display: flex !important;
+        flex-direction: row !important;
+    }
+
+    .navbar-header{
+        width: 70% !important;
+        max-width: 70% !important;
+        display: flex !important;
+        flex-direction: row !important;
+        margin-left: 20px;
+    }
+
+    .navbar-header > button{
+        display: none !important;
+    }
+
+    .navbar-right{
+        width: 25% !important;
+        max-width: 25% !important;
+    }
+
+    .box-img-link{
+        width: 60px;
+        min-width: 60px;
+        height: 25px;
+        min-height: 25px;
+    }
+
+    .img-link{
+        height: 35px !important;
+    }
+
+    .menu-break-text{
+        display: none;
+    }
+
+    .vertical-menu {
+        position: fixed;
+        top: 55px;
+        width: 50%;
+    }
+
+    .functions-group{
+        margin-left: 15px;
+        width: 90%;
+    }
+}
+
 @media print
     {
         @page {
@@ -976,7 +1074,6 @@ select[readonly] {
     background: #fff;
     border: none;
     border-radius: 0;
-    margin-bottom: 40px;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
     position: fixed !important;
     top: 0px !important;

@@ -932,3 +932,54 @@ const checkImageProfile = () => {
 
     return false;
 }
+
+const checkFieldHasValue = (element, buttonId) => {
+
+    const button = document.getElementById(buttonId);
+
+    if(element.value.length > 0){
+        button.disabled = false;
+        return;
+    }
+
+    button.disabled = true;
+}
+
+const ajaxNewShippingCompany = () => {
+
+    const shippingCompanyName = document.getElementById('new-shipping-company-name');
+
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        console.log(this);
+        if (this.readyState == 4 && this.status == 200) {
+            
+            const name = this.responseText;
+            const feedback = document.getElementById('feedback-modal');
+
+            if(name.includes('ERROR')){
+                feedback.style.display = 'block';
+                feedback.innerHTML = name.split('-')[1];
+                return;
+            }else{
+                feedback.style.display = 'none';
+
+                const newOption = document.createElement('option');
+                const optionText = document.createTextNode(name);
+                newOption.appendChild(optionText);
+                newOption.setAttribute('value', name);
+                newOption.setAttribute('selected', true);
+    
+                const select = document.getElementById('shippingCompany'); 
+                select.appendChild(newOption);
+
+                shippingCompanyName.value = '';
+    
+                $(".close").click();
+                return;
+            }
+        }
+    };
+    xmlhttp.open("GET","../ajax/ajaxNewCompany.php?name="+shippingCompanyName.value, true);
+    xmlhttp.send();
+}

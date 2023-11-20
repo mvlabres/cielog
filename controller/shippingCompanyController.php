@@ -23,6 +23,9 @@ class shippingCompanyController{
             
             $shippingCompany = $this->setFields($post, $shippingCompany);
 
+            $result = $this->shippingCompanyRepository->findByName($shippingCompany->getName());
+            if($result->result->num_rows > 0) return new ErrorHandler('Já existe uma transportadora com esse nome!', true, null);
+
             if($action == 'save') return $this->shippingCompanyRepository->save($shippingCompany);  
             else return $this->shippingCompanyRepository->update($shippingCompany); 
             
@@ -69,11 +72,23 @@ class shippingCompanyController{
         if(count($data) > 0) return new ErrorHandler($data[0], false, null);
         else return new ErrorHandler(new Employee(), false, null);
     }
+
+    //to ajax
+    public function findLastCreated(){
+
+        $result = $this->shippingCompanyRepository->findLastCreated();
+
+        if($result->hasError) return $result->result;
+
+        $data = $this->loadData($result->result);
+
+        if(count($data) > 0) return new ErrorHandler($data[0], false, null);
+    }
     
     public function setFields($post, $shippingCompany){
 
         if($post['id'] && $post['id'] != null) $shippingCompany->setId($post['id']);
-        $shippingCompany->setName(strtoupper($post['name']));
+        $shippingCompany->setName(mb_strtoupper($post['name']));
         
         return $shippingCompany;
     }

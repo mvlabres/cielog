@@ -125,7 +125,11 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
             <table width="3450px" class="table table-striped table-bordered table-hover" id="dataTables-example">
                 <thead>
                     <tr>
-                    <th scope="column" class="td-30">Editar</th>
+                    <?php
+                        if($_SESSION['FUNCTION_ACCESS']['edit_access'] != 'hidden') {
+                            echo '<th scope="column" class="td-30">Editar</th>';
+                        }
+                    ?>
                         <th scope="column" class="td-30">Detalhes</th>
                         <th scope="column" class="td-30">Turno</th>
                         <th scope="column" class="td-40">Entrada</th>
@@ -159,8 +163,10 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         foreach ($driversAccessResult->result as $driverAccess) {
 
                             echo '<tr class="odd gradeX">';
-                            echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=edit-all"><span class="fa fa-edit text-primary"></span></a></td>';
-                            echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
+                            if($_SESSION['FUNCTION_ACCESS']['edit_access'] != 'hidden') {
+                                echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=edit-all"><span class="fa fa-edit text-primary"></span></a></td>';
+                            }
+                            echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
                             echo '<td>'.$driverAccess->getRotation().'</td>';
                             echo '<td>'.$driverAccess->getStartDatetime().'</td>';
                             echo '<td>'.$driverAccess->getCpf().'</td>';
@@ -185,7 +191,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             }
 
                             if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
-                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#'.$driverAccess->getId().'"><span class="fa fa-trash text-primary"></span></td>';
+                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#'.$driverAccess->getId().'"><span class="fa fa-trash text-primary cell-action"></span></td>';
                             }
                             echo '</tr>';
                             echo '<div class="modal fade" id="'.$driverAccess->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

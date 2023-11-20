@@ -182,10 +182,10 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                             echo '<tr class="odd gradeX">';
 
                             if($hiddenComponents != 'hidden'){
-                                echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=close"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
-                                echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
+                                echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=close"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
+                                echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                             }
-                            echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
+                            echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
                             echo '<td>'.$time.'</td>';
                             echo '<td>'.$driverAccess->getRotation().'</td>';
                             echo '<td>'.$driverAccess->getStartDatetime().'</td>';
@@ -205,7 +205,7 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                             echo '<td>'.$driverAccess->getOutboundInvoice().'</td>';
                             echo '<td>'.$driverAccess->getCreatedByName().'</td>';
                             if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
-                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#driver-'.$driverAccess->getId().'"><span class="fa fa-trash text-primary"></span></td>';
+                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#driver-'.$driverAccess->getId().'"><span class="fa fa-trash text-primary cell-action"></span></td>';
                             }
                             echo '</tr>';
                             echo '<div class="modal fade" id="driver-'.$driverAccess->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -254,10 +254,10 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
 
                             echo '<tr class="odd gradeX">';
                             if($hiddenComponents != 'hidden'){
-                                echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=close"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
-                                echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
+                                echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=close"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
+                                echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                             }
-                            echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
+                            echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
                             echo '<td>'.$time.'</td>';
                             echo '<td>'.$employeeAccess->getRotation().'</td>';
                             echo '<td>'.$employeeAccess->getStartDatetime().'</td>';
@@ -270,7 +270,7 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                             echo '<td>'.$employeeAccess->getVehiclePlate().'</td>';
                             echo '<td>'.$employeeAccess->getCreatedByName().'</td>';
                             if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
-                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#emplyee-'.$employeeAccess->getId().'"><span class="fa fa-trash text-primary"></span></td>';
+                                echo '<td class="text-center clickble" data-toggle="modal" data-target="#emplyee-'.$employeeAccess->getId().'"><span class="fa fa-trash text-primary cell-action"></span></td>';
                             }
                             echo '</tr>';
                             echo '<div class="modal fade" id="emplyee-'.$employeeAccess->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

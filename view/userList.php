@@ -61,7 +61,7 @@ if($usersResult->hasError) errorAlert($usersResult->result.$usersResult->errorMe
                                         echo '<td>'.$user->getUsername().'</td>';
                                         echo '<td>'.$GLOBAL_USER_TYPES[$user->getType()].'</td>';
                                         echo '<td>'.$user->getClientName().'</td>';
-                                        echo '<td class="text-center clickble"><a href="index.php?content=newUser.php&userId='.$user->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
+                                        echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newUser.php&userId='.$user->getId().'&action=edit"><span class="fa fa-edit text-primary cell-action"></span></a></td>';
                                         echo '<td class="text-center clickble" data-toggle="modal" data-target="#'.$user->getId().'"><span class="fa fa-trash text-primary"></span></td>';
                                         echo '</tr>';
                                         echo '<div class="modal fade" id="'.$user->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
