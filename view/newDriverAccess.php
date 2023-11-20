@@ -211,17 +211,17 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                 </div>
                                 <div class="form-group">
                                     <label>Placa do veículo</label>
-                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$driverAccess->getVehiclePlate() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
+                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$driverAccess->getVehiclePlate() ?>" onkeyup="plateMask(event, this)" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Placa do veículo (segunda placa)</label>
-                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate2" id="vehiclePlate2" maxlength="10" placeholder="Segunda placa" value="<?=$driverAccess->getVehiclePlate2() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
+                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate2" id="vehiclePlate2" maxlength="10" placeholder="Segunda placa" value="<?=$driverAccess->getVehiclePlate2() ?>" onkeyup="plateMask(event, this)" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Placa do veículo (terceira placa)</label>
-                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate3" id="vehiclePlate3" maxlength="10" placeholder="Terceira placa" value="<?=$driverAccess->getVehiclePlate3() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
+                                    <input style="text-transform: uppercase" class="form-control" name="vehiclePlate3" id="vehiclePlate3" maxlength="10" placeholder="Terceira placa" value="<?=$driverAccess->getVehiclePlate3() ?>" onkeyup="plateMask(event, this)" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
 
                                 <div class="form-group">

@@ -67,9 +67,9 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
                             if(!$driverResult->hasError){
                                 foreach ($driverResult->result as $driver) {
                                     echo '<tr class="odd gradeX">';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newDriverAccess.php&driverId='.$driver->getId().'"><span class="fa fa-hand-o-right text-primary"></span></a></td>';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverId='.$driver->getId().'"><span class="fa fa-hand-o-right text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriver.php&driverId='.$driver->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                                     echo '<td>'.$driver->getName().'</td>';
                                     echo '<td>'.$driver->getCpf().'</td>';
                                     echo '<td>'.$DRIVER_RECORD_TYPES[$driver->getRecordType()].'</td>';

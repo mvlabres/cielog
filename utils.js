@@ -14,7 +14,7 @@ let inactiveColumnsTemp = [];
 
 const dt = new DataTransfer();
 
-const PROGRESS_TIME = 60000;
+const PROGRESS_TIME = 30000;
 
 let automatedTimeIsOn = true;
 
@@ -73,6 +73,7 @@ jQuery(function($){
 const init = () =>{
     // setTableLength(100);
     manageListAccess();
+    progressTimer();
 }
 
 const cpfMask = (element) => {
@@ -84,6 +85,18 @@ const cpfMask = (element) => {
     cpfValue = cpfValue.replace(/(\d{3})(\d)/,"$1.$2")
     cpfValue = cpfValue.replace(/(\d{3})(\d{1,2})$/,"$1-$2")
     element.value = cpfValue;
+}
+
+const plateMask = (event, element) => {
+    let plate = element.value; 
+
+    if(event.keyCode === 8) return;
+ 
+    if (plate.length === 3){                                                       
+        plate += "-";
+        element.value = plate; 
+    }
+    
 }
 
 const errorReportValidate = (action) => {
@@ -566,6 +579,8 @@ const customAlert = (type, message) => {
 const HandleChangeAutomatedTimeSwitch = () => {
     const automatedTimeSwitch = document.getElementById('automatedTimeSwitch');
 
+    if(!automatedTimeSwitch) return;
+
     if(!automatedTimeSwitch.checked) automatedTimeIsOn = false;
     else {
         automatedTimeIsOn = true;
@@ -583,7 +598,7 @@ const progressTimer = () => {
         time = time - 10;
         document.getElementById('panel-progress').value = time;
 
-        if(time === 0) document.getElementById('panel-form').submit();
+        if(time === 0) window.location.reload();;
     }, 10);
 }
 

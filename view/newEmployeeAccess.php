@@ -151,7 +151,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                             </div>
                             <div class="form-group">
                                 <label>Placa do veículo</label>
-                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>" disabled>
+                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="10" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>" onkeyup="plateMask(event, this)" disabled>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-body color-gray">

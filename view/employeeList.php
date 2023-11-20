@@ -111,9 +111,9 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             if(!$employeeResult->hasError){
                                 foreach ($employeeResult->result as $employee) {
                                     echo '<tr class="odd gradeX">';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newEmployeeAccess.php&employeeId='.$employee->getId().'"><span class="fa fa-hand-o-right text-primary"></span></a></td>';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
-                                    echo '<td class="text-center clickble"><a href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployeeAccess.php&employeeId='.$employee->getId().'"><span class="fa fa-hand-o-right text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
+                                    echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                                     echo '<td>'.$employee->getName().'</td>';
                                     echo '<td>'.$employee->getRegistration().'</td>';
                                     echo '<td>'.$employee->getCpf().'</td>';

@@ -53,7 +53,7 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
 }
 
 ?>
-<body class="table-quick-actions">
+<body class="table-quick-actions" >
     <div class="quick-actions" <?=$hiddenComponents  ?> >
         <div class="col-lg-12">
             <div class="panel-title">
@@ -61,33 +61,49 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
             </div>
         </div>
         <div class="panel-home">
-                <a href="index.php?content=driverList.php" class="quick-action-box box-orange0">
-                    <div class="box-home-header">
-                        <p>Acessos veículos</p>
-                    </div>
-                </a>
-                <a href="index.php?content=employeeList.php" class="quick-action-box box-orange1" >
-                    <div class="box-home-header">
-                        <p>Acesso colaborador</p>
-                    </div>
-                </a>
-                <a href="index.php?content=newDriver.php" class="quick-action-box box-orange2">
-                    <div class="box-home-header">
-                        <p>Novo motorista</p>
-                    </div>
-                </a>
-                <a href="index.php?content=newEmployee.php" class="quick-action-box box-orange3">
-                    <div class="box-home-header">
-                        <p>Novo colaborador</p>
-                    </div>
-                </a>
+            <a href="index.php?content=driverList.php" class="quick-action-box box-orange0">
+                <div class="box-home-header">
+                    <p>Acessos veículos</p>
+                </div>
+            </a>
+            <a href="index.php?content=employeeList.php" class="quick-action-box box-orange1" >
+                <div class="box-home-header">
+                    <p>Acesso colaborador</p>
+                </div>
+            </a>
+            <a href="index.php?content=newDriver.php" class="quick-action-box box-orange2">
+                <div class="box-home-header">
+                    <p>Novo motorista</p>
+                </div>
+            </a>
+            <a href="index.php?content=newEmployee.php" class="quick-action-box box-orange3">
+                <div class="box-home-header">
+                    <p>Novo colaborador</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="<?=$componentsClass ?>" >
+        <div class="panel-progress">
+            <progress id="panel-progress" value="30000" max="30000"></progress>
+        </div>
+        <div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="automatedTimeSwitch" onchange="HandleChangeAutomatedTimeSwitch()" checked>
+                <label class="form-check-label" for="openAccess">
+                    Ativar atualização automática
+                </label>
             </div>
+        </div>
     </div>
     <div class="functions-group">
-        <div class="<?=$componentsClass ?>">
+        <div>
             <input type="checkbox" id="access-type-toogle" <?=$listType ?> data-toggle="toggle" data-on="Veículos" data-off="Colaboradores" data-onstyle="success" data-offstyle="primary" onchange="manageListAccess()">
         </div>
-        <div class="btn-functions-group <?=$componentsClass ?>" >
+        
+        
+        <div class="btn-functions-group" >
             <a id="driverExport" href="../export/driverOpenAccessExport.php?business=<?=$business?>"><button type="button" class="btn btn-secondary" ><i class="fa fa-file-excel-o"></i> Exportar</button></a>
             <a id="employeeExport" href="../export/employeeOpenAccessExport.php?business=<?=$business?>"><button type="button" class="btn btn-secondary"><i class="fa fa-file-excel-o"></i> Exportar</button></a>
         </div>

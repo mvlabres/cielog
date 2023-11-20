@@ -279,6 +279,15 @@ td{
     align-items: end !important;
 }
 
+.row-start-aligment-elements{
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+.row-start-aligment-elements > div + div{
+    margin-left: 40px !important;
+}
+
 .box-full-heigth{
     background-color: red;
     height: 100% !important;
@@ -621,8 +630,8 @@ td{
 }
 
 .panel-progress{
-    margin-top: 10%;
-    width: 100%;
+    margin-top: 25px;
+    width: 98%;
 }
 
 progress{
@@ -851,7 +860,7 @@ select[readonly] {
 }
 
 .quick-action-toogle-margin{
-    margin-top: 260px;
+    margin-top: 320px;
 }
 
 .quick-action-toogle-top{
