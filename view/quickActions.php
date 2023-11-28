@@ -124,13 +124,13 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                             }
                         ?>
                         <th scope="column" class="td-40">Detalhes</th>
-                        <th scope="column" class="td-70">Tempo Total</th>
-                        <th scope="column" class="td-30">Turno</th>
-                        <th scope="column" class="td-40">Entrada</th>
                         <th scope="column" class="td-40">CPF</th>
                         <th scope="column" class="td-100">Nome</th>
                         <th scope="column" class="td-70">Empresa visitada</th>
                         <th scope="column" class="td-30">CNH</th>
+                        <th scope="column" class="td-70">Tempo Total</th>
+                        <th scope="column" class="td-30">Turno</th>
+                        <th scope="column" class="td-40">Entrada</th>
                         <th scope="column" class="td-70">Vencimento CNH</th>
                         <th scope="column" class="td-70">Transportadora</th>
                         <th scope="column" class="td-40">Saída</th>
@@ -159,12 +159,12 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                             }
                         ?>
                         <th scope="column" class="td-40">Detalhes</th>
-                        <th scope="column" class="td-30">Tempo Total</th>
-                        <th scope="column" class="td-30">Turno</th>
-                        <th scope="column" class="td-40">Entrada</th>
                         <th scope="column" class="td-40">CPF</th>
                         <th scope="column" class="td-100">Nome</th>
                         <th scope="column" class="td-70">Empresa</th>
+                        <th scope="column" class="td-30">Tempo Total</th>
+                        <th scope="column" class="td-30">Turno</th>
+                        <th scope="column" class="td-40">Entrada</th>
                         <th scope="column" class="td-30">Matrícula</th>
                         <th scope="column" class="td-40">Saída</th>
                         <th scope="column" class="td-70">Veículo</th>
@@ -202,13 +202,13 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                                 echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                             }
                             echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
-                            echo '<td>'.$time.'</td>';
-                            echo '<td>'.$driverAccess->getRotation().'</td>';
-                            echo '<td>'.$driverAccess->getStartDatetime().'</td>';
                             echo '<td>'.$driverAccess->getCpf().'</td>';
                             echo '<td>'.$driverAccess->getDriverName().'</td>';
                             echo '<td>'.$driverAccess->getBusinessName().'</td>';
                             echo '<td>'.$driverAccess->getCnh().'</td>';
+                            echo '<td>'.$time.'</td>';
+                            echo '<td>'.$driverAccess->getRotation().'</td>';
+                            echo '<td>'.$driverAccess->getStartDatetime().'</td>';
                             echo '<td>'.$driverAccess->getCnhExpiration().'</td>';
                             echo '<td>'.$driverAccess->getShippingCompany().'</td>';
                             echo '<td>'.$driverAccess->getEndDatetime().'</td>';
@@ -274,12 +274,12 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                                 echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=edit"><span class="fa fa-edit text-primary"></span></a></td>';
                             }
                             echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newEmployeeAccess.php&employeeAccessId='.$employeeAccess->getId().'&action=view"><span class="fa fa-search text-primary"></span></a></td>';
-                            echo '<td>'.$time.'</td>';
-                            echo '<td>'.$employeeAccess->getRotation().'</td>';
-                            echo '<td>'.$employeeAccess->getStartDatetime().'</td>';
                             echo '<td>'.$employee->getCpf().'</td>';
                             echo '<td>'.$employee->getName().'</td>';
                             echo '<td>'.$employee->getBusinessName().'</td>';
+                            echo '<td>'.$time.'</td>';
+                            echo '<td>'.$employeeAccess->getRotation().'</td>';
+                            echo '<td>'.$employeeAccess->getStartDatetime().'</td>';
                             echo '<td>'.$employee->getRegistration().'</td>';
                             echo '<td>'.$employeeAccess->getEndDatetime().'</td>';
                             echo '<td>'.$employeeAccess->getVehicle().'</td>';

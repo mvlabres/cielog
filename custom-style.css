@@ -847,7 +847,7 @@ select[readonly] {
     top: 80px !important;
     right: 30px;
     left: 30px;
-    height: 250px !important;
+    height: 230px !important;
 }
 
 .table-quick-actions{
@@ -860,7 +860,7 @@ select[readonly] {
 }
 
 .quick-action-toogle-margin{
-    margin-top: 320px;
+    margin-top: 240px;
 }
 
 .quick-action-toogle-top{
