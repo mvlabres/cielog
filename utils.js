@@ -20,6 +20,8 @@ let automatedTimeIsOn = true;
 
 let idInterval;
 
+let driversToSearch = [];
+
 function dateTimeMask(value) {
     let x = value.replace(/\D+/g, '').match(/(\d{0,2})(\d{0,2})(\d{0,4})(\d{0,2})(\d{0,2})(\d{0,2})/);
     return !x[2] ? x[1] : `${x[1]}/${x[2]}` + (!x[3] ? `` : `/${x[3]}` + ` `) + (!x[4] ? `` : x[4]) + (!x[5] ? `` : `:${x[5]}`) + (!x[6] ? `` : `:${x[6]}`);   
@@ -71,14 +73,18 @@ jQuery(function($){
 });
 
 const init = () =>{
-    // setTableLength(100);
+    
+    getDrivers();
     manageListAccess();
     progressTimer();
+
 }
 
 const cpfMask = (element) => {
 
     let cpfValue = element.value;
+
+    if( !cpfValue.match(/^[0-9]/)) return;
 
     cpfValue = cpfValue.replace(/\D/g,"")
     cpfValue = cpfValue.replace(/(\d{3})(\d)/,"$1.$2")
@@ -998,3 +1004,142 @@ const ajaxNewShippingCompany = () => {
     xmlhttp.open("GET","../ajax/ajaxNewCompany.php?name="+shippingCompanyName.value, true);
     xmlhttp.send();
 }
+
+const autocomplete = (inp, arr) =>  {
+   
+    var currentFocus;
+
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        
+        this.parentNode.appendChild(a);
+        
+        for (i = 0; i < arr.length; i++) {
+         
+            if (arr[i].toUpperCase().includes(val.toUpperCase())) {
+            
+                b = document.createElement("DIV");
+                
+                b.innerHTML =  arr[i].substr(0, val.length) ;
+                b.innerHTML += arr[i].substr(val.length);
+                
+                b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                
+                b.addEventListener("click", function(e) {
+                    
+                    inp.value = this.getElementsByTagName("input")[0].value;
+                    closeAllLists();
+                });
+
+                a.appendChild(b);
+            }
+        }
+    });
+    
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          
+            currentFocus++;
+         
+            addActive(x);
+        } else if (e.keyCode == 38) {
+          
+            currentFocus--;
+         
+            addActive(x);
+        } else if (e.keyCode == 13) {
+         
+            e.preventDefault();
+            if (currentFocus > -1) {
+                
+                if (x) x[currentFocus].click();
+            }
+        }
+    });
+
+    function addActive(x) {
+      
+        if (!x) return false;
+        
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        
+        x[currentFocus].classList.add("autocomplete-active");
+    }
+
+    function removeActive(x) {
+      
+        for (var i = 0; i < x.length; i++) {
+            x[i].classList.remove("autocomplete-active");
+        }
+    }
+
+    function closeAllLists(elmnt) {
+      
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+            if (elmnt != x[i] && elmnt != inp) {
+            x[i].parentNode.removeChild(x[i]);
+            }
+        }
+    }
+    
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+};
+
+const getDrivers = async () => {
+
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+       
+        if (this.readyState == 4 && this.status == 200) {
+            
+            const drivers = [];
+
+            const driversResult = this.responseText.split('|');
+            
+            driversResult.forEach(element => {
+
+                const result = element.split(';');
+
+                const driver = `${result[2]} - ${result[1]}`;
+                drivers.push(driver);
+
+                driversToSearch[driver] = Number(result[0]);
+            });
+
+            console.log(driversToSearch);
+
+            autocomplete(document.getElementById("auto-complete"), drivers);
+        }
+    };
+    xmlhttp.open("GET","../ajax/ajaxGetDrivers.php", true);
+    xmlhttp.send();
+}
+
+const navigateToAccessNew = () => {
+
+    const imputValue = document.getElementById('auto-complete').value;
+
+    const id = driversToSearch[imputValue];
+
+    if(!id) return;
+
+    if(!isNaN(id)){
+        window.location.href = 'index.php?content=newDriverAccess.php&driverId='+id;
+    }
+}
+  

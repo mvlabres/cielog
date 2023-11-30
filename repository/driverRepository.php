@@ -12,6 +12,17 @@ class driverRepository{
         $this->mySql = $mySql;
     }
 
+    public function findAllToSearch(){
+
+        try{
+            $sql = 'SELECT id,name,cnh,cnh_expiration,cpf FROM driver ORDER BY name';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar motoristas - ', true, $ex->getMessage());
+        }
+    }
+
     public function findAll(){
 
         try{

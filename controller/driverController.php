@@ -84,6 +84,17 @@ class DriverController{
         return new ErrorHandler($data, false, null);
     }
 
+    public function findAllToSearch(){
+
+        $result = $this->driverRepository->findAllToSearch();
+
+        if($result->hasError) return $result;
+
+        $data = $this->loadDataToSerch($result->result, false);
+
+        return new ErrorHandler($data, false, null);
+    }
+
     public function delete($id){
         try {
 
@@ -165,6 +176,23 @@ class DriverController{
         }
 
         return $drivers;
+    }
+
+    public function loadDataToSerch($records, $withFile){
+
+        $driver = '';
+
+        while ($data = $records->fetch_assoc()){ 
+            $driver .= $data['id'];
+            $driver .= ';' . $data['name'];
+            $driver .= ';' .$data['cpf'];
+
+            $driver.= '|';
+        }
+
+        $driver.= '|';
+
+        return rtrim($driver, '|');
     }
 
     public function setImagePath($driver){
