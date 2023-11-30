@@ -101,7 +101,13 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
         <div>
             <input type="checkbox" id="access-type-toogle" <?=$listType ?> data-toggle="toggle" data-on="Veículos" data-off="Colaboradores" data-onstyle="success" data-offstyle="primary" onchange="manageListAccess()">
         </div>
-        
+
+        <div class="select-auto-complete" <?=$hiddenComponents  ?>>
+            <div class="autocomplete" style="width:450px;">
+                <input id="auto-complete" type="text" placeholder="Motorista" onkeyup="cpfMask(this)">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="navigateToAccessNew()">Acesso</button>
+        </div>
         
         <div class="btn-functions-group" >
             <a id="driverExport" href="../export/driverOpenAccessExport.php?business=<?=$business?>"><button type="button" class="btn btn-secondary" ><i class="fa fa-file-excel-o"></i> Exportar</button></a>
