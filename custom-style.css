@@ -841,7 +841,7 @@ select[readonly] {
 
 .quick-actions{
     position: fixed !important;
-    width: 98% !important;
+    width: 96% !important;
     z-index: 99 !important;
     background-color: #fff;
     top: 80px !important;
@@ -918,6 +918,10 @@ select[readonly] {
     color: #ffffff; 
 }
 
+.warning-row{
+    background-color: #f21919 !important;
+    color: #fff !important;
+}
 
 @media (max-width: 1750px){
 

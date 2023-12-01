@@ -201,7 +201,13 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
 
                             $time = $hours.':'.$minutes.' hr';
 
-                            echo '<tr class="odd gradeX">';
+                            $rowClass = '';
+
+                            if($hours >= 12){
+                                $rowClass = 'warning-row';
+                            }
+
+                            echo '<tr class="odd gradeX '.$rowClass.'">';
 
                             if($hiddenComponents != 'hidden'){
                                 echo '<td class="text-center clickble"><a class="cell-action" href="index.php?content=newDriverAccess.php&driverAccessId='.$driverAccess->getId().'&action=close"><span class="fa fa-hand-o-left text-primary"></span></a></td>';
