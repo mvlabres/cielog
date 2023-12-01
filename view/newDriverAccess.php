@@ -264,11 +264,11 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                 </div>
                                 <div class="form-group">
                                     <label>NF de entrada</label>
-                                    <input class="form-control" name="inboundInvoice" id="inboundInvoice" maxlength="20" placeholder="NF de entrada" value="<?=$driverAccess->getInboundInvoice() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
+                                    <input class="form-control" name="inboundInvoice" id="inboundInvoice" maxlength="150" placeholder="NF de entrada" value="<?=$driverAccess->getInboundInvoice() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
                                 <div class="form-group">
                                     <label>NF de saída</label>
-                                    <input class="form-control" name="outboundInvoice" id="outboundInvoice" maxlength="20" placeholder="NF de saída" value="<?=$driverAccess->getOutboundInvoice() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
+                                    <input class="form-control" name="outboundInvoice" id="outboundInvoice" maxlength="150" placeholder="NF de saída" value="<?=$driverAccess->getOutboundInvoice() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
                                 </div>
                                 <div class="panel panel-default">
                                     <div class="panel-body color-gray">
