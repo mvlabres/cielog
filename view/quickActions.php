@@ -120,7 +120,7 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
             <div class="panel-title">
                 <h3 class="display-2">Acessos de <b id="access-type-label">VEÍCULOS</b> em aberto</h3>
             </div>
-            <table width="3500px" class="table table-striped table-bordered table-hover" id="dataTables-example">
+            <table width="3500px" class="table table-striped table-bordered table-hover vehicle-access" id="dataTables-example">
                 <thead class="vehicle-access">
                     <tr>
                         <?php
@@ -147,34 +147,6 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                         <th scope="column" class="td-70">Operação</th>
                         <th scope="column" class="td-70">NF entrada</th>
                         <th scope="column" class="td-70">NF saída</th>
-                        <th scope="column" class="td-70">Usuário (entrada)</th>
-                        <?php
-                            if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
-                                echo '<th scope="column" class="td-40">Excluir</th>';
-                            }
-                        ?>
-
-                    </tr>
-                </thead>
-                <thead class="employee-access" hidden>
-                    <tr>
-                        <?php
-                            if($hiddenComponents != 'hidden'){
-                                echo '<th scope="column" class="td-40">Finalizar</th>';
-                                echo '<th scope="column" class="td-30">Editar</th>';
-                            }
-                        ?>
-                        <th scope="column" class="td-40">Detalhes</th>
-                        <th scope="column" class="td-40">CPF</th>
-                        <th scope="column" class="td-100">Nome</th>
-                        <th scope="column" class="td-70">Empresa</th>
-                        <th scope="column" class="td-30">Tempo Total</th>
-                        <th scope="column" class="td-30">Turno</th>
-                        <th scope="column" class="td-40">Entrada</th>
-                        <th scope="column" class="td-30">Matrícula</th>
-                        <th scope="column" class="td-40">Saída</th>
-                        <th scope="column" class="td-70">Veículo</th>
-                        <th scope="column" class="td-70">Placa veículo</th>
                         <th scope="column" class="td-70">Usuário (entrada)</th>
                         <?php
                             if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
@@ -261,6 +233,36 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                     }
                     ?>
                 </tbody>
+            </table>
+            <table width="3500px" class="table table-striped table-bordered table-hover employee-access" id="dataTables-example2" hidden>
+                <thead class="employee-access" hidden>
+                    <tr>
+                        <?php
+                            if($hiddenComponents != 'hidden'){
+                                echo '<th scope="column" class="td-40">Finalizar</th>';
+                                echo '<th scope="column" class="td-30">Editar</th>';
+                            }
+                        ?>
+                        <th scope="column" class="td-40">Detalhes</th>
+                        <th scope="column" class="td-40">CPF</th>
+                        <th scope="column" class="td-100">Nome</th>
+                        <th scope="column" class="td-70">Empresa</th>
+                        <th scope="column" class="td-30">Tempo Total</th>
+                        <th scope="column" class="td-30">Turno</th>
+                        <th scope="column" class="td-40">Entrada</th>
+                        <th scope="column" class="td-30">Matrícula</th>
+                        <th scope="column" class="td-40">Saída</th>
+                        <th scope="column" class="td-70">Veículo</th>
+                        <th scope="column" class="td-70">Placa veículo</th>
+                        <th scope="column" class="td-70">Usuário (entrada)</th>
+                        <?php
+                            if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
+                                echo '<th scope="column" class="td-40">Excluir</th>';
+                            }
+                        ?>
+
+                    </tr>
+                </thead>
                 <tbody class="employee-access" hidden>
 
                     <?php

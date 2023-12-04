@@ -117,7 +117,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                                     if($action != 'edit' && $action != 'view' && $action != 'edit-all'){
                                         echo '<div class="btn-group-start">
                                             <a href="index.php?content=employeeList.php" class="btn btn-outline-primary">Alterar colaborador</a>
-                                            <a href="index.php?content=newemployee.php&employeeId='.$employee->getId().'&action=edit" class="btn btn-outline-primary">Editar dados colaborador</a>
+                                            <a href="index.php?content=newEmployee.php&employeeId='.$employee->getId().'&action=edit" class="btn btn-outline-primary">Editar dados colaborador</a>
                                         </div>';   
                                     } 
                             

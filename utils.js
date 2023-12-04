@@ -83,6 +83,7 @@ const init = () =>{
     getEmployess();
     manageListAccess();
     progressTimer();
+    setTableLength(50);
 
 }
 
@@ -747,6 +748,7 @@ const manageCnhValidation = (element, valueToValidation) => {
 const setTableLength = (qtde) => {
 
     const tables = document.getElementsByName('dataTables-example_length');
+    const tables2 = document.getElementsByName('dataTables-example2_length');
     
     if(!tables) return;
 
@@ -754,6 +756,11 @@ const setTableLength = (qtde) => {
 
     setTimeout(() => {
         tables.forEach(element => {
+            element.value = qtde;
+            element.dispatchEvent(new Event("change"));
+        });
+
+        tables2.forEach(element => {
             element.value = qtde;
             element.dispatchEvent(new Event("change"));
         });
@@ -926,6 +933,7 @@ const manageListAccess = () => {
     setTimeout(() => {
         const toogle = document.getElementById('access-type-toogle');
 
+        const headerTable = document.getElementById('dataTables-example_wrapper');
         const vehicleAccess = document.getElementsByClassName('vehicle-access');
         const employeeAccess = document.getElementsByClassName('employee-access');
 
@@ -934,10 +942,11 @@ const manageListAccess = () => {
         const label = document.getElementById('access-type-label');
         autoComplete.value = null;
     
-        for(let x = 0; x < 2; x++){
+        for(let x = 0; x < 3; x++){
     
             if(!toogle.checked){
                 isDriversList = false;
+                headerTable.hidden = true;
                 vehicleAccess[x].hidden = true;
                 employeeAccess[x].hidden = false; 
                 label.innerHTML = 'COLABORADORES';
@@ -948,6 +957,7 @@ const manageListAccess = () => {
                 autocomplete(document.getElementById("auto-complete"), employessRecordList);
             }else{
                 isDriversList = true;
+                headerTable.hidden = false;
                 vehicleAccess[x].hidden = false;
                 employeeAccess[x].hidden = true; 
                 label.innerHTML = 'VEÍCULOS';

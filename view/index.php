@@ -207,6 +207,12 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
             });
         });
 
+        $(document).ready(function() {
+            $('#dataTables-example2').DataTable({
+                responsive: true
+            });
+        });
+
         $(".alert").fadeTo(5000, 10).slideUp(500, function(){
             $(this).remove(); 
         });
