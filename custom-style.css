@@ -152,6 +152,7 @@ html, body {
     position: fixed;
     bottom: 0px;
     width: 100%;
+    z-index: 999999;
     text-decoration:none;
     background-color: #f8f8f8;
 }
@@ -873,6 +874,7 @@ select[readonly] {
 .autocomplete {
     position: relative;
     display: inline-block;
+    width:450px !important;
   }
   
 .autocomplete > input {
@@ -1109,6 +1111,25 @@ select[readonly] {
     .functions-group{
         margin-left: 15px;
         width: 90%;
+        flex-direction: column !important;
+    }
+
+    #export-box{
+        display: none !important;
+    }
+
+    .select-auto-complete{
+        margin-top: 10px !important;
+        display: flex !important;
+        flex-direction: row;
+    }
+    
+    .autocomplete{
+        width:90% !important;
+    }
+
+    .autocomplete > input {
+        width: 90% !important;
     }
 }
 

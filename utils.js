@@ -21,6 +21,11 @@ let automatedTimeIsOn = true;
 let idInterval;
 
 let driversToSearch = [];
+let employessToSearch = [];
+let isDriversList = true;
+
+let employessRecordList = [];
+let driversRecordList = [];
 
 function dateTimeMask(value) {
     let x = value.replace(/\D+/g, '').match(/(\d{0,2})(\d{0,2})(\d{0,4})(\d{0,2})(\d{0,2})(\d{0,2})/);
@@ -75,6 +80,7 @@ jQuery(function($){
 const init = () =>{
     
     getDrivers();
+    getEmployess();
     manageListAccess();
     progressTimer();
 
@@ -922,23 +928,34 @@ const manageListAccess = () => {
 
         const vehicleAccess = document.getElementsByClassName('vehicle-access');
         const employeeAccess = document.getElementsByClassName('employee-access');
+
+        const autoComplete = document.getElementById('auto-complete');
     
         const label = document.getElementById('access-type-label');
+        autoComplete.value = null;
     
         for(let x = 0; x < 2; x++){
     
             if(!toogle.checked){
+                isDriversList = false;
                 vehicleAccess[x].hidden = true;
                 employeeAccess[x].hidden = false; 
                 label.innerHTML = 'COLABORADORES';
                 document.getElementById('employeeExport').hidden = false;
                 document.getElementById('driverExport').hidden = true;
+                autoComplete.placeholder = 'Colaborador';
+
+                autocomplete(document.getElementById("auto-complete"), employessRecordList);
             }else{
+                isDriversList = true;
                 vehicleAccess[x].hidden = false;
                 employeeAccess[x].hidden = true; 
                 label.innerHTML = 'VEÍCULOS';
                 document.getElementById('employeeExport').hidden = true;
                 document.getElementById('driverExport').hidden = false;
+                autoComplete.placeholder = 'Motorista';
+
+                autocomplete(document.getElementById("auto-complete"), driversRecordList);
             }
         }
     }, 20);
@@ -1106,8 +1123,6 @@ const getDrivers = async () => {
     xmlhttp.onreadystatechange = function() {
        
         if (this.readyState == 4 && this.status == 200) {
-            
-            const drivers = [];
 
             const driversResult = this.responseText.split('|');
             
@@ -1116,17 +1131,37 @@ const getDrivers = async () => {
                 const result = element.split(';');
 
                 const driver = `${result[2]} - ${result[1]}`;
-                drivers.push(driver);
+                driversRecordList.push(driver);
 
                 driversToSearch[driver] = Number(result[0]);
             });
-
-            console.log(driversToSearch);
-
-            autocomplete(document.getElementById("auto-complete"), drivers);
         }
     };
     xmlhttp.open("GET","../ajax/ajaxGetDrivers.php", true);
+    xmlhttp.send();
+}
+
+const getEmployess = async () => {
+
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+       
+        if (this.readyState == 4 && this.status == 200) {
+
+            const employessResult = this.responseText.split('|');
+            
+            employessResult.forEach(element => {
+
+                const result = element.split(';');
+
+                const employee = `${result[2]} - ${result[1]}`;
+                employessRecordList.push(employee);
+
+                employessToSearch[employee] = Number(result[0]);
+            });
+        }
+    };
+    xmlhttp.open("GET","../ajax/ajaxGetEmployess.php", true);
     xmlhttp.send();
 }
 
@@ -1134,12 +1169,17 @@ const navigateToAccessNew = () => {
 
     const imputValue = document.getElementById('auto-complete').value;
 
-    const id = driversToSearch[imputValue];
+    let id;
+
+    if(isDriversList) id = driversToSearch[imputValue];
+    else id = employessToSearch[imputValue];
 
     if(!id) return;
 
     if(!isNaN(id)){
-        window.location.href = 'index.php?content=newDriverAccess.php&driverId='+id;
+
+        if(isDriversList) window.location.href = 'index.php?content=newDriverAccess.php&driverId='+id;
+        else window.location.href = 'index.php?content=newEmployeeAccess.php&employeeId='+id;
     }
 }
   

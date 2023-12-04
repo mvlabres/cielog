@@ -24,6 +24,17 @@ class EmployeeRepository{
         }
     }
 
+    public function findAllToSearch(){
+
+        try{
+            $sql = 'SELECT id,name,cpf FROM employee ORDER BY name';
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar colaboradores - ', true, $ex->getMessage());
+        }
+    }
+
     public function findById($id){
 
         try{

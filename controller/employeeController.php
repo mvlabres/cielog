@@ -80,6 +80,17 @@ class EmployeeController{
         return new ErrorHandler($data, false, null);
     }
 
+    public function findAllToSearch(){
+
+        $result = $this->employeeRepository->findAllToSearch();
+
+        if($result->hasError) return $result;
+
+        $data = $this->loadDataToSerch($result->result);
+
+        return new ErrorHandler($data, false, null);
+    }
+
     public function delete($id){
         try {
 
@@ -153,6 +164,23 @@ class EmployeeController{
         }
 
         return $employees;
+    }
+
+    public function loadDataToSerch($records){
+
+        $employee = '';
+
+        while ($data = $records->fetch_assoc()){ 
+            $employee .= $data['id'];
+            $employee .= ';' . $data['name'];
+            $employee .= ';' .$data['cpf'];
+
+            $employee.= '|';
+        }
+
+        $employee.= '|';
+
+        return rtrim($employee, '|');
     }
 
     

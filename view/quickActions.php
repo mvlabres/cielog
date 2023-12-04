@@ -103,13 +103,13 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
         </div>
 
         <div class="select-auto-complete" <?=$hiddenComponents  ?>>
-            <div class="autocomplete" style="width:450px;">
+            <div class="autocomplete">
                 <input id="auto-complete" type="text" placeholder="Motorista" onkeyup="cpfMask(this)">
             </div>
             <button type="button" class="btn btn-primary" onclick="navigateToAccessNew()">Acesso</button>
         </div>
         
-        <div class="btn-functions-group" >
+        <div class="btn-functions-group" id="export-box">
             <a id="driverExport" href="../export/driverOpenAccessExport.php?business=<?=$business?>"><button type="button" class="btn btn-secondary" ><i class="fa fa-file-excel-o"></i> Exportar</button></a>
             <a id="employeeExport" href="../export/employeeOpenAccessExport.php?business=<?=$business?>"><button type="button" class="btn btn-secondary"><i class="fa fa-file-excel-o"></i> Exportar</button></a>
         </div>
