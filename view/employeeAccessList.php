@@ -100,9 +100,9 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         </div>
                         <div class="form-group">
                             <div class="form-check">
-                                <input class="form-check-input" title="Sem data data/hora de saída" type="checkbox" value="true" name="with-open" id="openAccess" <?=$filterChecked ?>>
+                                <input class="form-check-input" title="Registros em aberto e fechados" type="checkbox" value="true" name="with-open" id="openAccess" <?=$filterChecked ?>>
                                 <label class="form-check-label" for="openAccess">
-                                    Acessos em aberto
+                                    Com acessos em aberto
                                 </label>
                             </div>
                         </div>
