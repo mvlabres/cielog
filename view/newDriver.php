@@ -83,7 +83,8 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                             <input  type="hidden" name="id" value="<?=$driver->getId() ?>" >
                             <input  type="hidden" name="redirect" id="redirect" value="no-redirect" >
                             <input  type="hidden" name="action" value="<?=$action ?>" >
-                            <input  type="hidden" name="image-profile" id="image-profile" value="<?=$driver->getImageProfilePath() ?>" >
+                            <input  type="hidden" name="image-profile" id="image-profile" value="" >
+                            <input type="hidden" id="image-profile-check" value="<?=$driver->getImageProfilePath() ?>">
                             <div class="col-lg-4">
                                 <div class="photo-box-action">
                                     <img class="profile-image" id="profile-image" src="<?=$driver->getImageProfilePath() ?>"/>

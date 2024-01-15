@@ -921,6 +921,7 @@ const takepicture = () => {
     const data = canvas.toDataURL("image/png");
     photo.setAttribute("src", data);
     document.getElementsByName('image-profile')[0].value = data;
+    document.getElementById('image-profile-check').value = data;
 
     document.getElementById('image-profile-feedback').style.display = 'none';
 
@@ -973,7 +974,7 @@ const manageListAccess = () => {
 
 const checkImageProfile = () => {
 
-    const element = document.getElementById('image-profile');
+    const element = document.getElementById('image-profile-check');
     if(element.value && element.value != '../images/profile.jpg') return true;
 
     document.getElementById('image-profile-feedback').style.display = 'block';

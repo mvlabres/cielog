@@ -76,7 +76,8 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             <input  type="hidden" name="id" value="<?=$employee->getId() ?>" >
                             <input  type="hidden" name="redirect" id="redirect" value="no-redirect" >
                             <input  type="hidden" name="action" value="<?=$action ?>" >
-                            <input  type="hidden" name="image-profile" id="image-profile" value="<?=$employee->getImageProfilePath() ?>" >
+                            <input  type="hidden" name="image-profile" id="image-profile" value="" >
+                            <input type="hidden" id="image-profile-check" value="<?=$employee->getImageProfilePath() ?>">
                             <div class="col-lg-4">
                                 <div class="photo-box-action" id="photo-box-action">
                                     <img class="profile-image" id="profile-image" src="<?=$employee->getImageProfilePath() ?>"/>

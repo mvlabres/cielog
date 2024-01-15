@@ -48,10 +48,10 @@ class EmployeeController{
                 }
             }
 
-            if($_POST['image-profile'] != null){
+            if($post['image-profile'] != null){
 
                 try {
-                    $this->saveBase64Image($_POST['image-profile'], $recordId);
+                    $this->saveBase64Image($post['image-profile'], $recordId);
                 } catch (Exception $ex) {
                     throw $ex;
                 }  
