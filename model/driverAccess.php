@@ -11,6 +11,7 @@ class DriverAccess{
     private $cpf;
     private $cnh;
     private $cnhExpiration;
+    private $phone;
     private $shippingCompany;
     private $businessId;
     private $businessMame;
@@ -93,6 +94,13 @@ class DriverAccess{
     }
     public function getCnhExpiration(){
         return $this->cnhExpiration;
+    }
+
+    public function setPhone($phone){
+        $this->phone = $phone;
+    }
+    public function getPhone(){
+        return $this->phone;
     }
 
     public function setShippingCompany($shippingCompany){

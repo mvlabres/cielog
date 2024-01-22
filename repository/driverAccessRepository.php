@@ -12,6 +12,7 @@ class DriverAccessRepository{
                                     end_datetime,
                                     dr.cnh AS driver_cnh,
                                     dr.cnh_expiration AS driver_cnh_expiration,
+                                    dr.phone AS driver_phone,
                                     dr.cpf AS driver_cpf,
                                     dr.shipping_company AS driver_shipping_company,
                                     dr_a.vehicle_type AS driver_vehicle_type,

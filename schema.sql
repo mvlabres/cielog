@@ -170,3 +170,9 @@ ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_cb` FOREIGN KEY (created_by) R
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_mb` FOREIGN KEY (modified_by) REFERENCES user(id);
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_di` FOREIGN KEY (driver_id) REFERENCES driver(id);
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_uoi` FOREIGN KEY (user_outbound_id) REFERENCES user(id);
+
+/* changes */
+ALTER TABLE driver ADD column phone varchar(15);
+
+/* NOT IN PRODUCTION*/
+

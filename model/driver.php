@@ -16,6 +16,7 @@ class Driver{
     private $status;
     private $blockReason;
     private $imageProfilePath;
+    private $phone;
     private $createdDate;
     private $modifiedDate;
     private $createdBy;
@@ -124,6 +125,13 @@ class Driver{
     }
     public function getImageProfilePath(){
         return ($this->imageProfilePath != null) ? $this->imageProfilePath : '../images/profile.jpg';
+    }
+
+    public function setPhone($phone){
+        $this->phone = $phone;
+    }
+    public function getPhone(){
+        return $this->phone;
     }
 
     public function setModifiedDate($modifiedDate){

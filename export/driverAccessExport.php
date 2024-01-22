@@ -24,6 +24,7 @@ if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['en
                             end_datetime,
                             dr.cnh AS driver_cnh,
                             dr.cnh_expiration AS driver_cnh_expiration,
+                            dr.phone AS driver_phone,
                             dr.cpf AS driver_cpf,
                             dr.shipping_company AS driver_shipping_company,
                             dr_a.vehicle_type AS driver_vehicle_type,
@@ -73,6 +74,7 @@ $file .= '<th>Nome</th>';
 $file .= '<th>Empresa visitada</th>';
 $file .= '<th>CNH</th>';
 $file .= '<th>Vencimento CNH</th>';
+$file .= '<th>Telefone</th>';
 $file .= '<th>Transportadora</th>';
 $file .= '<th>'.utf8_decode("Saída").'</th>';
 $file .= '<th>'.utf8_decode("Tipo veículo").'</th>';
@@ -97,7 +99,7 @@ while ($data = $driverAccess->fetch_assoc()){
     }else{
         $file .= '<td></td>';
     }
-    
+    $file .= '<td>'.utf8_decode($data['driver_phone']).'</td>';
     $file .= '<td>'.utf8_decode($data['driver_shipping_company']).'</td>';
     
     $endDate = (strpos($data['end_datetime'], '0000') === false) ? date("d/m/Y H:i", strtotime($data['end_datetime'])) : ''; 

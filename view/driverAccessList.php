@@ -138,6 +138,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         <th scope="column" class="td-70">Empresa visitada</th>
                         <th scope="column" class="td-30">CNH</th>
                         <th scope="column" class="td-70">Vencimento CNH</th>
+                        <th scope="column" class="td-70">Telefone</th>
                         <th scope="column" class="td-70">Transportadora</th>
                         <th scope="column" class="td-40">Saída</th>
                         <th scope="column" class="td-70">Tipo veículo</th>
@@ -174,6 +175,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             echo '<td>'.$driverAccess->getBusinessName().'</td>';
                             echo '<td>'.$driverAccess->getCnh().'</td>';
                             echo '<td>'.$driverAccess->getCnhExpiration().'</td>';
+                            echo '<td>'.$driverAccess->getPhone().'</td>';
                             echo '<td>'.$driverAccess->getShippingCompany().'</td>';
                             echo '<td>'.$driverAccess->getEndDatetime().'</td>';
                             echo '<td>'.$driverAccess->getVehicleType().'</td>';

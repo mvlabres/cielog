@@ -136,6 +136,7 @@ class DriverController{
         $driver->setRecordType($post['recordType']);
         $driver->setStatus($post['status']);
         $driver->setBlockReason($post['blockReason']);
+        $driver->setPhone($post['phone']);
 
         return $driver;
     }
@@ -161,6 +162,7 @@ class DriverController{
             $driver->setRecordType($data['record_type']);
             $driver->setStatus($data['status']);
             $driver->setBlockReason($data['block_reason']);
+            $driver->setPhone($data['phone']);
             $driver->setCreatedDate(date("d/m/Y", strtotime($data['created_date'])));
             
             if(!is_null($data['modified_date'])){

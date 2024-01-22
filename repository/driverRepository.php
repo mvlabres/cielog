@@ -5,7 +5,7 @@ include_once('../model/errorHandler.php');
 class driverRepository{
 
     private $mySql;
-    private $standardQuery = 'SELECT id,name,cnh,cnh_expiration,cpf,shipping_company,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,record_type,status,block_reason,created_date,modified_date,created_by,modified_by 
+    private $standardQuery = 'SELECT id,name,cnh,cnh_expiration,cpf,shipping_company,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,record_type,status,block_reason,created_date,modified_date,phone,created_by,modified_by 
                               FROM driver ';
 
     public function __construct($mySql){
@@ -59,7 +59,7 @@ class driverRepository{
     public function save($driver){
 
         try {
-            $sql = 'INSERT INTO driver (name,cnh,cnh_expiration,cpf,shipping_company,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,record_type,status,block_reason,created_date,created_by)
+            $sql = 'INSERT INTO driver (name,cnh,cnh_expiration,cpf,shipping_company,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,record_type,status,block_reason,phone,created_date,created_by)
             VALUES(
                 "'.$driver->getName().'", 
                 "'.$driver->getCnh().'", 
@@ -73,6 +73,7 @@ class driverRepository{
                 "'.$driver->getRecordType().'", 
                 "'.$driver->getStatus().'", 
                 "'.$driver->getBlockReason().'", 
+                "'.$driver->getPhone().'", 
                 "'.date("Y-m-d").'", 
                 '.$_SESSION['id'].' 
             )';
@@ -101,6 +102,7 @@ class driverRepository{
                         record_type = "'.$driver->getRecordType().'", 
                         status = "'.$driver->getStatus().'", 
                         block_reason = "'.$driver->getBlockReason().'",
+                        phone = "'.$driver->getPhone().'",
                         modified_by = '.$_SESSION['id'].',
                         modified_date = "'.date("Y-m-d").'" 
                          WHERE id = '.$driver->getId();

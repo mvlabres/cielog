@@ -40,7 +40,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="panel-body">
-                    <table style="width:2850px" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                    <table style="width:2900px" class="table table-striped table-bordered table-hover" id="dataTables-example">
                         <thead>
                             <tr>
                                 <td scope="column" class="td-30">Acesso</td>
@@ -51,6 +51,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
                                 <th scope="column" class="td-70">Tipo cadastro</th>
                                 <th scope="column" class="td-40">CNH</th>
                                 <th scope="column" class="td-100">Vencimento CNH</th>
+                                <th scope="column" class="td-70">Telefone</th>
                                 <th scope="column" class="td-70">Transportadora</th>
                                 <th scope="column" class="td-70">Tipo veículo</th>
                                 <th scope="column" class="td-70">Placa Veículo</th>
@@ -75,6 +76,7 @@ if($driverResult->hasError) errorAlert($driverResult->result.$driverResult->erro
                                     echo '<td>'.$DRIVER_RECORD_TYPES[$driver->getRecordType()].'</td>';
                                     echo '<td>'.$driver->getCnh().'</td>';
                                     echo '<td>'.$driver->getCnhExpiration().'</td>';
+                                    echo '<td>'.$driver->getPhone().'</td>';
                                     echo '<td>'.$driver->getShippingCompany().'</td>';
                                     echo '<td>'.$driver->getVehicleType().'</td>';
                                     echo '<td>'.$driver->getVehiclePlate().'</td>';

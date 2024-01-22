@@ -18,6 +18,7 @@ if(isset($_GET['business']) && $_GET['business'] != null){
                             end_datetime,
                             dr.cnh AS driver_cnh,
                             dr.cnh_expiration AS driver_cnh_expiration,
+                            dr.phone AS driver_phone,
                             dr.cpf AS driver_cpf,
                             dr.shipping_company AS driver_shipping_company,
                             dr_a.vehicle_type AS driver_vehicle_type,
@@ -61,6 +62,7 @@ $file .= '<th>Nome</th>';
 $file .= '<th>Empresa visitada</th>';
 $file .= '<th>CNH</th>';
 $file .= '<th>Vencimento CNH</th>';
+$file .= '<th>Telefone</th>';
 $file .= '<th>Transportadora</th>';
 $file .= '<th>'.utf8_decode("Tipo veículo").'</th>';
 $file .= '<th>'.utf8_decode("Placa veículo").'</th>';
@@ -83,7 +85,7 @@ while ($data = $driverAccess->fetch_assoc()){
     }else{
         $file .= '<td></td>';
     }
-    
+    $file .= '<td>'.utf8_decode($data['driver_phone']).'</td>';
     $file .= '<td>'.utf8_decode($data['driver_shipping_company']).'</td>';
     $file .= '<td>'.utf8_decode( $data['driver_vehicle_type'] ).'</td>';
     $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate'] ).'</td>';

@@ -148,6 +148,7 @@ class DriverAccessController{
                 $driverAccess->setCnhExpiration(date("d/m/Y", strtotime($data['driver_cnh_expiration'])));
             }
 
+            $driverAccess->setPhone($data['driver_phone']);
             $driverAccess->setShippingCompany($data['driver_shipping_company']);
             $driverAccess->setVehicleType($data['driver_vehicle_type']);
             $driverAccess->setVehiclePlate($data['driver_vehicle_plate']);

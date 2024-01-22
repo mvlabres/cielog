@@ -112,6 +112,32 @@ const plateMask = (event, element) => {
     
 }
 
+const phoneMask = (event, element) => {
+
+    if(event.keyCode === 8) return;
+
+    let phoneValue = element.value;
+
+    phoneValue = phoneValue.replace(/\D/g,"")
+
+    if( !phoneValue.match(/^[0-9]/)) return;
+
+    if(phoneValue.length === 1) {
+        element.value = `(${phoneValue}`;
+        return;
+    }
+
+    let x = '';
+
+    if(phoneValue.length <= 10){
+        x = phoneValue.replace(/\D+/g, '').match(/(\d{0,2})(\d{0,4})(\d{0,4})/);
+    }else{
+        x = phoneValue.replace(/\D+/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+    }
+
+    element.value = !x[2] ? `(${x[1]})` : `(${x[1]}) ${x[2]}` + (!x[3] ? `` : `-${x[3]}`);   
+}
+
 const errorReportValidate = (action) => {
 
     if(action != 'edit'){

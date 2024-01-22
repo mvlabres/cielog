@@ -122,6 +122,10 @@ if($vehicleTypesResult->hasError) errorAlert($vehicleTypesResult->result.$vehicl
                                     <input style="text-transform: uppercase" class="form-control" name="cpf" maxlength="14" minlength="14" placeholder="CPF" value="<?=$driver->getCpf() ?>" onkeyup="cpfMask(this)" <?=$viewMode ?> required>
                                 </div>
                                 <div class="form-group">
+                                    <label>Telefone</label><span class="required-icon">*<span>
+                                    <input style="text-transform: uppercase" class="form-control" name="phone" maxlength="15" minlength="13" placeholder="Telefone" value="<?=$driver->getPhone() ?>" onkeyup="phoneMask(event, this)" <?=$viewMode ?> required>
+                                </div>
+                                <div class="form-group">
                                     <label>CNH</label><span id="requiredCnh" class="required-icon">*</span>
                                     <input class="form-control" name="cnh" maxlength="20" placeholder="CNH" value="<?=$driver->getCnh() ?>" <?=$viewMode ?> required>
                                 </div>

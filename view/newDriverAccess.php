@@ -17,6 +17,9 @@ $clientController = new ClientController($MySQLi);
 $driver = new Driver();
 $driverAccess = new DriverAccess();
 
+$hasError = false;
+$recordValidationMesssage = null;
+
 $action = 'save';
 $disabledBlockReasonField = 'disabled';
 $disabledPlateFields = 'disabled';
@@ -101,9 +104,18 @@ if(isset($_GET['driverId']) && $_GET['driverId'] != null){
     $cnhExpirationDate = date("Y-m-d", strtotime(str_replace('/', '-', $driver->getCnhExpiration() )));
 
     if($cnhExpirationDate < date("Y-m-d")){
-        warningAlert('Motorista com CNH vencida!');
+        $hasError = true;
+        $recordValidationMesssage = 'Motorista com CNH vencida!';
+        warningAlert($recordValidationMesssage);
         $blockDisabled = 'disabled';
-    }
+    }else{
+        if(is_null($driver->getPhone())){
+            $hasError = true;
+            $recordValidationMesssage = 'Motorista sem TELEFONE informado. Favor atualizar o cadastro!';
+            warningAlert($recordValidationMesssage);
+            $blockDisabled = 'disabled';
+        }
+    } 
 }
 
 $vehicleTypesResult = $vehicleTypeController->findAll();
@@ -119,6 +131,11 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header" >Acesso de veículos</h1>
+        <?php 
+        if($hasError){
+            echo '<p class="text-danger">ATENÇÃO: '.$recordValidationMesssage.'<p>';
+        }
+        ?>
     </div>
 </div>
 <div class="row">
@@ -188,6 +205,10 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         </div>
                         <div class="col-lg-6">
                             <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Telefone</label>
+                                    <input class="form-control" value="<?=$driver->getPhone() ?>"  disabled>
+                                </div>
                                 <div class="form-group">
                                     <label>Tipo de veículo</label>
                                     <select name="vehicleType" class="form-control" <?=$blockDisabled ?> <?=$viewMode ?>>
