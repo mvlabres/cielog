@@ -27,6 +27,11 @@ class EmployeeController{
             $employee = $this->setFields($post, $employee);
 
             if($action == 'save') {
+
+                $result = $this->employeeRepository->findByCpf($employee->getCpf());
+
+                if($result->result->num_rows > 0) return new ErrorHandler('Já existe um registro com esse CPF', true, '');
+        
                 if($post['redirect'] == 'redirect') {
                     $result = $this->employeeRepository->save($employee); 
                     $recordId = $result->result;  
