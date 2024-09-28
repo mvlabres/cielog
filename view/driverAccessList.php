@@ -6,16 +6,19 @@ require_once('../utils.php');
 require_once('../controller/driverAccessController.php');
 require_once('../controller/clientController.php');
 require_once('../model/driverAccess.php');
+require_once('../controller/businessClientController.php');
 
 date_default_timezone_set("America/Sao_Paulo");
 $startDate = '01/'.date("m/Y");
 $endDate = date("d/m/Y");
 $business = getClientIfContains();
+$businessClient;
 
 $filterChecked = 'checked';
 
 $driverAccessController = new DriverAccessController($MySQLi);
 $clientController = new ClientController($MySQLi);
+$businessClientController = new BusinessClientController($MySQLi);
 $driversAccessResult = null;
 
 if(isset($_POST['action']) && $_POST['action'] == 'delete'){
@@ -37,16 +40,24 @@ if(isset($_POST['startDate']) && $_POST['startDate'] != null){
     $startDate = $_POST['startDate'];
     $endDate = $_POST['endDate'];
     $business = $_POST['business'];
+    $businessClient = $_POST['businessClient'];
+
 }
 
 $withOpen = ($filterChecked == 'checked') ? true : false;
 $withOpenExport = ($withOpen) ? 'true': 'false';
 
-$driversAccessResult = $driverAccessController->findByStartDateEndDateAndBusiness($startDate, $endDate, $business, $withOpen);
+$driversAccessResult = $driverAccessController->findByStartDateEndDateAndBusiness($startDate, $endDate, $business, $businessClient, $withOpen);
 if($driversAccessResult->hasError) errorAlert($driversAccessResult->result.$driversAccessResult->errorMessage);
 
 $clientsResult = $clientController->findAll();
 if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->errorMessage);
+
+$businessClientsResult = null; 
+if($business != null && $business != '' && $business != 'all'){
+    $businessClientsResult = $businessClientController->findByClientId($business);
+    if($businessClientsResult->hasError) errorAlert($businessClientsResult->result.$businessClientsResult->errorMessage);
+}
 
 ?>
 <body> 
@@ -76,7 +87,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         </div>
                         <div class="form-group">
                             <label>Empresa visitada</label>
-                            <select name="business" id="business" class="form-control">
+                            <select name="business" id="business" class="form-control" onchange="getBusinessClient(this, true)">
                                 <?php
                                 if(checkUserPermission()){
                                     echo '<option value="all">Todas</option>';
@@ -88,16 +99,37 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                         if(!checkClientDataPermission($client->getId())) continue;
 
                                         $selected = '';
+                                        
                                         if($business == $client->getId()) $selected = 'selected';
-
                                         echo '<option value="'.$client->getId().'" '.$selected.' >'.$client->getName().'</option>';
 
                                     }
-                                }
-                                    
+                                } 
                                 ?>
                             </select>
                         </div>
+
+
+                        <div class="form-group">
+                            <label>Empresa cliente</label>
+                            <select name="businessClient" id="businessClient" class="form-control">
+                                <option value="all">Todas</option>
+                                <?php
+ 
+                                if(!$businessClientsResult->hasError){
+                                    foreach ($businessClientsResult->result as $businessClientValue) {
+                                        
+                                        $selected = '';
+
+                                        if($businessClient == $businessClientValue->getId()) $selected = 'selected';
+                                        echo '<option value="'.$businessClientValue->getId().'" '.$selected.' >'.$businessClientValue->getName().'</option>';
+
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+
                         <div class="form-group">
                             <div class="form-check">
                                 <input class="form-check-input" title="Registros em aberto e fechados" type="checkbox" value="true" name="with-open" id="openAccess" <?=$filterChecked ?>>
@@ -112,7 +144,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                     </div>
                 </form>
                 <div class="btn-functions-group">
-                    <a href="../export/driverAccessExport.php?startDate=<?=date("Y-m-d", strtotime(str_replace('/', '-', $startDate)))?>&endDate=<?=date("Y-m-d", strtotime(str_replace('/', '-', $endDate)))?>&business=<?=$business?>&open-access=<?=$withOpenExport?>"><button type="button" class="btn btn-secondary"><i class="fa fa-file-excel-o"></i> Exportar</button></a>
+                    <a href="../export/driverAccessExport.php?startDate=<?=date("Y-m-d", strtotime(str_replace('/', '-', $startDate)))?>&endDate=<?=date("Y-m-d", strtotime(str_replace('/', '-', $endDate)))?>&business=<?=$business?>&businessClient=<?=$businessClient?>&open-access=<?=$withOpenExport?>"><button type="button" class="btn btn-secondary"><i class="fa fa-file-excel-o"></i> Exportar</button></a>
                 </div>
             </div>
         </div>
@@ -122,7 +154,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
             <div class="panel-title">
                 <h3 class="display-2">Acessos de veículos</h3>
             </div>
-            <table width="3450px" class="table table-striped table-bordered table-hover" id="dataTables-example">
+            <table width="4000px" class="table table-striped table-bordered table-hover" id="dataTables-example">
                 <thead>
                     <tr>
                     <?php
@@ -136,6 +168,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         <th scope="column" class="td-40">CPF</th>
                         <th scope="column" class="td-100">Nome</th>
                         <th scope="column" class="td-70">Empresa visitada</th>
+                        <th scope="column" class="td-70">Empresa cliente</th>
                         <th scope="column" class="td-30">CNH</th>
                         <th scope="column" class="td-70">Vencimento CNH</th>
                         <th scope="column" class="td-70">Telefone</th>
@@ -173,6 +206,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             echo '<td>'.$driverAccess->getCpf().'</td>';
                             echo '<td>'.$driverAccess->getDriverName().'</td>';
                             echo '<td>'.$driverAccess->getBusinessName().'</td>';
+                            echo '<td>'.$driverAccess->getBusinessClientName().'</td>';
                             echo '<td>'.$driverAccess->getCnh().'</td>';
                             echo '<td>'.$driverAccess->getCnhExpiration().'</td>';
                             echo '<td>'.$driverAccess->getPhone().'</td>';

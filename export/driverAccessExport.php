@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require_once('../conn.php');
 require_once('../session.php');
@@ -12,6 +15,7 @@ if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['en
     $startDate = $_GET['startDate'];
     $endDate = $_GET['endDate'];
     $business = $_GET['business'];
+    $businessClient = $_GET['businessClient'];
     $openAccess = $_GET['open-access'];
 
     $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
@@ -33,6 +37,8 @@ if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['en
                             dr_a.vehicle_plate3 AS driver_vehicle_plate3,
                             cl.id AS business_id,
                             cl.name AS business_name,
+                            business_client_id,
+                            bc.name AS business_client_name,
                             inbound_invoice,
                             outbound_invoice,
                             operation_type,
@@ -51,11 +57,17 @@ if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['en
                         INNER JOIN client AS cl ON cl.id = business_id
                         INNER JOIN user AS us_1 ON us_1.id = user_outbound_id
                         INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
+                        INNER JOIN business_client AS bc ON bc.id = dr_a.business_client_id
                         INNER JOIN user AS us_3 ON (us_3.id = dr_a.modified_by OR ISNULL(dr_a.modified_by )) ';
 
     if( !is_null($business) && $business != '' && $business != 'all' ){
-        if( $openAccess == 'false') $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC';
-        else $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' GROUP BY dr_a.id ORDER BY start_datetime DESC';
+        if( !is_null($businessClient) && $businessClient != '' && $businessClient != 'all' ){
+            if( $openAccess == 'false') $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' AND bc.id = '.$businessClient.' AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC';
+            else $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' AND bc.id = '.$businessClient.' GROUP BY dr_a.id ORDER BY start_datetime DESC';
+        }else{
+            if( $openAccess == 'false') $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC';
+            else $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$business.' GROUP BY dr_a.id ORDER BY start_datetime DESC';
+        }
 
     }else {
         if( $openAccess == 'false') $sql = $standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC'; 
@@ -72,6 +84,7 @@ $file .= '<th>Entrada</th>';
 $file .= '<th>CPF</th>';
 $file .= '<th>Nome</th>';
 $file .= '<th>Empresa visitada</th>';
+$file .= '<th>Empresa cliente</th>';
 $file .= '<th>CNH</th>';
 $file .= '<th>Vencimento CNH</th>';
 $file .= '<th>Telefone</th>';
@@ -93,6 +106,7 @@ while ($data = $driverAccess->fetch_assoc()){
     $file .= '<td>'.utf8_decode($data['driver_cpf']).'</td>';
     $file .= '<td>'.utf8_decode($data['driver_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['business_name']).'</td>';
+    $file .= '<td>'.utf8_decode($data['business_client_name']).'</td>';
     $file .= '<td>'.utf8_decode($data['driver_cnh']).'</td>';
     if(!strpos($data['driver_cnh_expiration'], '0000') && !is_null($data['driver_cnh_expiration'])){
         $file .= '<td>'.utf8_decode(date("d/m/Y", strtotime( $data['driver_cnh_expiration']))).'</td>';

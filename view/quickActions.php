@@ -120,7 +120,7 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
             <div class="panel-title">
                 <h3 class="display-2">Acessos de <b id="access-type-label">VEÍCULOS</b> em aberto</h3>
             </div>
-            <table width="3500px" class="table table-striped table-bordered table-hover vehicle-access" id="dataTables-example">
+            <table width="3900px" class="table table-striped table-bordered table-hover vehicle-access" id="dataTables-example">
                 <thead class="vehicle-access">
                     <tr>
                         <?php
@@ -133,6 +133,7 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                         <th scope="column" class="td-40">CPF</th>
                         <th scope="column" class="td-100">Nome</th>
                         <th scope="column" class="td-70">Empresa visitada</th>
+                        <th scope="column" class="td-70">Empresa cliente</th>
                         <th scope="column" class="td-30">CNH</th>
                         <th scope="column" class="td-70">Tempo Total</th>
                         <th scope="column" class="td-30">Turno</th>
@@ -190,6 +191,7 @@ if($_SESSION['FUNCTION_ACCESS']['edit_access'] == 'hidden') {
                             echo '<td>'.$driverAccess->getCpf().'</td>';
                             echo '<td>'.$driverAccess->getDriverName().'</td>';
                             echo '<td>'.$driverAccess->getBusinessName().'</td>';
+                            echo '<td>'.$driverAccess->getBusinessClientName().'</td>';
                             echo '<td>'.$driverAccess->getCnh().'</td>';
                             echo '<td>'.$time.'</td>';
                             echo '<td>'.$driverAccess->getRotation().'</td>';

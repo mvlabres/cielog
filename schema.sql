@@ -171,8 +171,25 @@ ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_mb` FOREIGN KEY (modified_by) 
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_di` FOREIGN KEY (driver_id) REFERENCES driver(id);
 ALTER TABLE `driver_access` ADD CONSTRAINT `fk_ea_uoi` FOREIGN KEY (user_outbound_id) REFERENCES user(id);
 
-/* changes */
 ALTER TABLE driver ADD column phone varchar(15);
 
 /* NOT IN PRODUCTION*/
+
+
+CREATE TABLE `business_client`(
+  `id` int(21) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(50) not null,
+  `client_id` int(21) NOT NULL, 
+  `created_date` date NOT NULL,
+  `modified_date` date DEFAULT NULL,
+  `created_by` int(21) NOT NULL,
+  `modified_by` int(21) DEFAULT NULL
+);
+
+ALTER TABLE `business_client` ADD CONSTRAINT `fk_bc_cb` FOREIGN KEY (created_by) REFERENCES user(id);
+ALTER TABLE `business_client` ADD CONSTRAINT `fk_bc_mb` FOREIGN KEY (modified_by) REFERENCES user(id);
+ALTER TABLE `business_client` ADD CONSTRAINT `fk_bc_uoi` FOREIGN KEY (client_id) REFERENCES client(id);
+
+insert into user_access(user_type, function_name) values ('adm', 'register_business_client');
+insert into user_access(user_type, function_name) values ('operator', 'register_business_client');
 

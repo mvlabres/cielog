@@ -21,6 +21,8 @@ class DriverAccessRepository{
                                     dr_a.vehicle_plate3 AS driver_vehicle_plate3,
                                     cl.id AS business_id,
                                     cl.name AS business_name,
+                                    business_client_id,
+                                    bc.name AS business_client_name,
                                     inbound_invoice,
                                     outbound_invoice,
                                     operation_type,
@@ -40,6 +42,7 @@ class DriverAccessRepository{
                               INNER JOIN client AS cl ON cl.id = business_id
                               INNER JOIN user AS us_1 ON us_1.id = user_outbound_id
                               INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
+                              INNER JOIN business_client AS bc ON bc.id = dr_a.business_client_id || isnull(dr_a.business_client_id)
                               INNER JOIN user AS us_3 ON (us_3.id = dr_a.modified_by OR ISNULL(dr_a.modified_by )) ';
 
     public function __construct($mySql){
@@ -61,7 +64,7 @@ class DriverAccessRepository{
 
         try{
             $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY dr_a.id ORDER BY start_datetime ASC";
-
+            echo $sql;
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -72,6 +75,7 @@ class DriverAccessRepository{
 
         try{
             $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            echo $sql;
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -83,6 +87,30 @@ class DriverAccessRepository{
 
         try{
             $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            echo $sql;
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessAndBusinessClient($startDate, $endDate, $businessId, $businessClientId){
+
+        try{
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            echo $sql;
+            return new ErrorHandler($this->mySql->query($sql), false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+    
+
+    public function findByStartDateEndDateAndBusinessAndBusinessClientAndClosedAccess($startDate, $endDate, $businessId, $businessClientId){
+
+        try{
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            echo $sql;
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -93,6 +121,7 @@ class DriverAccessRepository{
 
         try{
             $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            echo $sql;
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -103,6 +132,7 @@ class DriverAccessRepository{
 
         try{
             $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            echo $sql;
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -123,7 +153,7 @@ class DriverAccessRepository{
     public function save($driverAccess){
 
         try {
-            $sql = 'INSERT INTO driver_access (start_datetime,end_datetime,driver_id,business_id,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,inbound_invoice,outbound_invoice,operation_type,rotation,user_outbound_id,created_date,created_by)
+            $sql = 'INSERT INTO driver_access (start_datetime,end_datetime,driver_id,business_id,vehicle_type,vehicle_plate,vehicle_plate2,vehicle_plate3,inbound_invoice,outbound_invoice,operation_type,rotation,business_client_id,user_outbound_id,created_date,created_by)
             VALUES(
                 "'.$driverAccess->getStartDatetime().'", 
                 "'.$driverAccess->getEndDatetime().'", 
@@ -137,6 +167,7 @@ class DriverAccessRepository{
                 "'.$driverAccess->getOutboundInvoice().'", 
                 "'.$driverAccess->getOperationType().'", 
                 "'.$driverAccess->getRotation().'",
+                '.$driverAccess->getBusinessClientId().',
                 '.$_SESSION['id'].', 
                 "'.date("Y-m-d").'", 
                 '.$_SESSION['id'].' 
@@ -165,6 +196,7 @@ class DriverAccessRepository{
                         outbound_invoice = "'.$driverAccess->getOutboundInvoice().'", 
                         operation_type = "'.$driverAccess->getOperationType().'",
                         rotation = "'.$driverAccess->getRotation().'",
+                        business_client_id = '.$driverAccess->getBusinessClientId().',
                         user_outbound_id = '.$_SESSION['id'].',
                         modified_by = '.$_SESSION['id'].',
                         modified_date = "'.date("Y-m-d").'" 

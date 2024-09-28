@@ -71,7 +71,7 @@ class DriverAccessController{
         else return new ErrorHandler(new DriverAccess(), false, null);
     }
 
-    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $business, $openAccess){
+    public function findByStartDateEndDateAndBusiness($startDate, $endDate, $business, $businessClientId, $openAccess){
 
         $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
         $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
@@ -82,8 +82,13 @@ class DriverAccessController{
             
         }
         else {
-            if($openAccess) $result = $this->driverAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business);
-            else $result = $this->driverAccessRepository->findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $business); 
+            if(is_null($businessClientId) ||  $businessClientId == 'all') {
+                if($openAccess) $result = $this->driverAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business);
+                else $result = $this->driverAccessRepository->findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $business);
+            }else{
+                if($openAccess) $result = $this->driverAccessRepository->findByStartDateEndDateAndBusinessAndBusinessClient($startDate, $endDate, $business, $businessClientId);
+                else $result = $this->driverAccessRepository->findByStartDateEndDateAndBusinessAndBusinessClientAndClosedAccess($startDate, $endDate, $business, $businessClientId);
+            }
         }
 
         if($result->hasError) return $result;
@@ -113,6 +118,7 @@ class DriverAccessController{
             $driverAccess->setEndDatetime(date("Y-m-d H:i", strtotime(str_replace('/', '-', $post['endDate'] ))));
         }
 
+        $driverAccess->setBusinessClientId($post['businessClient']);
         $driverAccess->setDriverId($post['driverId'] );
         $driverAccess->setVehicleType($post['vehicleType']);
         $driverAccess->setVehiclePlate($post['vehiclePlate']);
@@ -164,6 +170,8 @@ class DriverAccessController{
             $driverAccess->setDriverStatus($data['driver_access_status']);
             $driverAccess->setDriverBlockReason($data['driver_block_reason']);
             $driverAccess->setRotation($data['rotation']);
+            $driverAccess->setBusinessClientId($data['business_client_id']);
+            $driverAccess->setBusinessClientName($data['business_client_name']);
             $driverAccess->setCreatedDate($data['access_created_date']);
             $driverAccess->setModifiedDate($data['access_modified_date']);
             $driverAccess->setCreatedBy($data['access_created_by']);

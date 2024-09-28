@@ -15,6 +15,8 @@ class DriverAccess{
     private $shippingCompany;
     private $businessId;
     private $businessMame;
+    private $businessClientId;
+    private $businessClientName;
     private $vehicleType;
     private $vehiclePlate;
     private $vehiclePlate2;
@@ -150,6 +152,20 @@ class DriverAccess{
     }
     public function getBusinessName(){
         return $this->businessName;
+    }
+
+    public function setBusinessClientId($businessClientId){
+        $this->businessClientId = $businessClientId;
+    }
+    public function getBusinessClientId(){
+        return $this->businessClientId;
+    }
+
+    public function setBusinessClientName($businessClientName){
+        $this->businessClientName = $businessClientName;
+    }
+    public function getBusinessClientName(){
+        return $this->businessClientName;
     }
 
     public function setInboundInvoice($inboundInvoice){

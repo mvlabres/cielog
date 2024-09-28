@@ -97,7 +97,8 @@ function getAccess($mysqli){
         'register_driver' => 'hidden',
         'new_employee' => 'hidden',
         'delete_access' => 'hidden',
-        'edit_access' => 'hidden'
+        'edit_access' => 'hidden',
+        'register_business_client' => 'hidden'
     ];
 
     $sql = "SELECT id, user_type, function_name

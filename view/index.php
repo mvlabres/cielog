@@ -114,8 +114,6 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
                     </ul>
                 </li>
             </ul>
-           
-           
             <div class="navbar-default sidebar vertical-menu" id="menu-nav-bar" role="navigation" >
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" >
@@ -138,6 +136,9 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
                             <ul class="collapse nav nav-second-level" id="pageSubmenu3">
                                 <li <?=$_SESSION['FUNCTION_ACCESS']['register_client'] ?>>
                                     <a href="index.php?content=newClient.php">Empresa cliente</a>
+                                </li>
+                                <li <?=$_SESSION['FUNCTION_ACCESS']['register_business_client'] ?>>
+                                    <a href="index.php?content=newBusinessClient.php">Empresa visitante</a>
                                 </li>
                                 <li <?=$_SESSION['FUNCTION_ACCESS']['register_employee'] ?>>
                                     <a href="index.php?content=employeeList.php">Colaborador</a>

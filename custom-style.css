@@ -424,6 +424,7 @@ td{
     justify-content: space-between;
     width: 100%;
     align-items: flex-end;
+    margin-bottom: 15px;
 }
 
 .form-field-action > .form-group{

@@ -9,11 +9,13 @@ require_once('../controller/driverAccessController.php');
 require_once('../model/driverAccess.php');
 require_once('../model/client.php');
 require_once('../controller/clientController.php');
+require_once('../controller/businessClientController.php');
 
 $driverController = new DriverController($MySQLi);
 $vehicleTypeController = new VehicleTypeController($MySQLi);
 $driverAccessController = new DriverAccessController($MySQLi);
 $clientController = new ClientController($MySQLi);
+$businessClientController = new BusinessClientController($MySQLi);
 $driver = new Driver();
 $driverAccess = new DriverAccess();
 
@@ -71,8 +73,6 @@ if(isset($_GET['driverAccessId']) && $_GET['driverAccessId'] != null){
 
 if(isset($_POST['driverId']) && $_POST['driverId'] != null){
 
-    echo 'save';
-
     $result = $driverAccessController->save($_POST, $action);
 
     if($result->hasError) errorAlert($result->result.$result->errorMessage);
@@ -126,6 +126,12 @@ if($driversResult->hasError) errorAlert($driversResult->result.$driversResult->e
 
 $clientsResult = $clientController->findAll();
 if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->errorMessage);
+
+$businessClientsResult = null; 
+if($driverAccess->getBusinessId() != null && $driverAccess->getBusinessId() != ''){
+    $businessClientsResult = $businessClientController->findByClientId($driverAccess->getBusinessId());
+    if($businessClientsResult->hasError) errorAlert($businessClientsResult->result.$businessClientsResult->errorMessage);
+}
 
 ?>
 <div class="row">
@@ -246,27 +252,6 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Empresa visitada</label><span class="required-icon">*</span>
-                                    <select name="business" class="form-control" <?=$blockDisabled ?> <?=$viewMode ?> required>
-                                        <option value="">Selecione...</option>
-                                        <?php
-
-                                        if(!$clientsResult->hasError){
-                                            foreach ($clientsResult->result as $business) {
-                                                $selected = null;
-                                                if($driverAccess->getBusinessId() == $business->getId()) $selected = 'selected';
-
-                                                echo '<option value="'.$business->getId().'" '.$selected.' >'.$business->getName().'</option>';
-
-                                            }
-                                        }
-                                            
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
                                     <label>Tipo de operação</label><span class="required-icon">*</span>
                                     <select name="operationType" class="form-control" <?=$blockDisabled ?> <?=$viewMode ?> required>
                                         <option value="">Selecione...</option>
@@ -283,6 +268,47 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                         ?>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Empresa visitada</label><span class="required-icon">*</span>
+                                    <select name="business" id="business" class="form-control" <?=$blockDisabled ?> <?=$viewMode ?> onchange="getBusinessClient(this)"  required>
+                                        <option value="">Selecione...</option>
+                                        <?php
+
+                                        if(!$clientsResult->hasError){
+                                            foreach ($clientsResult->result as $business) {
+                                                $selected = null;
+                                                if($driverAccess->getBusinessId() == $business->getId()) $selected = 'selected';
+
+                                                echo '<option value="'.$business->getId().'" '.$selected.' >'.$business->getName().'</option>';
+                                            }
+                                        }
+                                            
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-field-action">
+                                    <div class="form-group">
+                                        <label>Cliente Empresa</label><span class="required-icon">*</span>
+                                        <select name="businessClient" class="form-control" id="businessClient" <?=$blockDisabled ?> <?=$viewMode ?> required>
+                                            <option value="">Selecione...</option>
+                                            <?php
+
+                                            if(!$businessClientsResult->hasError){
+                                                foreach ($businessClientsResult->result as $businessClient) {
+                                                    $selected = null;
+                                                    if($driverAccess->getBusinessClientId() == $businessClient->getId()) $selected = 'selected';
+
+                                                    echo '<option value="'.$businessClient->getId().'" '.$selected.' >'.$businessClient->getName().'</option>';
+                                                }
+                                            }
+                                        ?>
+                                        </select>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="new-business-client-action" data-toggle="modal" data-target="#new-business-client" disabled>Criar</button>
+                                </div>
+
                                 <div class="form-group">
                                     <label>NF de entrada</label>
                                     <input class="form-control" name="inboundInvoice" id="inboundInvoice" maxlength="150" placeholder="NF de entrada" value="<?=$driverAccess->getInboundInvoice() ?>" <?=$blockDisabled ?> <?=$viewMode ?>>
@@ -324,6 +350,27 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                     <button type="reset" class="btn btn-danger">Cancelar</button>
                 </div>   
             </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="new-business-client" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Nova empresa cliente</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome da empresa</label>
+                    <input style="text-transform: uppercase" class="form-control" id="new-business-client-name" placeholder="Nome" maxlength="50" value="" onkeyup="checkFieldHasValue(this, 'modalButton')">
+                    <p class="feedback" id="feedback-modal"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">fechar</button>
+                <button type="button" class="btn btn-primary" id="modalButton" onclick="ajaxNewBusinessClient()" disabled>Salvar</button>
+            </div>
         </div>
     </div>
 </div>

@@ -635,9 +635,12 @@ const progressTimer = () => {
         if(!automatedTimeIsOn) clearInterval(idInterval);
 
         time = time - 10;
-        document.getElementById('panel-progress').value = time;
 
-        if(time === 0) window.location.reload();;
+        if(document.getElementById('panel-progress')){
+            document.getElementById('panel-progress').value = time;
+            if(time === 0) window.location.reload();;
+        }
+
     }, 10);
 }
 
@@ -1059,6 +1062,23 @@ const ajaxNewShippingCompany = () => {
     xmlhttp.send();
 }
 
+const ajaxNewBusinessClient = () => {
+
+    const name = document.getElementById('new-business-client-name').value;
+    const clientId = document.getElementById('business').value;
+
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            const businessClientSelect = document.getElementById('business');
+            getBusinessClient(businessClientSelect);
+            $(".close").click();
+        }
+    };
+    xmlhttp.open("GET","../ajax/ajaxNewBusinessClient.php?name="+name+"&clientId="+clientId, true);
+    xmlhttp.send();
+}
+
 const autocomplete = (inp, arr) =>  {
    
     var currentFocus;
@@ -1175,6 +1195,60 @@ const getDrivers = async () => {
         }
     };
     xmlhttp.open("GET","../ajax/ajaxGetDrivers.php", true);
+    xmlhttp.send();
+}
+
+const getBusinessClient = async (element, isList) => {
+
+    const clientId = element.value;
+    const select = document.getElementById('businessClient');
+
+    while (select.options.length > 0) {                
+        select.remove(0);
+    } 
+
+    let opt = document.createElement('option');
+
+    if(!isList){
+        opt.value = "";
+        opt.innerHTML = 'Selecione...';
+    }else{
+        opt.value = "all";
+        opt.innerHTML = 'Todas';
+    }
+    select.appendChild(opt);
+
+    const newBusinessClientAction = document.getElementById('new-business-client-action');
+
+    if(!clientId) {
+        select.disabled = true;
+        if(!isList) newBusinessClientAction.disabled = true;
+        return;
+    }
+    else {
+        select.disabled = false;
+        if(!isList) newBusinessClientAction.disabled = false;
+    }
+
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        
+        if (this.readyState == 4 && this.status == 200) {
+            
+            const result = this.responseText.split('|');
+
+            if(!result[0]) return;
+            result.forEach(element => {
+
+                const values = element.split('-');
+                opt = document.createElement('option');
+                opt.value = values[0];
+                opt.innerHTML = values[1];
+                select.appendChild(opt);
+            });
+        }
+    };
+    xmlhttp.open("GET","../ajax/ajaxGetBusinessClient.php?clientId="+clientId, true);
     xmlhttp.send();
 }
 
