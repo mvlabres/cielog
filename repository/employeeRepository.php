@@ -16,14 +16,14 @@ class EmployeeRepository{
     public function findAll(){
 
         try{
-            $sql = $this->standardQuery . ' GROUP BY employee.id ORDER BY employee.name';
+            $sql = $this->standardQuery . ' GROUP BY employee.id ,employee.name ,registration ,cpf ,vehicle ,vehicle_plate ,employee.created_date ,employee.modified_date ,employee.created_by ,employee.modified_by ,business_id ,client.name ORDER BY employee.name';
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar colaboradores - ', true, $ex->getMessage());
         }
     }
-
+    
     public function findByCpf($cpf){
 
         try{

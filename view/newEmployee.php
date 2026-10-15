@@ -1,5 +1,6 @@
 <?php
 
+
 require_once('../utils.php');
 require_once('../model/employee.php');
 require_once('../model/client.php');
@@ -110,7 +111,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                             </div>
                             <div class="form-group">
                                 <label>Placa do veículo</label>
-                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="50" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>" onkeyup="plateMask(event, this)" <?=$disabledField ?> <?=$viewMode ?>>
+                                <input style="text-transform: uppercase" class="form-control" name="vehiclePlate" id="vehiclePlate" maxlength="8" placeholder="Placa do veículo" value="<?=$employee->getVehiclePlate() ?>" onkeyup="plateMask(event, this)" <?=$disabledField ?> <?=$viewMode ?>>
                             </div>
                             <div class="form-group">
                                 <label>Empresa</label>

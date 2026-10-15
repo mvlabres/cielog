@@ -40,7 +40,7 @@ class EmployeeAccessRepository{
     public function findAll(){
 
         try{
-            $sql = $this->standardQuery . ' GROUP BY em_a.id ORDER BY start_datetime ASC';
+            $sql = $this->standardQuery . ' GROUP BY em_a.id,em.id,em.name,start_datetime,end_datetime,em.cpf,em.registration,em.cpf,em.vehicle,em.vehicle_plate,cl.id,cl.name,rotation,em_a.created_date,em_a.modified_date,em_a.created_by,us_2.name,em_a.modified_by,us_3.name,us_1.id,us_1.name';
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -51,7 +51,7 @@ class EmployeeAccessRepository{
     public function findByNullEndDate(){
 
         try{
-            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY em_a.id ORDER BY start_datetime ASC";
+            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY em_a.id,em.id,em.name,start_datetime,end_datetime,em.cpf,em.registration,em.cpf,em.vehicle,em.vehicle_plate,cl.id,cl.name,rotation,em_a.created_date,em_a.modified_date,em_a.created_by,us_2.name,em_a.modified_by,us_3.name,us_1.id,us_1.name";
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -62,7 +62,7 @@ class EmployeeAccessRepository{
     public function findByStartDateEndDateAndBusiness($startDate, $endDate, $businessId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' GROUP BY em_a.id ORDER BY start_datetime ASC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' GROUP BY em_a.id,em.id,em.name,start_datetime,end_datetime,em.cpf,em.registration,em.cpf,em.vehicle,em.vehicle_plate,cl.id,cl.name,rotation,em_a.created_date,em_a.modified_date,em_a.created_by,us_2.name,em_a.modified_by,us_3.name,us_1.id,us_1.name';
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -72,7 +72,7 @@ class EmployeeAccessRepository{
     public function findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $businessId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%" GROUP BY em_a.id ORDER BY start_datetime ASC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%" GROUP BY em_a.id,em.id,em.name,start_datetime,end_datetime,em.cpf,em.registration,em.cpf,em.vehicle,em.vehicle_plate,cl.id,cl.name,rotation,em_a.created_date,em_a.modified_date,em_a.created_by,us_2.name,em_a.modified_by,us_3.name,us_1.id,us_1.name';
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -83,7 +83,7 @@ class EmployeeAccessRepository{
     public function findByStartDateAndEndDate($startDate, $endDate){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" GROUP BY em_a.id ORDER BY start_datetime ASC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" GROUP BY em_a.id,em.id,em.name,start_datetime,end_datetime,em.cpf,em.registration,em.cpf,em.vehicle,em.vehicle_plate,cl.id,cl.name,rotation,em_a.created_date,em_a.modified_date,em_a.created_by,us_2.name,em_a.modified_by,us_3.name,us_1.id,us_1.name';
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -93,7 +93,7 @@ class EmployeeAccessRepository{
     public function findByStartDateAndEndDateAndClosedAccess($startDate, $endDate){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY em_a.id ORDER BY start_datetime ASC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY em_a.id,em.id,em.name,start_datetime,end_datetime,em.cpf,em.registration,em.cpf,em.vehicle,em.vehicle_plate,cl.id,cl.name,rotation,em_a.created_date,em_a.modified_date,em_a.created_by,us_2.name,em_a.modified_by,us_3.name,us_1.id,us_1.name';
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -126,6 +126,8 @@ class EmployeeAccessRepository{
                 "'.date("Y-m-d").'", 
                 '.$_SESSION['id'].' 
             )';
+            
+            $sql = str_replace('""',"null",$sql);
 
             $result = $this->mySql->query($sql);
             return new ErrorHandler('Acesso criado com sucesso!', false, null);
@@ -148,6 +150,8 @@ class EmployeeAccessRepository{
                         modified_by = '.$_SESSION['id'].',
                         modified_date = "'.date("Y-m-d").'" 
                          WHERE id = '.$employeeAccess->getId();
+                         
+            $sql = str_replace('""',"null",$sql);
 
             $result = $this->mySql->query($sql);
             return new ErrorHandler('Acesso atualizado com sucesso!', false, null);

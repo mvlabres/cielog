@@ -169,9 +169,9 @@ class DriverAccessController{
             $driverAccess->setUserOutboundName($data['access_outbound_name']);
             $driverAccess->setDriverStatus($data['driver_access_status']);
             $driverAccess->setDriverBlockReason($data['driver_block_reason']);
-            $driverAccess->setRotation($data['rotation']);
             $driverAccess->setBusinessClientId($data['business_client_id']);
             $driverAccess->setBusinessClientName($data['business_client_name']);
+            $driverAccess->setRotation($data['rotation']);
             $driverAccess->setCreatedDate($data['access_created_date']);
             $driverAccess->setModifiedDate($data['access_modified_date']);
             $driverAccess->setCreatedBy($data['access_created_by']);
@@ -201,8 +201,27 @@ class DriverAccessController{
             
             array_push($driverAccessList, $driverAccess);
         }
+        
+       
+        return $this->removeDuplicates($driverAccessList);
+    }
+    
+    public function removeDuplicates($arrayValues){
 
-        return $driverAccessList;
+        $temp = [];
+        $result = [];
+
+        foreach ($arrayValues as $value) {
+            $key = $value->getId();
+    
+            // Verifica se o identificador já foi adicionado
+            if (!in_array($key, $temp)) {
+                array_push($temp, $key);
+                array_push($result, $value);
+            }
+        }
+
+        return $result;
     }
 }
 

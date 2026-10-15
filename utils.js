@@ -635,12 +635,10 @@ const progressTimer = () => {
         if(!automatedTimeIsOn) clearInterval(idInterval);
 
         time = time - 10;
-
-        if(document.getElementById('panel-progress')){
+         if(document.getElementById('panel-progress')){
             document.getElementById('panel-progress').value = time;
             if(time === 0) window.location.reload();;
         }
-
     }, 10);
 }
 
@@ -1062,6 +1060,7 @@ const ajaxNewShippingCompany = () => {
     xmlhttp.send();
 }
 
+
 const ajaxNewBusinessClient = () => {
 
     const name = document.getElementById('new-business-client-name').value;
@@ -1197,6 +1196,7 @@ const getDrivers = async () => {
     xmlhttp.open("GET","../ajax/ajaxGetDrivers.php", true);
     xmlhttp.send();
 }
+
 
 const getBusinessClient = async (element, isList) => {
 

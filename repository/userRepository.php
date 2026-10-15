@@ -123,6 +123,7 @@ class UserRepository{
 
         try{
             $sql = 'DELETE FROM user WHERE id = '.$id;
+            
             $this->mySql->query($sql);
             return new ErrorHandler('Usuário excluido com sucesso!', false, null);
 

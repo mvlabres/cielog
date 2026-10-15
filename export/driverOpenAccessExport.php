@@ -47,8 +47,8 @@ if(isset($_GET['business']) && $_GET['business'] != null){
                         INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
                         INNER JOIN user AS us_3 ON (us_3.id = dr_a.modified_by OR ISNULL(dr_a.modified_by )) ';
 
-    if( $business != 'all' ) $sql = $standardQuery . ' WHERE cl.id = '.$business.' AND end_datetime LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC';
-    else $sql = $standardQuery . ' WHERE end_datetime LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime DESC'; 
+    if( $business != 'all' ) $sql = $standardQuery . ' WHERE cl.id = '.$business.' AND end_datetime LIKE "0000%" GROUP BY dr_a.id,dr.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
+    else $sql = $standardQuery . ' WHERE end_datetime LIKE "0000%" GROUP BY dr_a.id,dr.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC'; 
        
     $driverAccess = $MySQLi->query($sql);
 }
@@ -73,29 +73,36 @@ $file .= '<th>NF entrada</th>';
 $file .= '<th>'.utf8_decode("NF saída").'</th>';
 $file .= '<th>'.utf8_decode("Usuário (entrada)").'</th>';
 
+$temp = [];
+
 while ($data = $driverAccess->fetch_assoc()){ 
-    $file .= '<tr>';
-    $file .= '<td>'.utf8_decode(date("d/m/Y H:i", strtotime($data['start_datetime']))).'</td>';
-    $file .= '<td>'.utf8_decode($data['driver_cpf']).'</td>';
-    $file .= '<td>'.utf8_decode($data['driver_name']).'</td>';
-    $file .= '<td>'.utf8_decode($data['business_name']).'</td>';
-    $file .= '<td>'.utf8_decode($data['driver_cnh']).'</td>';
-    if(strpos($data['driver_cnh_expiration'], '0000') === false && !is_null($data['driver_cnh_expiration'])){
-        $file .= '<td>'.utf8_decode(date("d/m/Y", strtotime( $data['driver_cnh_expiration']))).'</td>';
-    }else{
-        $file .= '<td></td>';
+    
+    if (!in_array($data['driver_id'], $temp)) {
+        array_push($temp, $data['driver_id']);
+        
+        $file .= '<tr>';
+        $file .= '<td>'.utf8_decode(date("d/m/Y H:i", strtotime($data['start_datetime']))).'</td>';
+        $file .= '<td>'.utf8_decode($data['driver_cpf']).'</td>';
+        $file .= '<td>'.utf8_decode($data['driver_name']).'</td>';
+        $file .= '<td>'.utf8_decode($data['business_name']).'</td>';
+        $file .= '<td>'.utf8_decode($data['driver_cnh']).'</td>';
+        if(strpos($data['driver_cnh_expiration'], '0000') === false && !is_null($data['driver_cnh_expiration'])){
+            $file .= '<td>'.utf8_decode(date("d/m/Y", strtotime( $data['driver_cnh_expiration']))).'</td>';
+        }else{
+            $file .= '<td></td>';
+        }
+        $file .= '<td>'.utf8_decode($data['driver_phone']).'</td>';
+        $file .= '<td>'.utf8_decode($data['driver_shipping_company']).'</td>';
+        $file .= '<td>'.utf8_decode( $data['driver_vehicle_type'] ).'</td>';
+        $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate'] ).'</td>';
+        $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate2'] ).'</td>';
+        $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate3'] ).'</td>';
+        $file .= '<td>'.utf8_decode( $data['operation_type'] ).'</td>';
+        $file .= '<td>'.utf8_decode( $data['inbound_invoice'] ).'</td>';
+        $file .= '<td>'.utf8_decode( $data['outbound_invoice'] ).'</td>';
+        $file .= '<td>'.utf8_decode( $data['access_created_by_name'] ).'</td>';
+        $file .= '</tr>';
     }
-    $file .= '<td>'.utf8_decode($data['driver_phone']).'</td>';
-    $file .= '<td>'.utf8_decode($data['driver_shipping_company']).'</td>';
-    $file .= '<td>'.utf8_decode( $data['driver_vehicle_type'] ).'</td>';
-    $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate'] ).'</td>';
-    $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate2'] ).'</td>';
-    $file .= '<td>'.utf8_decode( $data['driver_vehicle_plate3'] ).'</td>';
-    $file .= '<td>'.utf8_decode( $data['operation_type'] ).'</td>';
-    $file .= '<td>'.utf8_decode( $data['inbound_invoice'] ).'</td>';
-    $file .= '<td>'.utf8_decode( $data['outbound_invoice'] ).'</td>';
-    $file .= '<td>'.utf8_decode( $data['access_created_by_name'] ).'</td>';
-    $file .= '</tr>';
 }
 
 $file .= '</tbody></table>';

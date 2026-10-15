@@ -12,7 +12,7 @@ date_default_timezone_set("America/Sao_Paulo");
 $startDate = '01/'.date("m/Y");
 $endDate = date("d/m/Y");
 $business = getClientIfContains();
-$businessClient;
+$businessClient = null;
 
 $filterChecked = 'checked';
 
@@ -47,8 +47,19 @@ if(isset($_POST['startDate']) && $_POST['startDate'] != null){
 $withOpen = ($filterChecked == 'checked') ? true : false;
 $withOpenExport = ($withOpen) ? 'true': 'false';
 
+$quantityItens = 0;
 $driversAccessResult = $driverAccessController->findByStartDateEndDateAndBusiness($startDate, $endDate, $business, $businessClient, $withOpen);
 if($driversAccessResult->hasError) errorAlert($driversAccessResult->result.$driversAccessResult->errorMessage);
+
+if($driversAccessResult->result != null){
+    $quantityItens = count($driversAccessResult->result);
+    
+    if($quantityItens > 1000){
+        echo "<script>window.open('../export/driverAccessExport.php?startDate=".date("Y-m-d", strtotime(str_replace('/', '-', $startDate)))."&endDate=".date("Y-m-d", strtotime(str_replace('/', '-', $endDate)))."&business=".$business."&open-access=".$withOpenExport."', '_blank')</script>";
+    }
+}
+
+$driversAccessResult = $driverAccessController->findByStartDateEndDateAndBusiness($startDate, $endDate, $business,$businessClient, $withOpen);
 
 $clientsResult = $clientController->findAll();
 if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->errorMessage);
@@ -60,7 +71,7 @@ if($business != null && $business != '' && $business != 'all'){
 }
 
 ?>
-<body> 
+<body onload="automatedExport(<?=$quantityItens ?>)"> 
 <div class="row">
         <div class="col-lg-12">
             <div class="panel-title">
@@ -99,17 +110,16 @@ if($business != null && $business != '' && $business != 'all'){
                                         if(!checkClientDataPermission($client->getId())) continue;
 
                                         $selected = '';
-                                        
                                         if($business == $client->getId()) $selected = 'selected';
+
                                         echo '<option value="'.$client->getId().'" '.$selected.' >'.$client->getName().'</option>';
 
                                     }
-                                } 
+                                }
+                                    
                                 ?>
                             </select>
                         </div>
-
-
                         <div class="form-group">
                             <label>Empresa cliente</label>
                             <select name="businessClient" id="businessClient" class="form-control">
@@ -129,7 +139,6 @@ if($business != null && $business != '' && $business != 'all'){
                                 ?>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <div class="form-check">
                                 <input class="form-check-input" title="Registros em aberto e fechados" type="checkbox" value="true" name="with-open" id="openAccess" <?=$filterChecked ?>>
@@ -152,7 +161,7 @@ if($business != null && $business != '' && $business != 'all'){
     <div class="row">
         <div class="col-lg-12">
             <div class="panel-title">
-                <h3 class="display-2">Acessos de veículos</h3>
+                <h6 class="display-4">Encontrados <?=$quantityItens ?> itens <?php if($quantityItens > 1000) echo ' <b>(A tabela abaixo está limitada à 1000 registros - Verificar consulta completa no arquivo exportado.)</b>'?></h6>
             </div>
             <table width="4000px" class="table table-striped table-bordered table-hover" id="dataTables-example">
                 <thead>
@@ -194,7 +203,11 @@ if($business != null && $business != '' && $business != 'all'){
 
                     <?php
                     if(!$driversAccessResult->hasError){
+
+                        $counter = 1;
                         foreach ($driversAccessResult->result as $driverAccess) {
+
+                            if($counter > 1000) break;
 
                             echo '<tr class="odd gradeX">';
                             if($_SESSION['FUNCTION_ACCESS']['edit_access'] != 'hidden') {
@@ -205,7 +218,9 @@ if($business != null && $business != '' && $business != 'all'){
                             echo '<td>'.$driverAccess->getStartDatetime().'</td>';
                             echo '<td>'.$driverAccess->getCpf().'</td>';
                             echo '<td>'.$driverAccess->getDriverName().'</td>';
-                            echo '<td>'.$driverAccess->getBusinessName().'</td>';
+                            if($driverAccess->getBusinessClientId() != null){
+                                echo '<td>'.$driverAccess->getBusinessName().'</td>';
+                            }else echo '<td></td>';
                             echo '<td>'.$driverAccess->getBusinessClientName().'</td>';
                             echo '<td>'.$driverAccess->getCnh().'</td>';
                             echo '<td>'.$driverAccess->getCnhExpiration().'</td>';
@@ -251,6 +266,8 @@ if($business != null && $business != '' && $business != 'all'){
                                         </div>
                                     </div>
                                 </div>';
+
+                            $counter++;
                         }
                     }
                     ?>
@@ -259,3 +276,12 @@ if($business != null && $business != '' && $business != 'all'){
         </div>
     </div>
 </body>
+
+<script>
+
+    function automatedExport(quantityElements){
+
+        if(quantityElements < 1000) return;
+        document.getElementById('export').click();
+    }
+</script>

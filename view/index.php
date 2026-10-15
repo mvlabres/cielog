@@ -114,6 +114,8 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
                     </ul>
                 </li>
             </ul>
+           
+           
             <div class="navbar-default sidebar vertical-menu" id="menu-nav-bar" role="navigation" >
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu" >
@@ -186,7 +188,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'access-save'){
                 include($content);
             ?>
         </div>
-        <a class="dev-fixed-bottom" href="http://labsoft.tech/" target="_blank" ><p class="text-muted">&nbsp Desenvolvido por <span class="text-primary" style="font-size:1.2em"><b>LAB</b>soft</span></p></a>
+        <a class="dev-fixed-bottom" href="http://www.labsoftsistemas.com.br" target="_blank" ><p class="text-muted">&nbsp Desenvolvido por <span class="text-primary" style="font-size:1.2em"><b>LAB</b>soft</span></p></a>
         
     </div>
 

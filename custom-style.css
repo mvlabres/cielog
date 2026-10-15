@@ -218,6 +218,18 @@ html, body {
     overflow: auto !important;
 }
 
+/* Start - Table with more performance */
+.results tr[visible='true']{
+    display:table-row;
+}
+
+.counter{
+    padding:8px; 
+    color:#ccc;
+}
+
+/* END */
+
 /* table column width */
 
 .td-30{
@@ -244,6 +256,12 @@ html, body {
     max-width: 70px !important
 }
 
+.td-80{
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important
+}
+
 .td-100{
     width: 100px !important;
     min-width: 100px !important;
@@ -267,6 +285,12 @@ td{
     max-width: 150px !important;
     overflow: hidden !important; 
     text-overflow: ellipsis !important;
+}
+
+.box-scroll{
+    overflow: scroll !important;
+    overflow-y: hidden !important;
+    margin-bottom: 30px;
 }
 
 .invisible-disabeld-field:read-only {
