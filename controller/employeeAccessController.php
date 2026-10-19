@@ -168,15 +168,14 @@ class EmployeeAccessController{
     
      public function removeDuplicates($arrayValues){
 
-        $temp = [];
-        $result = [];
+        $temp = array();
+        $result = array();
 
         foreach ($arrayValues as $value) {
             $key = $value->getId();
-    
-            // Verifica se o identificador já foi adicionado
-            if (!in_array($key, $temp)) {
-                array_push($temp, $key);
+
+            if (!isset($temp[$key])) {
+                $temp[$key] = true;
                 array_push($result, $value);
             }
         }

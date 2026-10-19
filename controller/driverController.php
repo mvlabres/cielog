@@ -9,6 +9,7 @@ class DriverController{
     private $driverRepository;
     private $mySql;
     public $defaultImagePath = '../image-profile/driver/id-00';
+    private static $imageCache = array();
 
     public function __construct($mySql){
 
@@ -198,11 +199,19 @@ class DriverController{
     }
 
     public function setImagePath($driver){
-        
-        $filename = $this->defaultImagePath.$driver->getId().'.png';
 
-        if (file_exists($filename)) $driver->setImageProfilePath($filename);
-        else $driver->setImageProfilePath('../images/profile.jpg');
+        $filename = $this->defaultImagePath.$driver->getId().'.png';
+        $driverId = $driver->getId();
+
+        if (!isset(self::$imageCache[$driverId])) {
+            self::$imageCache[$driverId] = file_exists($filename);
+        }
+
+        if (self::$imageCache[$driverId]) {
+            $driver->setImageProfilePath($filename);
+        } else {
+            $driver->setImageProfilePath('../images/profile.jpg');
+        }
 
         return $driver;
     }

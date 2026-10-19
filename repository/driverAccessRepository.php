@@ -37,13 +37,13 @@ class DriverAccessRepository{
                                     us_3.name AS access_modified_name,
                                     us_1.id AS access_outbound_id,
                                     us_1.name AS access_outbound_name
-                              FROM driver_access AS dr_a 
+                              FROM driver_access AS dr_a
                               INNER JOIN driver AS dr ON dr.id = driver_id
                               INNER JOIN client AS cl ON cl.id = business_id
                               INNER JOIN user AS us_1 ON us_1.id = user_outbound_id
                               INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
-                              INNER JOIN business_client AS bc ON bc.id = dr_a.business_client_id || isnull(dr_a.business_client_id)
-                              INNER JOIN user AS us_3 ON (us_3.id = dr_a.modified_by OR ISNULL(dr_a.modified_by )) ';
+                              LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                              LEFT JOIN user AS us_3 ON us_3.id = dr_a.modified_by ';
 
     public function __construct($mySql){
         $this->mySql = $mySql;
@@ -52,7 +52,7 @@ class DriverAccessRepository{
     public function findAll(){
 
         try{
-           $sql = $this->standardQuery . ' GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
+           $sql = $this->standardQuery . ' ORDER BY start_datetime ASC';
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -63,8 +63,7 @@ class DriverAccessRepository{
     public function findByNullEndDate(){
 
         try{
-            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name order by start_datetime asc";
-            
+            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') ORDER BY start_datetime ASC";
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -75,9 +74,9 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusiness($startDate, $endDate, $businessId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.'  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
-           
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' ORDER BY start_datetime ASC';
+
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -88,8 +87,8 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $businessId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%"  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC';
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -99,8 +98,8 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusinessAndBusinessClient($startDate, $endDate, $businessId, $businessClientId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.'  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' ORDER BY start_datetime ASC';
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -111,8 +110,8 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusinessAndBusinessClientAndClosedAccess($startDate, $endDate, $businessId, $businessClientId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%"  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC';
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -122,7 +121,7 @@ class DriverAccessRepository{
     public function findByStartDateAndEndDateAndClosedAccess($startDate, $endDate){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC';
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -133,9 +132,9 @@ class DriverAccessRepository{
     public function findByStartDateAndEndDate($startDate, $endDate){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" ORDER BY start_datetime ASC';
+
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());

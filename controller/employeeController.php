@@ -10,6 +10,7 @@ class EmployeeController{
     private $employeeRepository;
     private $mySql;
     public $defaultImagePath = '../image-profile/employee/id-00';
+    private static $imageCache = array();
 
     public function __construct($mySql){
 
@@ -191,11 +192,19 @@ class EmployeeController{
 
     
     public function setImagePath($employee){
-        
-        $filename = $this->defaultImagePath.$employee->getId().'.png';
 
-        if (file_exists($filename)) $employee->setImageProfilePath($filename);
-        else $employee->setImageProfilePath('../images/profile.jpg');
+        $filename = $this->defaultImagePath.$employee->getId().'.png';
+        $employeeId = $employee->getId();
+
+        if (!isset(self::$imageCache[$employeeId])) {
+            self::$imageCache[$employeeId] = file_exists($filename);
+        }
+
+        if (self::$imageCache[$employeeId]) {
+            $employee->setImageProfilePath($filename);
+        } else {
+            $employee->setImageProfilePath('../images/profile.jpg');
+        }
 
         return $employee;
     }
