@@ -23,8 +23,12 @@ class BusinessClientController{
             
             $businessClient = $this->setFields($post, $businessClient);
 
-            $result = $this->businessClientRepository->findByNameAndClient($businessClient->getName(), $businessClient->getClientId());
-            if($result->result->num_rows > 0) return new ErrorHandler('Já existe um registro com esse Nome e cliente', true, '');
+            $excludeId = ($action == 'save') ? null : $businessClient->getId();
+            $result = $this->businessClientRepository->findByNameAndClient($businessClient->getName(), $businessClient->getClientId(), $excludeId);
+
+            if($result->hasError) return new ErrorHandler('Erro ao verificar se o cadastro já existe na base', true, ' - '. $result->errorMessage);
+
+            if($result->result->num_rows > 0) return new ErrorHandler('O cadastro <strong>'.htmlspecialchars($businessClient->getName()).'</strong> já existe.', true, '');
 
             if($action == 'save') return $this->businessClientRepository->save($businessClient);  
             else return $this->businessClientRepository->update($businessClient); 

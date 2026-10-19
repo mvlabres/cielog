@@ -36,10 +36,11 @@ class BusinessClientRepository{
         }
     }
 
-    public function findByNameAndClient($name, $clientId){
+    public function findByNameAndClient($name, $clientId, $excludeId = null){
 
         try{
-            $sql = $this->standardQuery . ' WHERE business_client.Name = "'.$name.'" AND business_client.client_id = '.$clientId;
+            $sql = $this->standardQuery . ' WHERE business_client.Name = "'.$this->mySql->real_escape_string($name).'" AND business_client.client_id = '.(int)$clientId;
+            if(!empty($excludeId)) $sql .= ' AND business_client.id <> '.(int)$excludeId;
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){

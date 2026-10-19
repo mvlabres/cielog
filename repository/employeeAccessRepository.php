@@ -111,6 +111,61 @@ class EmployeeAccessRepository{
         }
     }
 
+    // ===== PAGINATED METHODS (with optional text search) =====
+
+    private function buildFilterClause($startDate, $endDate, $businessId, $closedOnly, $search){
+        $startDate = $this->mySql->real_escape_string($startDate);
+        $endDate = $this->mySql->real_escape_string($endDate);
+
+        $clause = ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"';
+
+        if(!is_null($businessId) && $businessId != 'all') $clause .= ' AND cl.id = '.(int)$businessId;
+        if($closedOnly) $clause .= ' AND end_datetime NOT LIKE "0000%"';
+
+        if(!empty($search)){
+            $term = $this->mySql->real_escape_string(trim($search));
+            $clause .= " AND (em.name LIKE '%$term%'
+                          OR em.cpf LIKE '%$term%'
+                          OR em.registration LIKE '%$term%'
+                          OR em_a.vehicle_plate LIKE '%$term%'
+                          OR em_a.vehicle LIKE '%$term%'
+                          OR cl.name LIKE '%$term%')";
+        }
+
+        return $clause;
+    }
+
+    public function findPaginated($startDate, $endDate, $businessId = null, $closedOnly = false, $search = '', $page = 1, $limit = 50){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $sql = $this->standardQuery . $this->buildFilterClause($startDate, $endDate, $businessId, $closedOnly, $search) . ' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countFiltered($startDate, $endDate, $businessId = null, $closedOnly = false, $search = ''){
+        try{
+            $sql = 'SELECT COUNT(*) as total FROM employee_access AS em_a
+                    INNER JOIN employee AS em ON em.id = em_a.employee_id
+                    INNER JOIN client AS cl ON cl.id = em.business_id'
+                    . $this->buildFilterClause($startDate, $endDate, $businessId, $closedOnly, $search);
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
     public function save($employeeAccess){
 
         try {
