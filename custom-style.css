@@ -280,11 +280,52 @@ html, body {
     max-width: 150px !important;
 }
 
+/* HEADERS - sem restrições de largura */
+thead .td-30,
+thead .td-40,
+thead .td-50,
+thead .td-70,
+thead .td-80,
+thead .td-100,
+thead .td-120,
+thead .td-150 {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+}
+
 td{
     white-space: nowrap !important;
     max-width: 150px !important;
-    overflow: hidden !important; 
+    overflow: hidden !important;
     text-overflow: ellipsis !important;
+}
+
+/* Headers - sem limite de largura, sem cortagem */
+thead > tr > td,
+thead > tr > th {
+    white-space: nowrap !important;
+    max-width: none !important;
+    min-width: auto !important;
+    width: auto !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    padding: 8px 15px !important;
+}
+
+/* Remover width dos headers - sobrescrever classes .td-* */
+thead .td-30,
+thead .td-40,
+thead .td-50,
+thead .td-70,
+thead .td-80,
+thead .td-100,
+thead .td-120,
+thead .td-150 {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
 }
 
 .box-scroll{

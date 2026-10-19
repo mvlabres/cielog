@@ -85,6 +85,32 @@ class DriverController{
         return new ErrorHandler($data, false, null);
     }
 
+    public function findPaginated($page = 1, $limit = 50, $search = '', $orderBy = 'name'){
+
+        try {
+            $result = $this->driverRepository->findPaginated($page, $limit, $search, $orderBy);
+
+            if($result->hasError) return $result;
+
+            $data = $this->loadData($result->result['data'], false);
+
+            $total = $this->driverRepository->countDrivers($search);
+
+            return new ErrorHandler([
+                'data' => $data,
+                'total' => $total,
+                'page' => max(1, (int)$page),
+                'limit' => max(1, min((int)$limit, 100)),
+                'pages' => ceil($total / (int)$limit),
+                'search' => $search,
+                'orderBy' => $orderBy
+            ], false, null);
+
+        } catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar motoristas - ', true, $ex->getMessage());
+        }
+    }
+
     public function findAllToSearch(){
 
         $result = $this->driverRepository->findAllToSearch();

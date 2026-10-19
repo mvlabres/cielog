@@ -34,6 +34,62 @@ class driverRepository{
         }
     }
 
+    public function findPaginated($page = 1, $limit = 50, $search = '', $orderBy = 'name'){
+
+        try {
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $whereClause = '';
+            if(!empty($search)){
+                $searchTerm = $this->mySql->real_escape_string(trim($search));
+                $whereClause = " WHERE (name LIKE '%$searchTerm%'
+                                OR cpf LIKE '%$searchTerm%'
+                                OR phone LIKE '%$searchTerm%'
+                                OR shipping_company LIKE '%$searchTerm%')";
+            }
+
+            $validOrderBy = ['name', 'cpf', 'phone', 'status', 'created_date'];
+            $orderBy = in_array($orderBy, $validOrderBy) ? $orderBy : 'name';
+
+            $sql = $this->standardQuery . $whereClause .
+                   " ORDER BY $orderBy LIMIT $offset, $limit";
+
+            $result = $this->mySql->query($sql);
+
+            return new ErrorHandler([
+                'data' => $result,
+                'query' => $sql
+            ], false, null);
+
+        } catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar motoristas - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countDrivers($search = ''){
+
+        try {
+            $whereClause = '';
+            if(!empty($search)){
+                $searchTerm = $this->mySql->real_escape_string(trim($search));
+                $whereClause = " WHERE (name LIKE '%$searchTerm%'
+                                OR cpf LIKE '%$searchTerm%'
+                                OR phone LIKE '%$searchTerm%'
+                                OR shipping_company LIKE '%$searchTerm%')";
+            }
+
+            $sql = "SELECT COUNT(*) as total FROM driver" . $whereClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+
+        } catch(Exception $ex){
+            return 0;
+        }
+    }
+
     public function findById($id){
 
         try{
