@@ -169,7 +169,8 @@ class EmployeeController{
         $employee->setVehicle($post['vehicle']);
         $employee->setVehiclePlate(mb_strtoupper($post['vehiclePlate']));
         $employee->setBusinessId($post['business']);
-        
+        $employee->setStatus($post['status']);
+
         return $employee;
     }
 
@@ -177,7 +178,7 @@ class EmployeeController{
 
         $employees = array();
 
-        while ($data = $records->fetch_assoc()){ 
+        while ($data = $records->fetch_assoc()){
             $employee = new Employee();
             $employee->setId($data['id']);
             $employee->setName($data['name']);
@@ -187,13 +188,14 @@ class EmployeeController{
             $employee->setVehiclePlate($data['vehicle_plate']);
             $employee->setBusinessId($data['business_id']);
             $employee->setBusinessName($data['business_name']);
+            $employee->setStatus($data['status']);
             $employee->setCreatedDate(date("d/m/Y", strtotime($data['created_date'])));
             $employee->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
             $employee->setCreatedBy( $data['created_by']);
             $employee->setModifiedBy($data['modified_by']);
 
             if($withFile) $employee = $this->setImagePath($employee);
-            
+
             array_push($employees, $employee);
         }
 

@@ -23,7 +23,7 @@ if($_GET['list-type'] && $_GET['list-type'] != null){
         $listType = null;
     }
 }
-echo '<p class="text-muted">Tempo de carregamento até  ponto A: ' . round((microtime(true) - $loadStartTime) * 1000) . ' ms</p>';
+
 
 if(isset($_POST['action']) && $_POST['action'] == 'driver-delete'){
     $driverAccessId = $_POST['driverAccessId'];
@@ -32,7 +32,6 @@ if(isset($_POST['action']) && $_POST['action'] == 'driver-delete'){
     if($result->hasError) errorAlert($result->result.$result->errorMessage);
     else successAlert($result->result);
 }
-echo '<p class="text-muted">Tempo de carregamento até  ponto B: ' . round((microtime(true) - $loadStartTime) * 1000) . ' ms</p>';
 
 if(isset($_POST['action']) && $_POST['action'] == 'employee-delete'){
     $employeeAccessId = $_POST['employeeAccessId'];
@@ -42,16 +41,13 @@ if(isset($_POST['action']) && $_POST['action'] == 'employee-delete'){
     else successAlert($result->result);
 }
 
-echo '<p class="text-muted">Tempo de carregamento até  ponto C: ' . round((microtime(true) - $loadStartTime) * 1000) . ' ms</p>';
 
 $driversAccessResult = $driverAccessController->findByNullEndDate();
 if($driversAccessResult->hasError) errorAlert($driversAccessResult->result.$driversAccessResult->errorMessage);
-echo '<p class="text-muted">Tempo de carregamento até  ponto E: ' . round((microtime(true) - $loadStartTime) * 1000) . ' ms</p>';
 
 $employeesAccessResult = $employeeAccessController->findByNullEndDate();
 if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$employeesAccessResult->errorMessage);
 
-echo '<p class="text-muted">Tempo de carregamento até  ponto F: ' . round((microtime(true) - $loadStartTime) * 1000) . ' ms</p>';
 
 $hiddenComponents = '';
 $componentsClass = 'row quick-action-toogle-margin';

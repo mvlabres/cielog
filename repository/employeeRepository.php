@@ -5,7 +5,7 @@ include_once('../model/errorHandler.php');
 class EmployeeRepository{
 
     private $mySql;
-    private $standardQuery = 'SELECT employee.id,employee.name,registration,cpf,vehicle,vehicle_plate,employee.created_date,employee.modified_date,employee.created_by,employee.modified_by,business_id,client.name AS business_name
+    private $standardQuery = 'SELECT employee.id,employee.name,registration,cpf,vehicle,vehicle_plate,employee.status,employee.created_date,employee.modified_date,employee.created_by,employee.modified_by,business_id,client.name AS business_name
                               FROM employee
                               LEFT JOIN client ON business_id = client.id ';
 
@@ -140,16 +140,17 @@ class EmployeeRepository{
     public function save($employee){
 
         try {
-            $sql = 'INSERT INTO employee (name,registration,cpf,vehicle,vehicle_plate,business_id,created_date,created_by)
+            $sql = 'INSERT INTO employee (name,registration,cpf,vehicle,vehicle_plate,business_id,status,created_date,created_by)
             VALUES(
-                "'.$employee->getName().'", 
-                "'.$employee->getRegistration().'", 
-                "'.$employee->getCpf().'", 
-                "'.$employee->getVehicle().'", 
-                "'.$employee->getVehiclePlate().'", 
+                "'.$employee->getName().'",
+                "'.$employee->getRegistration().'",
+                "'.$employee->getCpf().'",
+                "'.$employee->getVehicle().'",
+                "'.$employee->getVehiclePlate().'",
                 '.$employee->getBusinessId().',
-                "'.date("Y-m-d").'", 
-                '.$_SESSION['id'].' 
+                "'.$employee->getStatus().'",
+                "'.date("Y-m-d").'",
+                '.$_SESSION['id'].'
             )';
 
             $result = $this->mySql->query($sql);
@@ -157,21 +158,22 @@ class EmployeeRepository{
 
         } catch (Exception $ex) {
             throw $ex;
-        } 
+        }
     }
 
     public function update($employee){
 
         try {
-            $sql = 'UPDATE employee 
+            $sql = 'UPDATE employee
                     SET name = "'.$employee->getName().'",
                         registration = "'.$employee->getRegistration().'",
-                        cpf = "'.$employee->getCpf().'", 
-                        vehicle = "'.$employee->getVehicle().'", 
-                        vehicle_plate = "'.$employee->getVehiclePlate().'", 
-                        business_id = '.$employee->getBusinessId().', 
+                        cpf = "'.$employee->getCpf().'",
+                        vehicle = "'.$employee->getVehicle().'",
+                        vehicle_plate = "'.$employee->getVehiclePlate().'",
+                        business_id = '.$employee->getBusinessId().',
+                        status = "'.$employee->getStatus().'",
                         modified_by = '.$_SESSION['id'].',
-                        modified_date = "'.date("Y-m-d").'" 
+                        modified_date = "'.date("Y-m-d").'"
                          WHERE id = '.$employee->getId();
 
             $result = $this->mySql->query($sql);
@@ -179,7 +181,7 @@ class EmployeeRepository{
 
         } catch (Exception $ex) {
             return new ErrorHandler('Erro ao atualizar Colaborador! - ', true, $ex->getMessage());
-        } 
+        }
     }
 
     public function delete($id){

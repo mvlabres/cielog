@@ -14,6 +14,7 @@ $employeeAccess = new employeeAccess();
 $action = 'save';
 $disabledPlateField = 'disabled';
 $disabledEndDate = 'disabled';
+$blockDisabled = '';
 $btnLabel = 'Criar acesso';
 
 $dateNow = date("d/m/Y H:i");
@@ -21,6 +22,8 @@ $endDate = null;
 
 $viewMode = '';
 $hiddenComponents = '';
+$hasError = false;
+$recordValidationMesssage = null;
 
 $rotation = setRotation();
 
@@ -77,13 +80,18 @@ if(isset($_GET['employeeId']) && $_GET['employeeId'] != null){
     $title = 'Editar';
 
     $result = $employeeController->findById($employeeId);
-    
+
     if($result->hasError) errorAlert($result->result.$result->errorMessage);
-    
+
     $employee = $result->result;
 
     $employeeAccess->setVehicle($employee->getVehicle());
     $employeeAccess->setVehiclePlate($employee->getVehiclePlate());
+
+    if($employee->getStatus() == 'block'){
+        warningAlert('Colaborador bloqueado');
+        $blockDisabled = 'disabled';
+    }
 }
 
 $employeesResult = $employeeController->findAll();
@@ -93,6 +101,11 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header" >Acesso de colaboradores</h1>
+        <?php
+        if($hasError){
+            echo '<p class="text-danger">ATENÇÃO: '.$recordValidationMesssage.'<p>';
+        }
+        ?>
     </div>
 </div>
 <div class="row">
@@ -142,6 +155,10 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                                     <label>Empresa</label>
                                     <input class="form-control" value="<?=$employee->getBusinessName() ?>" disabled>
                                 </div>
+                                <div class="form-group">
+                                    <label>Status do cadastro</label>
+                                    <input class="form-control" value="<?=$EMPLOYEE_STATUS[$employee->getStatus()]  ?>" disabled>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-4">
@@ -160,7 +177,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                                             <div class="form-group">
                                                 <label>Data/hora entrada</label><span class="required-icon">*</span>
                                                 <div class='input-group date' id='datetimepicker1'>
-                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getStartDatetime())) ? $dateNow : $employeeAccess->getStartDatetime() ?>" name="startDate" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" <?=$viewMode ?>/>
+                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getStartDatetime())) ? $dateNow : $employeeAccess->getStartDatetime() ?>" name="startDate" onblur="dateTimeHandleBlur(this)" minlength="19" maxlength="19" <?=$blockDisabled ?> <?=$viewMode ?>/>
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
                                                 </div>
@@ -168,7 +185,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                                             <div class="form-group">
                                                 <label>Data/hora saída</label>
                                                 <div class='input-group date' id='datetimepicker1'>
-                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getEndDatetime())) ? $endDate : $employeeAccess->getEndDatetime() ?>" name="endDate" onblur="dateTimeHandleBlur(this)" onkeyup="manageEndDate(this)" minlength="19" maxlength="19" <?=$disabledEndDate ?> <?=$viewMode ?>/>
+                                                    <input type='text' data-date-format="DD/MM/YYYY HH:mm" class="form-control" value="<?=(is_null($employeeAccess->getEndDatetime())) ? $endDate : $employeeAccess->getEndDatetime() ?>" name="endDate" onblur="dateTimeHandleBlur(this)" onkeyup="manageEndDate(this)" minlength="19" maxlength="19" <?=$blockDisabled ?> <?=$disabledEndDate ?> <?=$viewMode ?>/>
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
                                                 </div>
@@ -181,7 +198,7 @@ if($employeesResult->hasError) errorAlert($employeesResult->result.$employeesRes
                     </div>
                 </div> 
                 <div class="btn-group-end" <?=$hiddenComponents ?>>
-                    <button type="submit" class="btn btn-primary" id="user-save-btn" <?=$viewMode ?>><?=$btnLabel ?></button>
+                    <button type="submit" class="btn btn-primary" id="user-save-btn" <?=$blockDisabled ?> <?=$viewMode ?>><?=$btnLabel ?></button>
                     <button type="reset" class="btn btn-danger">Cancelar</button>
                 </div>   
             </form>

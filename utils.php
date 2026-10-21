@@ -54,6 +54,7 @@
 
   $DRIVER_RECORD_TYPES = ['driver'=> 'Motorista', 'guest'=> 'Visitante', 'other'=> 'Outros'];
   $DRIVER_STATUS = ['active'=> 'Ativo', 'block'=> 'Bloqueado'];
+  $EMPLOYEE_STATUS = ['active'=> 'Ativo', 'block'=> 'Bloqueado'];
 
   $OPERATION_TYPES = ['carga', 'descarga', 'outros'];
 ?>

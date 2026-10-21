@@ -120,6 +120,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                 <th scope="column" class="td-70" style="white-space: nowrap;">Empresa</th>
                                 <th scope="column" class="td-70" style="white-space: nowrap;">Veículo</th>
                                 <th scope="column" class="td-70" style="white-space: nowrap;">Placa Veículo</th>
+                                <th scope="column" class="td-70" style="white-space: nowrap;">Status</th>
                                 <th scope="column" class="td-30" style="white-space: nowrap;">Excluir</th>
                             </tr>
                         </thead>
@@ -141,11 +142,12 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                         echo '<td>'.$employee->getBusinessName().'</td>';
                                         echo '<td>'.$employee->getVehicle().'</td>';
                                         echo '<td>'.$employee->getVehiclePlate().'</td>';
+                                        echo '<td>'.$EMPLOYEE_STATUS[$employee->getStatus()].'</td>';
                                         echo '<td class="text-center clickble" data-toggle="modal" data-target="#delete-modal-'.$employeeId.'" style="cursor: pointer;"><span class="fa fa-trash text-primary"></span></td>';
                                         echo '</tr>';
                                     }
                                 }else{
-                                    echo '<tr><td colspan="10" class="text-center" style="padding: 20px;">Nenhum registro encontrado</td></tr>';
+                                    echo '<tr><td colspan="11" class="text-center" style="padding: 20px;">Nenhum registro encontrado</td></tr>';
                                 }
                             }
                             ?>

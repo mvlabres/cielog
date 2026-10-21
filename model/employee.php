@@ -15,6 +15,7 @@ class Employee{
     private $createdBy;
     private $modifiedBy;
     private $imageProfilePath;
+    private $status;
     
     public function setId($id){
         $this->id = $id;
@@ -105,6 +106,13 @@ class Employee{
     }
     public function getImageProfilePath(){
         return ($this->imageProfilePath != null) ? $this->imageProfilePath : '../images/profile.jpg';
+    }
+
+    public function setStatus($status){
+        $this->status = $status;
+    }
+    public function getStatus(){
+        return $this->status;
     }
 
 }
