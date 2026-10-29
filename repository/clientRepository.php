@@ -34,10 +34,11 @@ class ClientRepository{
         }
     }
 
-    public function findByName($name){
+    public function findByName($name, $excludeId = null){
 
         try{
-            $sql = $this->standardQuery . ' WHERE name = "'.$name.'"';
+            $sql = $this->standardQuery . ' WHERE name = "'.$this->mySql->real_escape_string($name).'"';
+            if(!empty($excludeId)) $sql .= ' AND id <> '.(int)$excludeId;
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){

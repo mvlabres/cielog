@@ -6,6 +6,10 @@ html, body {
     min-width: 100%;
     overflow-x: hidden !important;
 }
+.select-form-group{
+    width: 80% !important;
+}
+
 [hidden]{
     display: none !important;
 }
@@ -280,11 +284,52 @@ html, body {
     max-width: 150px !important;
 }
 
+/* HEADERS - sem restrições de largura */
+thead .td-30,
+thead .td-40,
+thead .td-50,
+thead .td-70,
+thead .td-80,
+thead .td-100,
+thead .td-120,
+thead .td-150 {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+}
+
 td{
     white-space: nowrap !important;
     max-width: 150px !important;
-    overflow: hidden !important; 
+    overflow: hidden !important;
     text-overflow: ellipsis !important;
+}
+
+/* Headers - sem limite de largura, sem cortagem */
+thead > tr > td,
+thead > tr > th {
+    white-space: nowrap !important;
+    max-width: none !important;
+    min-width: auto !important;
+    width: auto !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    padding: 8px 15px !important;
+}
+
+/* Remover width dos headers - sobrescrever classes .td-* */
+thead .td-30,
+thead .td-40,
+thead .td-50,
+thead .td-70,
+thead .td-80,
+thead .td-100,
+thead .td-120,
+thead .td-150 {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
 }
 
 .box-scroll{
@@ -452,7 +497,7 @@ td{
 }
 
 .form-field-action > .form-group{
-    width: 85%;
+    width: 80%;
     margin-bottom: 0px !important;
 }
 
@@ -582,7 +627,8 @@ td{
 }
 
 .panel-home{
-    margin-top: 50px;
+    margin-top: 15px;
+    margin-bottom: 30px;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -656,7 +702,7 @@ td{
 }
 
 .panel-progress{
-    margin-top: 25px;
+    /* margin-top: 10px; */
     width: 98%;
 }
 
@@ -866,11 +912,11 @@ select[readonly] {
 }
 
 .quick-actions{
-    position: fixed !important;
-    width: 96% !important;
+    position: relative !important;
+    width: 100% !important;
     z-index: 99 !important;
     background-color: #fff;
-    top: 80px !important;
+    top: 20px !important;
     right: 30px;
     left: 30px;
     height: 260px !important;
@@ -886,10 +932,21 @@ select[readonly] {
 }
 
 .quick-action-toogle-margin{
-    margin-top: 310px;
+    position: relative !important;
+    margin-top: 20px !important;
+    width: 100% !important;
+    z-index: 98 !important;
+    background-color: #fff;
+    padding: 15px 30px;
 }
 
 .quick-action-toogle-top{
+    position: sticky !important;
+    top: 360px !important;
+    width: 100% !important;
+    z-index: 98 !important;
+    background-color: #fff;
+    padding: 15px 30px;
     margin-top: 20px;
 }
 
@@ -955,9 +1012,9 @@ select[readonly] {
     .quick-actions{
         height: 230px !important;
     }
-    
+
     .quick-action-toogle-margin{
-        margin-top: 240px;
+        /* top: 330px !important; */
     }
 
     .home-box-text{
@@ -971,7 +1028,7 @@ select[readonly] {
     .label-terminal-panel > div:first-child{
         font-size: 1.7rem;
     }
-    
+
     .label-big-number{
         font-size: 3rem;
     }
@@ -980,9 +1037,9 @@ select[readonly] {
         font-size: 2rem !important;
     }
 
-    .panel-progress{
+    /* .panel-progress{
         margin-top: 5% !important;
-    }
+    } */
 
     .login-container{
         height: 70%;
@@ -1000,9 +1057,9 @@ select[readonly] {
         min-height: 120px;
     }
 
-    .panel-progress{
+    /* .panel-progress{
         margin-top: 5% !important;
-    }
+    } */
 }
 
 
@@ -1016,9 +1073,9 @@ select[readonly] {
         font-size: 1.5rem !important;
     }
 
-    .panel-progress{
+    /* .panel-progress{
         margin-top: 7% !important;
-    }
+    } */
 }
 
 @media (max-width: 1280px){
@@ -1031,9 +1088,9 @@ select[readonly] {
         font-size: 1.5rem !important;
     }
 
-    .panel-progress{
+    /* .panel-progress{
         margin-top: 10% !important;
-    }
+    } */
 
     .display-2{
         font-size: 2.5rem !important;
@@ -1064,9 +1121,9 @@ select[readonly] {
         font-size: 1rem !important;
     }
 
-    .panel-progress{
+    /* .panel-progress{
         margin-top: 5% !important;
-    }
+    } */
 
     .display-2{
         font-size: 1.5rem !important;
@@ -1087,7 +1144,7 @@ select[readonly] {
     }
 
     .quick-action-toogle-margin{
-        margin-top: 30px;
+        /* top: 80px !important; */
     }
 
     .navbar {

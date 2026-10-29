@@ -79,7 +79,7 @@ class DriverAccessController{
         if(is_null($business) ||  $business == 'all') {
             if($openAccess) $result = $this->driverAccessRepository->findByStartDateAndEndDate($startDate, $endDate);
             else $result = $this->driverAccessRepository->findByStartDateAndEndDateAndClosedAccess($startDate, $endDate);
-            
+
         }
         else {
             if(is_null($businessClientId) ||  $businessClientId == 'all') {
@@ -95,6 +95,43 @@ class DriverAccessController{
 
         $data = $this->loadData($result->result);
         return new ErrorHandler($data, false, null);
+    }
+
+    public function findByStartDateEndDateAndBusinessPaginated($startDate, $endDate, $business, $businessClientId, $openAccess, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+
+        $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
+        $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
+
+        $closedSuffix = $openAccess ? '' : 'AndClosedAccess';
+
+        if(is_null($business) || $business == 'all') {
+            $findMethod = 'findByStartDateAndEndDateWithSearch'.$closedSuffix.'Paginated';
+            $countMethod = 'countByStartDateAndEndDateWithSearch'.$closedSuffix;
+            $filterArgs = [$startDate, $endDate];
+        } elseif(is_null($businessClientId) || $businessClientId == 'all') {
+            $findMethod = 'findByStartDateEndDateAndBusinessWithSearch'.$closedSuffix.'Paginated';
+            $countMethod = 'countByStartDateEndDateAndBusinessWithSearch'.$closedSuffix;
+            $filterArgs = [$startDate, $endDate, $business];
+        } else {
+            $findMethod = 'findByStartDateEndDateAndBusinessAndBusinessClientWithSearch'.$closedSuffix.'Paginated';
+            $countMethod = 'countByStartDateEndDateAndBusinessAndBusinessClientWithSearch'.$closedSuffix;
+            $filterArgs = [$startDate, $endDate, $business, $businessClientId];
+        }
+
+        $result = call_user_func_array([$this->driverAccessRepository, $findMethod], array_merge($filterArgs, [$search, $page, $limit, $sortBy, $sortDir]));
+        if($result->hasError) return $result;
+
+        $total = call_user_func_array([$this->driverAccessRepository, $countMethod], array_merge($filterArgs, [$search]));
+        $data = $this->loadData($result->result['data']);
+        $limit = max(1, min((int)$limit, 100));
+
+        return new ErrorHandler([
+            'data' => $data,
+            'total' => $total,
+            'page' => max(1, (int)$page),
+            'limit' => $limit,
+            'pages' => ceil($total / $limit)
+        ], false, null);
     }
 
     public function delete($id){
@@ -208,15 +245,14 @@ class DriverAccessController{
     
     public function removeDuplicates($arrayValues){
 
-        $temp = [];
-        $result = [];
+        $temp = array();
+        $result = array();
 
         foreach ($arrayValues as $value) {
             $key = $value->getId();
-    
-            // Verifica se o identificador já foi adicionado
-            if (!in_array($key, $temp)) {
-                array_push($temp, $key);
+
+            if (!isset($temp[$key])) {
+                $temp[$key] = true;
                 array_push($result, $value);
             }
         }

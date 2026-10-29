@@ -128,7 +128,25 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
 
                                         }
                                     }
-                                        
+
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label><span class="required-icon">*<span>
+                                <select name="status" class="form-control" <?=$viewMode ?> required>
+                                    <option value="">Selecione...</option>
+                                    <?php
+                                    foreach ($EMPLOYEE_STATUS as $key => $value) {
+                                        $selected = null;
+
+                                        if($employee->getStatus() == $key) $selected = 'selected';
+
+                                        if(is_null($employee->getStatus()) && $key == 'active') $selected = 'selected';
+                                        echo '<option value="'.$key.'" '.$selected.' >'.$value.'</option>';
+
+                                    }
+
                                     ?>
                                 </select>
                             </div>

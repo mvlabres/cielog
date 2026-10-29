@@ -637,7 +637,7 @@ const progressTimer = () => {
         time = time - 10;
          if(document.getElementById('panel-progress')){
             document.getElementById('panel-progress').value = time;
-            if(time === 0) window.location.reload();;
+            if(time === 0) window.location.href = window.location.pathname;
         }
     }, 10);
 }

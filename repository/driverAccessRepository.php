@@ -37,13 +37,13 @@ class DriverAccessRepository{
                                     us_3.name AS access_modified_name,
                                     us_1.id AS access_outbound_id,
                                     us_1.name AS access_outbound_name
-                              FROM driver_access AS dr_a 
+                              FROM driver_access AS dr_a
                               INNER JOIN driver AS dr ON dr.id = driver_id
                               INNER JOIN client AS cl ON cl.id = business_id
                               INNER JOIN user AS us_1 ON us_1.id = user_outbound_id
                               INNER JOIN user AS us_2 ON us_2.id = dr_a.created_by
-                              INNER JOIN business_client AS bc ON bc.id = dr_a.business_client_id || isnull(dr_a.business_client_id)
-                              INNER JOIN user AS us_3 ON (us_3.id = dr_a.modified_by OR ISNULL(dr_a.modified_by )) ';
+                              LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                              LEFT JOIN user AS us_3 ON us_3.id = dr_a.modified_by ';
 
     public function __construct($mySql){
         $this->mySql = $mySql;
@@ -52,7 +52,7 @@ class DriverAccessRepository{
     public function findAll(){
 
         try{
-           $sql = $this->standardQuery . ' GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
+           $sql = $this->standardQuery . ' ORDER BY start_datetime ASC';
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -63,8 +63,7 @@ class DriverAccessRepository{
     public function findByNullEndDate(){
 
         try{
-            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name order by start_datetime asc";
-            
+            $sql = $this->standardQuery . " WHERE (ISNULL(end_datetime) OR end_datetime LIKE '0000-00%') ORDER BY start_datetime ASC";
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -75,9 +74,9 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusiness($startDate, $endDate, $businessId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.'  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
-           
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' ORDER BY start_datetime ASC';
+
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -88,8 +87,8 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $businessId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%"  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC';
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -99,8 +98,8 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusinessAndBusinessClient($startDate, $endDate, $businessId, $businessClientId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.'  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' ORDER BY start_datetime ASC';
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -111,8 +110,8 @@ class DriverAccessRepository{
     public function findByStartDateEndDateAndBusinessAndBusinessClientAndClosedAccess($startDate, $endDate, $businessId, $businessClientId){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%"  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC';
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -122,7 +121,7 @@ class DriverAccessRepository{
     public function findByStartDateAndEndDateAndClosedAccess($startDate, $endDate){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" GROUP BY dr_a.id ORDER BY start_datetime ASC';
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC';
 
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
@@ -133,9 +132,9 @@ class DriverAccessRepository{
     public function findByStartDateAndEndDate($startDate, $endDate){
 
         try{
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"  GROUP BY dr_a.id,dr.name,start_datetime,end_datetime,dr.cnh,dr.cnh_expiration,dr.phone,dr.cpf,dr.shipping_company,dr_a.vehicle_type,dr_a.vehicle_plate,dr_a.vehicle_plate2,dr_a.vehicle_plate3,cl.id,cl.name,business_client_id,bc.name,inbound_invoice,outbound_invoice,operation_type,rotation,dr.status,dr.block_reason,dr_a.created_date,dr_a.modified_date,dr_a.created_by,us_2.name,dr_a.modified_by,us_3.name,us_1.id,us_1.name ORDER BY start_datetime ASC';
-            
-            
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" ORDER BY start_datetime ASC';
+
+
             return new ErrorHandler($this->mySql->query($sql), false, null);
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar acessos - ', true, $ex->getMessage());
@@ -150,6 +149,436 @@ class DriverAccessRepository{
 
         }catch(Exception $ex){
             return new ErrorHandler('Erro ao buscar acesso - ', true, $ex->getMessage());
+        }
+    }
+
+    // ===== PAGINATED METHODS =====
+
+    public function findByStartDateAndEndDatePaginated($startDate, $endDate, $page = 1, $limit = 50){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateAndEndDate($startDate, $endDate){
+        try{
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"';
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateAndEndDateAndClosedAccessPaginated($startDate, $endDate, $page = 1, $limit = 50){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateAndEndDateAndClosedAccess($startDate, $endDate){
+        try{
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%"';
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessPaginated($startDate, $endDate, $businessId, $page = 1, $limit = 50){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusiness($startDate, $endDate, $businessId){
+        try{
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessAndClosedAccessPaginated($startDate, $endDate, $businessId, $page = 1, $limit = 50){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $businessId){
+        try{
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%"';
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessAndBusinessClientPaginated($startDate, $endDate, $businessId, $businessClientId, $page = 1, $limit = 50){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusinessAndBusinessClient($startDate, $endDate, $businessId, $businessClientId){
+        try{
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessAndBusinessClientAndClosedAccessPaginated($startDate, $endDate, $businessId, $businessClientId, $page = 1, $limit = 50){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%" ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusinessAndBusinessClientAndClosedAccess($startDate, $endDate, $businessId, $businessClientId){
+        try{
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%"';
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    // ===== SEARCH METHODS WITH TEXT FILTER =====
+
+    private function buildOrderClause($sortBy, $sortDir){
+        $columns = [
+            'rotation' => 'dr_a.rotation',
+            'start' => 'dr_a.start_datetime',
+            'cpf' => 'dr.cpf',
+            'name' => 'dr.name',
+            'business' => 'cl.name',
+            'businessClient' => 'bc.name',
+            'cnh' => 'dr.cnh',
+            'cnhExpiration' => 'dr.cnh_expiration',
+            'phone' => 'dr.phone',
+            'shippingCompany' => 'dr.shipping_company',
+            'end' => 'dr_a.end_datetime',
+            'vehicleType' => 'dr_a.vehicle_type',
+            'plate' => 'dr_a.vehicle_plate',
+            'plate2' => 'dr_a.vehicle_plate2',
+            'plate3' => 'dr_a.vehicle_plate3',
+            'operation' => 'dr_a.operation_type',
+            'inboundInvoice' => 'dr_a.inbound_invoice',
+            'outboundInvoice' => 'dr_a.outbound_invoice',
+            'userIn' => 'us_2.name',
+            'userOut' => 'us_1.name',
+        ];
+
+        $column = isset($columns[$sortBy]) ? $columns[$sortBy] : 'dr_a.start_datetime';
+        $direction = (strtolower((string)$sortDir) == 'desc') ? 'DESC' : 'ASC';
+
+        return ' ORDER BY '.$column.' '.$direction.', dr_a.id '.$direction;
+    }
+
+    private function buildSearchClause($search){
+        if(empty($search)) return '';
+        $searchTerm = $this->mySql->real_escape_string(trim($search));
+        return " AND (dr.name LIKE '%$searchTerm%'
+                  OR dr.cpf LIKE '%$searchTerm%'
+                  OR dr_a.vehicle_plate LIKE '%$searchTerm%'
+                  OR dr_a.vehicle_plate2 LIKE '%$searchTerm%'
+                  OR dr_a.vehicle_plate3 LIKE '%$searchTerm%'
+                  OR cl.name LIKE '%$searchTerm%'
+                  OR bc.name LIKE '%$searchTerm%')";
+    }
+
+    public function findByStartDateAndEndDateWithSearchPaginated($startDate, $endDate, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+            $searchClause = $this->buildSearchClause($search);
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateAndEndDateWithSearch($startDate, $endDate, $search = ''){
+        try{
+            $searchClause = $this->buildSearchClause($search);
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN driver AS dr ON dr.id = dr_a.driver_id
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"'.$searchClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateAndEndDateWithSearchAndClosedAccessPaginated($startDate, $endDate, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+            $searchClause = $this->buildSearchClause($search);
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateAndEndDateWithSearchAndClosedAccess($startDate, $endDate, $search = ''){
+        try{
+            $searchClause = $this->buildSearchClause($search);
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN driver AS dr ON dr.id = dr_a.driver_id
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%"'.$searchClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessWithSearchPaginated($startDate, $endDate, $businessId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+            $searchClause = $this->buildSearchClause($search);
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusinessWithSearch($startDate, $endDate, $businessId, $search = ''){
+        try{
+            $searchClause = $this->buildSearchClause($search);
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN driver AS dr ON dr.id = dr_a.driver_id
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.$searchClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessWithSearchAndClosedAccessPaginated($startDate, $endDate, $businessId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+            $searchClause = $this->buildSearchClause($search);
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusinessWithSearchAndClosedAccess($startDate, $endDate, $businessId, $search = ''){
+        try{
+            $searchClause = $this->buildSearchClause($search);
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN driver AS dr ON dr.id = dr_a.driver_id
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%"'.$searchClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessAndBusinessClientWithSearchPaginated($startDate, $endDate, $businessId, $businessClientId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+            $searchClause = $this->buildSearchClause($search);
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusinessAndBusinessClientWithSearch($startDate, $endDate, $businessId, $businessClientId, $search = ''){
+        try{
+            $searchClause = $this->buildSearchClause($search);
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN driver AS dr ON dr.id = dr_a.driver_id
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.$searchClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
+        }
+    }
+
+    public function findByStartDateEndDateAndBusinessAndBusinessClientWithSearchAndClosedAccessPaginated($startDate, $endDate, $businessId, $businessClientId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+        try{
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+            $searchClause = $this->buildSearchClause($search);
+
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
+
+            return new ErrorHandler([
+                'data' => $this->mySql->query($sql),
+                'query' => $sql
+            ], false, null);
+        }catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar acessos - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countByStartDateEndDateAndBusinessAndBusinessClientWithSearchAndClosedAccess($startDate, $endDate, $businessId, $businessClientId, $search = ''){
+        try{
+            $searchClause = $this->buildSearchClause($search);
+            $sql = 'SELECT COUNT(*) as total FROM driver_access AS dr_a
+                    INNER JOIN driver AS dr ON dr.id = dr_a.driver_id
+                    INNER JOIN client AS cl ON cl.id = dr_a.business_id
+                    LEFT JOIN business_client AS bc ON bc.id = dr_a.business_client_id
+                    WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%"'.$searchClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }catch(Exception $ex){
+            return 0;
         }
     }
 

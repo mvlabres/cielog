@@ -5,9 +5,9 @@ include_once('../model/errorHandler.php');
 class EmployeeRepository{
 
     private $mySql;
-    private $standardQuery = 'SELECT employee.id,employee.name,registration,cpf,vehicle,vehicle_plate,employee.created_date,employee.modified_date,employee.created_by,employee.modified_by,business_id,client.name AS business_name
+    private $standardQuery = 'SELECT employee.id,employee.name,registration,cpf,vehicle,vehicle_plate,employee.status,employee.created_date,employee.modified_date,employee.created_by,employee.modified_by,business_id,client.name AS business_name
                               FROM employee
-                              INNER JOIN client ON (business_id = client.id || isnull(business_id) )';
+                              LEFT JOIN client ON business_id = client.id ';
 
     public function __construct($mySql){
         $this->mySql = $mySql;
@@ -16,11 +16,80 @@ class EmployeeRepository{
     public function findAll(){
 
         try{
-            $sql = $this->standardQuery . ' GROUP BY employee.id ,employee.name ,registration ,cpf ,vehicle ,vehicle_plate ,employee.created_date ,employee.modified_date ,employee.created_by ,employee.modified_by ,business_id ,client.name ORDER BY employee.name';
+            $sql = $this->standardQuery . ' ORDER BY employee.name';
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){
             return new ErrorHandler('Error ao buscar colaboradores - ', true, $ex->getMessage());
+        }
+    }
+
+    public function findPaginated($page = 1, $limit = 50, $search = '', $businessId = null, $orderBy = 'employee.name'){
+
+        try {
+            $page = max(1, (int)$page);
+            $limit = max(1, min((int)$limit, 100));
+            $offset = ($page - 1) * $limit;
+
+            $whereClause = '';
+            if(!empty($search)){
+                $searchTerm = $this->mySql->real_escape_string(trim($search));
+                $whereClause = " WHERE (employee.name LIKE '%$searchTerm%'
+                                OR employee.cpf LIKE '%$searchTerm%'
+                                OR employee.registration LIKE '%$searchTerm%')";
+            }
+
+            if(!is_null($businessId) && $businessId != 'all'){
+                $businessId = (int)$businessId;
+                if(empty($whereClause)){
+                    $whereClause = " WHERE business_id = $businessId";
+                }else{
+                    $whereClause .= " AND business_id = $businessId";
+                }
+            }
+
+            $sql = $this->standardQuery . $whereClause .
+                   " ORDER BY $orderBy LIMIT $offset, $limit";
+
+            $result = $this->mySql->query($sql);
+
+            return new ErrorHandler([
+                'data' => $result,
+                'query' => $sql
+            ], false, null);
+
+        } catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar colaboradores - ', true, $ex->getMessage());
+        }
+    }
+
+    public function countEmployees($search = '', $businessId = null){
+
+        try {
+            $whereClause = '';
+            if(!empty($search)){
+                $searchTerm = $this->mySql->real_escape_string(trim($search));
+                $whereClause = " WHERE (employee.name LIKE '%$searchTerm%'
+                                OR employee.cpf LIKE '%$searchTerm%'
+                                OR employee.registration LIKE '%$searchTerm%')";
+            }
+
+            if(!is_null($businessId) && $businessId != 'all'){
+                $businessId = (int)$businessId;
+                if(empty($whereClause)){
+                    $whereClause = " WHERE business_id = $businessId";
+                }else{
+                    $whereClause .= " AND business_id = $businessId";
+                }
+            }
+
+            $sql = "SELECT COUNT(*) as total FROM employee" . $whereClause;
+            $result = $this->mySql->query($sql);
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+
+        } catch(Exception $ex){
+            return 0;
         }
     }
     
@@ -71,16 +140,17 @@ class EmployeeRepository{
     public function save($employee){
 
         try {
-            $sql = 'INSERT INTO employee (name,registration,cpf,vehicle,vehicle_plate,business_id,created_date,created_by)
+            $sql = 'INSERT INTO employee (name,registration,cpf,vehicle,vehicle_plate,business_id,status,created_date,created_by)
             VALUES(
-                "'.$employee->getName().'", 
-                "'.$employee->getRegistration().'", 
-                "'.$employee->getCpf().'", 
-                "'.$employee->getVehicle().'", 
-                "'.$employee->getVehiclePlate().'", 
+                "'.$employee->getName().'",
+                "'.$employee->getRegistration().'",
+                "'.$employee->getCpf().'",
+                "'.$employee->getVehicle().'",
+                "'.$employee->getVehiclePlate().'",
                 '.$employee->getBusinessId().',
-                "'.date("Y-m-d").'", 
-                '.$_SESSION['id'].' 
+                "'.$employee->getStatus().'",
+                "'.date("Y-m-d").'",
+                '.$_SESSION['id'].'
             )';
 
             $result = $this->mySql->query($sql);
@@ -88,21 +158,22 @@ class EmployeeRepository{
 
         } catch (Exception $ex) {
             throw $ex;
-        } 
+        }
     }
 
     public function update($employee){
 
         try {
-            $sql = 'UPDATE employee 
+            $sql = 'UPDATE employee
                     SET name = "'.$employee->getName().'",
                         registration = "'.$employee->getRegistration().'",
-                        cpf = "'.$employee->getCpf().'", 
-                        vehicle = "'.$employee->getVehicle().'", 
-                        vehicle_plate = "'.$employee->getVehiclePlate().'", 
-                        business_id = '.$employee->getBusinessId().', 
+                        cpf = "'.$employee->getCpf().'",
+                        vehicle = "'.$employee->getVehicle().'",
+                        vehicle_plate = "'.$employee->getVehiclePlate().'",
+                        business_id = '.$employee->getBusinessId().',
+                        status = "'.$employee->getStatus().'",
                         modified_by = '.$_SESSION['id'].',
-                        modified_date = "'.date("Y-m-d").'" 
+                        modified_date = "'.date("Y-m-d").'"
                          WHERE id = '.$employee->getId();
 
             $result = $this->mySql->query($sql);
@@ -110,7 +181,7 @@ class EmployeeRepository{
 
         } catch (Exception $ex) {
             return new ErrorHandler('Erro ao atualizar Colaborador! - ', true, $ex->getMessage());
-        } 
+        }
     }
 
     public function delete($id){

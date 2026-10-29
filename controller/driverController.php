@@ -9,6 +9,7 @@ class DriverController{
     private $driverRepository;
     private $mySql;
     public $defaultImagePath = '../image-profile/driver/id-00';
+    private static $imageCache = array();
 
     public function __construct($mySql){
 
@@ -82,6 +83,32 @@ class DriverController{
         $data = $this->loadData($result->result, false);
 
         return new ErrorHandler($data, false, null);
+    }
+
+    public function findPaginated($page = 1, $limit = 50, $search = '', $orderBy = 'name'){
+
+        try {
+            $result = $this->driverRepository->findPaginated($page, $limit, $search, $orderBy);
+
+            if($result->hasError) return $result;
+
+            $data = $this->loadData($result->result['data'], false);
+
+            $total = $this->driverRepository->countDrivers($search);
+
+            return new ErrorHandler([
+                'data' => $data,
+                'total' => $total,
+                'page' => max(1, (int)$page),
+                'limit' => max(1, min((int)$limit, 100)),
+                'pages' => ceil($total / (int)$limit),
+                'search' => $search,
+                'orderBy' => $orderBy
+            ], false, null);
+
+        } catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar motoristas - ', true, $ex->getMessage());
+        }
     }
 
     public function findAllToSearch(){
@@ -198,11 +225,19 @@ class DriverController{
     }
 
     public function setImagePath($driver){
-        
-        $filename = $this->defaultImagePath.$driver->getId().'.png';
 
-        if (file_exists($filename)) $driver->setImageProfilePath($filename);
-        else $driver->setImageProfilePath('../images/profile.jpg');
+        $filename = $this->defaultImagePath.$driver->getId().'.png';
+        $driverId = $driver->getId();
+
+        if (!isset(self::$imageCache[$driverId])) {
+            self::$imageCache[$driverId] = file_exists($filename);
+        }
+
+        if (self::$imageCache[$driverId]) {
+            $driver->setImageProfilePath($filename);
+        } else {
+            $driver->setImageProfilePath('../images/profile.jpg');
+        }
 
         return $driver;
     }

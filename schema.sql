@@ -193,3 +193,7 @@ ALTER TABLE `business_client` ADD CONSTRAINT `fk_bc_uoi` FOREIGN KEY (client_id)
 insert into user_access(user_type, function_name) values ('adm', 'register_business_client');
 insert into user_access(user_type, function_name) values ('operator', 'register_business_client');
 
+alter table employee add column status varchar(20) not null;
+update employee set status = 'active';
+
+/* alterações não aplicadas em produção*/

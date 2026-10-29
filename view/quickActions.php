@@ -1,5 +1,7 @@
 <?php
 
+$loadStartTime = microtime(true);
+
 require_once('../conn.php');
 require_once('../session.php');
 require_once('../utils.php'); 
@@ -22,6 +24,7 @@ if($_GET['list-type'] && $_GET['list-type'] != null){
     }
 }
 
+
 if(isset($_POST['action']) && $_POST['action'] == 'driver-delete'){
     $driverAccessId = $_POST['driverAccessId'];
     $result = $driverAccessController->delete($driverAccessId);
@@ -38,11 +41,13 @@ if(isset($_POST['action']) && $_POST['action'] == 'employee-delete'){
     else successAlert($result->result);
 }
 
+
 $driversAccessResult = $driverAccessController->findByNullEndDate();
 if($driversAccessResult->hasError) errorAlert($driversAccessResult->result.$driversAccessResult->errorMessage);
 
 $employeesAccessResult = $employeeAccessController->findByNullEndDate();
 if($employeesAccessResult->hasError) errorAlert($employeesAccessResult->result.$employeesAccessResult->errorMessage);
+
 
 $hiddenComponents = '';
 $componentsClass = 'row quick-action-toogle-margin';

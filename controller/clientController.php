@@ -24,11 +24,12 @@ class ClientController{
             
             $client = $this->setFields($post, $client);
 
-            $result = $this->clientRepository->findByName($client->getName());
+            $excludeId = ($action == 'save') ? null : $client->getId();
+            $result = $this->clientRepository->findByName($client->getName(), $excludeId);
 
             if($result->hasError) return new ErrorHandler('Erro ao verificar se a empresa já existe na base', true, ' - '. $result->errorMessage);
 
-            if($result->result->num_rows > 0) return new ErrorHandler('Já existe um registro com esse nome', true, '');
+            if($result->result->num_rows > 0) return new ErrorHandler('O cadastro <strong>'.htmlspecialchars($client->getName()).'</strong> já existe.', true, '');
 
             if($action == 'save'){
                 return $this->clientRepository->save($client); 

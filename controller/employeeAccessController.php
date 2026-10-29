@@ -81,13 +81,36 @@ class EmployeeAccessController{
         }
         else {
             if($openAccess) $result = $this->employeeAccessRepository->findByStartDateEndDateAndBusiness($startDate, $endDate, $business);
-            else $result = $this->employeeAccessRepository->findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $business);  
+            else $result = $this->employeeAccessRepository->findByStartDateEndDateAndBusinessAndClosedAccess($startDate, $endDate, $business);
         }
 
         if($result->hasError) return $result;
 
         $data = $this->loadData($result->result);
         return new ErrorHandler($data, false, null);
+    }
+
+    public function findByStartDateEndDateAndBusinessPaginated($startDate, $endDate, $business, $openAccess, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
+
+        $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
+        $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
+
+        $closedOnly = !$openAccess;
+
+        $result = $this->employeeAccessRepository->findPaginated($startDate, $endDate, $business, $closedOnly, $search, $page, $limit, $sortBy, $sortDir);
+        if($result->hasError) return $result;
+
+        $total = $this->employeeAccessRepository->countFiltered($startDate, $endDate, $business, $closedOnly, $search);
+        $data = $this->loadData($result->result['data']);
+        $limit = max(1, min((int)$limit, 100));
+
+        return new ErrorHandler([
+            'data' => $data,
+            'total' => $total,
+            'page' => max(1, (int)$page),
+            'limit' => $limit,
+            'pages' => ceil($total / $limit)
+        ], false, null);
     }
 
     public function delete($id){
@@ -168,15 +191,14 @@ class EmployeeAccessController{
     
      public function removeDuplicates($arrayValues){
 
-        $temp = [];
-        $result = [];
+        $temp = array();
+        $result = array();
 
         foreach ($arrayValues as $value) {
             $key = $value->getId();
-    
-            // Verifica se o identificador já foi adicionado
-            if (!in_array($key, $temp)) {
-                array_push($temp, $key);
+
+            if (!isset($temp[$key])) {
+                $temp[$key] = true;
                 array_push($result, $value);
             }
         }

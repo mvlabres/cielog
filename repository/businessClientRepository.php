@@ -28,7 +28,7 @@ class BusinessClientRepository{
     public function findById($id){
 
         try{
-            $sql = $this->standardQuery . 'WHERE business_client.id = '.$id;
+            $sql = $this->standardQuery . ' WHERE business_client.id = '.(int)$id;
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){
@@ -36,10 +36,11 @@ class BusinessClientRepository{
         }
     }
 
-    public function findByNameAndClient($name, $clientId){
+    public function findByNameAndClient($name, $clientId, $excludeId = null){
 
         try{
-            $sql = $this->standardQuery . ' WHERE business_client.Name = "'.$name.'" AND business_client.client_id = '.$clientId;
+            $sql = $this->standardQuery . ' WHERE business_client.Name = "'.$this->mySql->real_escape_string($name).'" AND business_client.client_id = '.(int)$clientId;
+            if(!empty($excludeId)) $sql .= ' AND business_client.id <> '.(int)$excludeId;
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){
@@ -82,6 +83,7 @@ class BusinessClientRepository{
         try {
             $sql = 'UPDATE business_client 
                     SET name = "'.$businessClient->getName().'",
+                        client_id = '.(int)$businessClient->getClientId().',
                         modified_by = '.$_SESSION['id'].',
                         modified_date = "'.date("Y-m-d").'" 
                         WHERE id = '.$businessClient->getId();

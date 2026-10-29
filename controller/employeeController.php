@@ -10,6 +10,7 @@ class EmployeeController{
     private $employeeRepository;
     private $mySql;
     public $defaultImagePath = '../image-profile/employee/id-00';
+    private static $imageCache = array();
 
     public function __construct($mySql){
 
@@ -86,6 +87,33 @@ class EmployeeController{
         return new ErrorHandler($data, false, null);
     }
 
+    public function findPaginated($page = 1, $limit = 50, $search = '', $businessId = null, $orderBy = 'employee.name'){
+
+        try {
+            $result = $this->employeeRepository->findPaginated($page, $limit, $search, $businessId, $orderBy);
+
+            if($result->hasError) return $result;
+
+            $data = $this->loadData($result->result['data'], false);
+
+            $total = $this->employeeRepository->countEmployees($search, $businessId);
+
+            return new ErrorHandler([
+                'data' => $data,
+                'total' => $total,
+                'page' => max(1, (int)$page),
+                'limit' => max(1, min((int)$limit, 100)),
+                'pages' => ceil($total / (int)$limit),
+                'search' => $search,
+                'businessId' => $businessId,
+                'orderBy' => $orderBy
+            ], false, null);
+
+        } catch(Exception $ex){
+            return new ErrorHandler('Erro ao buscar colaboradores - ', true, $ex->getMessage());
+        }
+    }
+
     public function findAllToSearch(){
 
         $result = $this->employeeRepository->findAllToSearch();
@@ -141,7 +169,8 @@ class EmployeeController{
         $employee->setVehicle($post['vehicle']);
         $employee->setVehiclePlate(mb_strtoupper($post['vehiclePlate']));
         $employee->setBusinessId($post['business']);
-        
+        $employee->setStatus($post['status']);
+
         return $employee;
     }
 
@@ -149,7 +178,7 @@ class EmployeeController{
 
         $employees = array();
 
-        while ($data = $records->fetch_assoc()){ 
+        while ($data = $records->fetch_assoc()){
             $employee = new Employee();
             $employee->setId($data['id']);
             $employee->setName($data['name']);
@@ -159,13 +188,14 @@ class EmployeeController{
             $employee->setVehiclePlate($data['vehicle_plate']);
             $employee->setBusinessId($data['business_id']);
             $employee->setBusinessName($data['business_name']);
+            $employee->setStatus($data['status']);
             $employee->setCreatedDate(date("d/m/Y", strtotime($data['created_date'])));
             $employee->setModifiedDate(date("d/m/Y", strtotime($data['modified_date'])));
             $employee->setCreatedBy( $data['created_by']);
             $employee->setModifiedBy($data['modified_by']);
 
             if($withFile) $employee = $this->setImagePath($employee);
-            
+
             array_push($employees, $employee);
         }
 
@@ -191,11 +221,19 @@ class EmployeeController{
 
     
     public function setImagePath($employee){
-        
-        $filename = $this->defaultImagePath.$employee->getId().'.png';
 
-        if (file_exists($filename)) $employee->setImageProfilePath($filename);
-        else $employee->setImageProfilePath('../images/profile.jpg');
+        $filename = $this->defaultImagePath.$employee->getId().'.png';
+        $employeeId = $employee->getId();
+
+        if (!isset(self::$imageCache[$employeeId])) {
+            self::$imageCache[$employeeId] = file_exists($filename);
+        }
+
+        if (self::$imageCache[$employeeId]) {
+            $employee->setImageProfilePath($filename);
+        } else {
+            $employee->setImageProfilePath('../images/profile.jpg');
+        }
 
         return $employee;
     }
