@@ -336,6 +336,36 @@ class DriverAccessRepository{
 
     // ===== SEARCH METHODS WITH TEXT FILTER =====
 
+    private function buildOrderClause($sortBy, $sortDir){
+        $columns = [
+            'rotation' => 'dr_a.rotation',
+            'start' => 'dr_a.start_datetime',
+            'cpf' => 'dr.cpf',
+            'name' => 'dr.name',
+            'business' => 'cl.name',
+            'businessClient' => 'bc.name',
+            'cnh' => 'dr.cnh',
+            'cnhExpiration' => 'dr.cnh_expiration',
+            'phone' => 'dr.phone',
+            'shippingCompany' => 'dr.shipping_company',
+            'end' => 'dr_a.end_datetime',
+            'vehicleType' => 'dr_a.vehicle_type',
+            'plate' => 'dr_a.vehicle_plate',
+            'plate2' => 'dr_a.vehicle_plate2',
+            'plate3' => 'dr_a.vehicle_plate3',
+            'operation' => 'dr_a.operation_type',
+            'inboundInvoice' => 'dr_a.inbound_invoice',
+            'outboundInvoice' => 'dr_a.outbound_invoice',
+            'userIn' => 'us_2.name',
+            'userOut' => 'us_1.name',
+        ];
+
+        $column = isset($columns[$sortBy]) ? $columns[$sortBy] : 'dr_a.start_datetime';
+        $direction = (strtolower((string)$sortDir) == 'desc') ? 'DESC' : 'ASC';
+
+        return ' ORDER BY '.$column.' '.$direction.', dr_a.id '.$direction;
+    }
+
     private function buildSearchClause($search){
         if(empty($search)) return '';
         $searchTerm = $this->mySql->real_escape_string(trim($search));
@@ -348,14 +378,14 @@ class DriverAccessRepository{
                   OR bc.name LIKE '%$searchTerm%')";
     }
 
-    public function findByStartDateAndEndDateWithSearchPaginated($startDate, $endDate, $search = '', $page = 1, $limit = 50){
+    public function findByStartDateAndEndDateWithSearchPaginated($startDate, $endDate, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
         try{
             $page = max(1, (int)$page);
             $limit = max(1, min((int)$limit, 100));
             $offset = ($page - 1) * $limit;
             $searchClause = $this->buildSearchClause($search);
 
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"'.$searchClause.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
 
             return new ErrorHandler([
                 'data' => $this->mySql->query($sql),
@@ -382,14 +412,14 @@ class DriverAccessRepository{
         }
     }
 
-    public function findByStartDateAndEndDateWithSearchAndClosedAccessPaginated($startDate, $endDate, $search = '', $page = 1, $limit = 50){
+    public function findByStartDateAndEndDateWithSearchAndClosedAccessPaginated($startDate, $endDate, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
         try{
             $page = max(1, (int)$page);
             $limit = max(1, min((int)$limit, 100));
             $offset = ($page - 1) * $limit;
             $searchClause = $this->buildSearchClause($search);
 
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%"'.$searchClause.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND end_datetime NOT LIKE "0000%"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
 
             return new ErrorHandler([
                 'data' => $this->mySql->query($sql),
@@ -416,14 +446,14 @@ class DriverAccessRepository{
         }
     }
 
-    public function findByStartDateEndDateAndBusinessWithSearchPaginated($startDate, $endDate, $businessId, $search = '', $page = 1, $limit = 50){
+    public function findByStartDateEndDateAndBusinessWithSearchPaginated($startDate, $endDate, $businessId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
         try{
             $page = max(1, (int)$page);
             $limit = max(1, min((int)$limit, 100));
             $offset = ($page - 1) * $limit;
             $searchClause = $this->buildSearchClause($search);
 
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.$searchClause.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
 
             return new ErrorHandler([
                 'data' => $this->mySql->query($sql),
@@ -450,14 +480,14 @@ class DriverAccessRepository{
         }
     }
 
-    public function findByStartDateEndDateAndBusinessWithSearchAndClosedAccessPaginated($startDate, $endDate, $businessId, $search = '', $page = 1, $limit = 50){
+    public function findByStartDateEndDateAndBusinessWithSearchAndClosedAccessPaginated($startDate, $endDate, $businessId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
         try{
             $page = max(1, (int)$page);
             $limit = max(1, min((int)$limit, 100));
             $offset = ($page - 1) * $limit;
             $searchClause = $this->buildSearchClause($search);
 
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%"'.$searchClause.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND end_datetime NOT LIKE "0000%"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
 
             return new ErrorHandler([
                 'data' => $this->mySql->query($sql),
@@ -484,14 +514,14 @@ class DriverAccessRepository{
         }
     }
 
-    public function findByStartDateEndDateAndBusinessAndBusinessClientWithSearchPaginated($startDate, $endDate, $businessId, $businessClientId, $search = '', $page = 1, $limit = 50){
+    public function findByStartDateEndDateAndBusinessAndBusinessClientWithSearchPaginated($startDate, $endDate, $businessId, $businessClientId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
         try{
             $page = max(1, (int)$page);
             $limit = max(1, min((int)$limit, 100));
             $offset = ($page - 1) * $limit;
             $searchClause = $this->buildSearchClause($search);
 
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.$searchClause.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
 
             return new ErrorHandler([
                 'data' => $this->mySql->query($sql),
@@ -518,14 +548,14 @@ class DriverAccessRepository{
         }
     }
 
-    public function findByStartDateEndDateAndBusinessAndBusinessClientWithSearchAndClosedAccessPaginated($startDate, $endDate, $businessId, $businessClientId, $search = '', $page = 1, $limit = 50){
+    public function findByStartDateEndDateAndBusinessAndBusinessClientWithSearchAndClosedAccessPaginated($startDate, $endDate, $businessId, $businessClientId, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
         try{
             $page = max(1, (int)$page);
             $limit = max(1, min((int)$limit, 100));
             $offset = ($page - 1) * $limit;
             $searchClause = $this->buildSearchClause($search);
 
-            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%"'.$searchClause.' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+            $sql = $this->standardQuery . ' WHERE start_datetime >= "'.$startDate.'" AND start_datetime <= "'.$endDate.'" AND cl.id = '.$businessId.' AND bc.id = '.$businessClientId.' AND end_datetime NOT LIKE "0000%"'.$searchClause.$this->buildOrderClause($sortBy, $sortDir).' LIMIT '.$offset.', '.$limit;
 
             return new ErrorHandler([
                 'data' => $this->mySql->query($sql),

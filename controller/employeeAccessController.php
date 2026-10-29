@@ -90,14 +90,14 @@ class EmployeeAccessController{
         return new ErrorHandler($data, false, null);
     }
 
-    public function findByStartDateEndDateAndBusinessPaginated($startDate, $endDate, $business, $openAccess, $search = '', $page = 1, $limit = 50){
+    public function findByStartDateEndDateAndBusinessPaginated($startDate, $endDate, $business, $openAccess, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
 
         $startDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $startDate.' 00:00' )));
         $endDate = date("Y-m-d H:i", strtotime(str_replace('/', '-', $endDate.' 23:59' )));
 
         $closedOnly = !$openAccess;
 
-        $result = $this->employeeAccessRepository->findPaginated($startDate, $endDate, $business, $closedOnly, $search, $page, $limit);
+        $result = $this->employeeAccessRepository->findPaginated($startDate, $endDate, $business, $closedOnly, $search, $page, $limit, $sortBy, $sortDir);
         if($result->hasError) return $result;
 
         $total = $this->employeeAccessRepository->countFiltered($startDate, $endDate, $business, $closedOnly, $search);

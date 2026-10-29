@@ -22,7 +22,23 @@ $startDate = isset($_GET['startDate']) ? trim($_GET['startDate']) : '01/'.date("
 $endDate = isset($_GET['endDate']) ? trim($_GET['endDate']) : date("d/m/Y");
 $business = isset($_GET['business']) ? $_GET['business'] : getClientIfContains();
 $businessClient = isset($_GET['businessClient']) ? $_GET['businessClient'] : null;
+if($business === '') $business = null;
+if($businessClient === '') $businessClient = null;
 $withOpen = isset($_GET['startDate']) ? (isset($_GET['with-open']) && $_GET['with-open'] == '1') : true;
+$sortBy = isset($_GET['sortBy']) ? trim($_GET['sortBy']) : '';
+$sortDir = (isset($_GET['sortDir']) && $_GET['sortDir'] == 'desc') ? 'desc' : 'asc';
+$sortQuery = '&sortBy='.urlencode($sortBy).'&sortDir='.$sortDir;
+
+function sortableHeader($label, $key, $class, $sortBy, $sortDir, $search, $startDate, $endDate, $business, $businessClient, $withOpen){
+    $isActive = ($sortBy == $key);
+    $nextDir = ($isActive && $sortDir == 'asc') ? 'desc' : 'asc';
+    $icon = 'fa-sort text-muted';
+    if($isActive) $icon = ($sortDir == 'asc') ? 'fa-sort-asc text-primary' : 'fa-sort-desc text-primary';
+
+    $url = 'index.php?content=driverAccessList.php&page=1&search='.urlencode($search).'&startDate='.urlencode($startDate).'&endDate='.urlencode($endDate).'&business='.urlencode($business).'&businessClient='.urlencode($businessClient).'&with-open='.($withOpen ? '1' : '0').'&sortBy='.urlencode($key).'&sortDir='.$nextDir;
+
+    return '<td scope="column" class="'.$class.'" style="white-space: nowrap;"><a href="'.$url.'" class="sort-link" style="color: inherit; text-decoration: none;" title="Ordenar por '.$label.'">'.$label.' <i class="fa '.$icon.'"></i></a></td>';
+}
 
 // Ação de delete
 if(isset($_POST['action']) && $_POST['action'] == 'delete'){
@@ -31,7 +47,7 @@ if(isset($_POST['action']) && $_POST['action'] == 'delete'){
 
     if(!$result->hasError) {
         successAlert($result->result);
-        header("Location: index.php?content=driverAccessList.php&page=$page&search=".urlencode($search)."&startDate=".urlencode($startDate)."&endDate=".urlencode($endDate)."&business=".urlencode($business)."&businessClient=".urlencode($businessClient)."&with-open=".($withOpen ? '1' : '0'));
+        header("Location: index.php?content=driverAccessList.php&page=$page&search=".urlencode($search)."&startDate=".urlencode($startDate)."&endDate=".urlencode($endDate)."&business=".urlencode($business)."&businessClient=".urlencode($businessClient)."&with-open=".($withOpen ? '1' : '0').$sortQuery);
         exit;
     }else{
         errorAlert($result->result.$result->errorMessage);
@@ -39,7 +55,7 @@ if(isset($_POST['action']) && $_POST['action'] == 'delete'){
 }
 
 // Buscar dados paginados
-$driversAccessResult = $driverAccessController->findByStartDateEndDateAndBusinessPaginated($startDate, $endDate, $business, $businessClient, $withOpen, $search, $page, $limit);
+$driversAccessResult = $driverAccessController->findByStartDateEndDateAndBusinessPaginated($startDate, $endDate, $business, $businessClient, $withOpen, $search, $page, $limit, $sortBy, $sortDir);
 if($driversAccessResult->hasError) errorAlert($driversAccessResult->result.$driversAccessResult->errorMessage);
 
 $clientsResult = $clientController->findAll();
@@ -61,6 +77,8 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
             <div class="panel-body">
                 <form method="GET" id="panel-form" action="">
                     <input type="hidden" name="content" value="driverAccessList.php">
+                    <input type="hidden" name="sortBy" value="<?php echo htmlspecialchars($sortBy); ?>">
+                    <input type="hidden" name="sortDir" value="<?php echo $sortDir; ?>">
 
                     <div class="row">
                         <div class="col-md-12">
@@ -163,6 +181,7 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
     </div>
 </div>
 
+<div id="driver-access-results">
 <!-- TABELA DE DADOS -->
 <div class="row">
     <div class="col-lg-12">
@@ -178,26 +197,34 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
                                 }
                             ?>
                                 <td scope="column" class="td-30" style="white-space: nowrap;">Detalhes</td>
-                                <td scope="column" class="td-30" style="white-space: nowrap;">Turno</td>
-                                <td scope="column" class="td-40" style="white-space: nowrap;">Entrada</td>
-                                <td scope="column" class="td-40" style="white-space: nowrap;">CPF</td>
-                                <td scope="column" class="td-100" style="white-space: nowrap;">Nome</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Empresa visitada</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Empresa cliente</td>
-                                <td scope="column" class="td-30" style="white-space: nowrap;">CNH</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Vencimento CNH</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Telefone</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Transportadora</td>
-                                <td scope="column" class="td-40" style="white-space: nowrap;">Saída</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Tipo veículo</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Placa veículo</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Segunda placa</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Terceira placa</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Operação</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">NF entrada</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">NF saída</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Usuário (entrada)</td>
-                                <td scope="column" class="td-70" style="white-space: nowrap;">Usuário (saída)</td>
+                            <?php
+                                $sortableColumns = [
+                                    ['Turno', 'rotation', 'td-30'],
+                                    ['Entrada', 'start', 'td-40'],
+                                    ['CPF', 'cpf', 'td-40'],
+                                    ['Nome', 'name', 'td-100'],
+                                    ['Empresa visitada', 'business', 'td-70'],
+                                    ['Empresa cliente', 'businessClient', 'td-70'],
+                                    ['CNH', 'cnh', 'td-30'],
+                                    ['Vencimento CNH', 'cnhExpiration', 'td-70'],
+                                    ['Telefone', 'phone', 'td-70'],
+                                    ['Transportadora', 'shippingCompany', 'td-70'],
+                                    ['Saída', 'end', 'td-40'],
+                                    ['Tipo veículo', 'vehicleType', 'td-70'],
+                                    ['Placa veículo', 'plate', 'td-70'],
+                                    ['Segunda placa', 'plate2', 'td-70'],
+                                    ['Terceira placa', 'plate3', 'td-70'],
+                                    ['Operação', 'operation', 'td-70'],
+                                    ['NF entrada', 'inboundInvoice', 'td-70'],
+                                    ['NF saída', 'outboundInvoice', 'td-70'],
+                                    ['Usuário (entrada)', 'userIn', 'td-70'],
+                                    ['Usuário (saída)', 'userOut', 'td-70'],
+                                ];
+
+                                foreach($sortableColumns as $column){
+                                    echo sortableHeader($column[0], $column[1], $column[2], $sortBy, $sortDir, $search, $startDate, $endDate, $business, $businessClient, $withOpen);
+                                }
+                            ?>
                                 <?php
                                     if($_SESSION['FUNCTION_ACCESS']['delete_access'] != 'hidden'){
                                         echo '<td scope="column" class="td-40" style="white-space: nowrap;">Excluir</td>';
@@ -283,7 +310,7 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
                         <!-- Primeira página -->
                         <?php if($current_page > 1): ?>
                             <li>
-                                <a href="index.php?content=driverAccessList.php&page=1&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?>">
+                                <a href="index.php?content=driverAccessList.php&page=1&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?><?php echo $sortQuery; ?>">
                                     <span aria-hidden="true">&laquo;</span> Primeira
                                 </a>
                             </li>
@@ -292,7 +319,7 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
                         <!-- Anterior -->
                         <?php if($current_page > 1): ?>
                             <li>
-                                <a href="index.php?content=driverAccessList.php&page=<?php echo $current_page-1; ?>&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?>">
+                                <a href="index.php?content=driverAccessList.php&page=<?php echo $current_page-1; ?>&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?><?php echo $sortQuery; ?>">
                                     <span aria-hidden="true">&lsaquo;</span> Anterior
                                 </a>
                             </li>
@@ -304,7 +331,7 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
                         $end = min($total_pages, $current_page + 2);
 
                         if($start > 1){
-                            echo '<li><a href="index.php?content=driverAccessList.php&page=1&search='.urlencode($search).'&startDate='.urlencode($startDate).'&endDate='.urlencode($endDate).'&business='.urlencode($business).'&businessClient='.urlencode($businessClient).'&with-open='.($withOpen ? '1' : '0').'">1</a></li>';
+                            echo '<li><a href="index.php?content=driverAccessList.php&page=1&search='.urlencode($search).'&startDate='.urlencode($startDate).'&endDate='.urlencode($endDate).'&business='.urlencode($business).'&businessClient='.urlencode($businessClient).'&with-open='.($withOpen ? '1' : '0').$sortQuery.'">1</a></li>';
                             if($start > 2) echo '<li class="disabled"><span>...</span></li>';
                         }
 
@@ -312,20 +339,20 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
                             if($i == $current_page){
                                 echo '<li class="active"><span>'.$i.'</span></li>';
                             }else{
-                                echo '<li><a href="index.php?content=driverAccessList.php&page='.$i.'&search='.urlencode($search).'&startDate='.urlencode($startDate).'&endDate='.urlencode($endDate).'&business='.urlencode($business).'&businessClient='.urlencode($businessClient).'&with-open='.($withOpen ? '1' : '0').'">'.$i.'</a></li>';
+                                echo '<li><a href="index.php?content=driverAccessList.php&page='.$i.'&search='.urlencode($search).'&startDate='.urlencode($startDate).'&endDate='.urlencode($endDate).'&business='.urlencode($business).'&businessClient='.urlencode($businessClient).'&with-open='.($withOpen ? '1' : '0').$sortQuery.'">'.$i.'</a></li>';
                             }
                         }
 
                         if($end < $total_pages){
                             if($end < $total_pages - 1) echo '<li class="disabled"><span>...</span></li>';
-                            echo '<li><a href="index.php?content=driverAccessList.php&page='.$total_pages.'&search='.urlencode($search).'&startDate='.urlencode($startDate).'&endDate='.urlencode($endDate).'&business='.urlencode($business).'&businessClient='.urlencode($businessClient).'&with-open='.($withOpen ? '1' : '0').'">'.$total_pages.'</a></li>';
+                            echo '<li><a href="index.php?content=driverAccessList.php&page='.$total_pages.'&search='.urlencode($search).'&startDate='.urlencode($startDate).'&endDate='.urlencode($endDate).'&business='.urlencode($business).'&businessClient='.urlencode($businessClient).'&with-open='.($withOpen ? '1' : '0').$sortQuery.'">'.$total_pages.'</a></li>';
                         }
                         ?>
 
                         <!-- Próxima -->
                         <?php if($current_page < $total_pages): ?>
                             <li>
-                                <a href="index.php?content=driverAccessList.php&page=<?php echo $current_page+1; ?>&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?>">
+                                <a href="index.php?content=driverAccessList.php&page=<?php echo $current_page+1; ?>&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?><?php echo $sortQuery; ?>">
                                     Próxima <span aria-hidden="true">&rsaquo;</span>
                                 </a>
                             </li>
@@ -334,7 +361,7 @@ $withOpenExport = ($withOpen) ? 'true': 'false';
                         <!-- Última página -->
                         <?php if($current_page < $total_pages): ?>
                             <li>
-                                <a href="index.php?content=driverAccessList.php&page=<?php echo $total_pages; ?>&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?>">
+                                <a href="index.php?content=driverAccessList.php&page=<?php echo $total_pages; ?>&search=<?php echo urlencode($search); ?>&startDate=<?php echo urlencode($startDate); ?>&endDate=<?php echo urlencode($endDate); ?>&business=<?php echo urlencode($business); ?>&businessClient=<?php echo urlencode($businessClient); ?>&with-open=<?php echo ($withOpen ? '1' : '0'); ?><?php echo $sortQuery; ?>">
                                     Última <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
@@ -378,3 +405,54 @@ if(!$driversAccessResult->hasError && isset($driversAccessResult->result['data']
     }
 }
 ?>
+
+</div>
+
+<script>
+(function () {
+    const container = document.getElementById('driver-access-results');
+    let requestId = 0;
+
+    const sortBy = document.querySelector('#panel-form input[name="sortBy"]');
+    const sortDir = document.querySelector('#panel-form input[name="sortDir"]');
+
+    container.addEventListener('click', async (event) => {
+        const link = event.target.closest('a.sort-link');
+        if (!link) return;
+
+        event.preventDefault();
+
+        const url = link.href;
+        const currentRequest = ++requestId;
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+
+        try {
+            const response = await fetch(url, { credentials: 'same-origin' });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+
+            const html = await response.text();
+            const newContainer = new DOMParser().parseFromString(html, 'text/html').getElementById('driver-access-results');
+            if (!newContainer) throw new Error('Container not found');
+
+            if (currentRequest !== requestId) return;
+
+            container.innerHTML = newContainer.innerHTML;
+
+            const params = new URL(url).searchParams;
+            if (sortBy) sortBy.value = params.get('sortBy') || '';
+            if (sortDir) sortDir.value = params.get('sortDir') || 'asc';
+
+            history.replaceState(null, '', url);
+        } catch (error) {
+            window.location.href = url;
+            return;
+        } finally {
+            if (currentRequest === requestId) {
+                container.style.opacity = '';
+                container.style.pointerEvents = '';
+            }
+        }
+    });
+})();
+</script>

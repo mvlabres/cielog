@@ -86,7 +86,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                         <label>Nome cliente</label>
                         <input style="text-transform: uppercase" class="form-control" name="name" id="name" placeholder="Nome" maxlength="50" value="<?=$businessClient->getName() ?>" <?=$viewMode ?> required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group select-form-group">
                         <label>Empresa</label>
                         <select name="business" id="business" class="form-control" <?=$viewMode ?> required>
                             <option value="">Selecione...</option>
@@ -135,7 +135,7 @@ if($clientsResult->hasError) errorAlert($clientsResult->result.$clientsResult->e
                                         echo '<td>'.$businessClientValue->getName().'</td>';
                                         echo '<td>'.$businessClientValue->getClientName().'</td>';
                                         echo '<td>'.$businessClientValue->getCreatedBy().'</td>';
-                                        echo '<td class="text-center clickble"><a href="index.php?content=newBusinessClient.php&businessClientId=3"><span class="fa fa-edit text-primary"></span></a></td>';
+                                        echo '<td class="text-center clickble"><a href="index.php?content=newBusinessClient.php&businessClientId='.$businessClientValue->getId().'"><span class="fa fa-edit text-primary"></span></a></td>';
                                         echo '<td class="text-center clickble" data-toggle="modal" data-target="#'.$businessClientValue->getId().'"><span class="fa fa-trash text-primary"></span></td>';
                                         echo '</tr>';
                                         echo '<div class="modal fade" id="'.$businessClientValue->getId().'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

@@ -6,6 +6,10 @@ html, body {
     min-width: 100%;
     overflow-x: hidden !important;
 }
+.select-form-group{
+    width: 80% !important;
+}
+
 [hidden]{
     display: none !important;
 }
@@ -493,7 +497,7 @@ thead .td-150 {
 }
 
 .form-field-action > .form-group{
-    width: 85%;
+    width: 80%;
     margin-bottom: 0px !important;
 }
 

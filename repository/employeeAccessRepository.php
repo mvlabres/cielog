@@ -135,13 +135,34 @@ class EmployeeAccessRepository{
         return $clause;
     }
 
-    public function findPaginated($startDate, $endDate, $businessId = null, $closedOnly = false, $search = '', $page = 1, $limit = 50){
+    private function buildOrderClause($sortBy, $sortDir){
+        $columns = [
+            'rotation' => 'em_a.rotation',
+            'start' => 'em_a.start_datetime',
+            'cpf' => 'em.cpf',
+            'name' => 'em.name',
+            'business' => 'cl.name',
+            'registration' => 'em.registration',
+            'end' => 'em_a.end_datetime',
+            'vehicle' => 'em.vehicle',
+            'plate' => 'em.vehicle_plate',
+            'userIn' => 'us_2.name',
+            'userOut' => 'us_1.name',
+        ];
+
+        $column = isset($columns[$sortBy]) ? $columns[$sortBy] : 'em_a.start_datetime';
+        $direction = (strtolower((string)$sortDir) == 'desc') ? 'DESC' : 'ASC';
+
+        return ' ORDER BY '.$column.' '.$direction.', em_a.id '.$direction;
+    }
+
+    public function findPaginated($startDate, $endDate, $businessId = null, $closedOnly = false, $search = '', $page = 1, $limit = 50, $sortBy = null, $sortDir = 'asc'){
         try{
             $page = max(1, (int)$page);
             $limit = max(1, min((int)$limit, 100));
             $offset = ($page - 1) * $limit;
 
-            $sql = $this->standardQuery . $this->buildFilterClause($startDate, $endDate, $businessId, $closedOnly, $search) . ' ORDER BY start_datetime ASC LIMIT '.$offset.', '.$limit;
+            $sql = $this->standardQuery . $this->buildFilterClause($startDate, $endDate, $businessId, $closedOnly, $search) . $this->buildOrderClause($sortBy, $sortDir) . ' LIMIT '.$offset.', '.$limit;
 
             return new ErrorHandler([
                 'data' => $this->mySql->query($sql),

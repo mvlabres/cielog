@@ -28,7 +28,7 @@ class BusinessClientRepository{
     public function findById($id){
 
         try{
-            $sql = $this->standardQuery . 'WHERE business_client.id = '.$id;
+            $sql = $this->standardQuery . ' WHERE business_client.id = '.(int)$id;
             return new ErrorHandler($this->mySql->query($sql), false, null);
 
         }catch(Exception $ex){
@@ -83,6 +83,7 @@ class BusinessClientRepository{
         try {
             $sql = 'UPDATE business_client 
                     SET name = "'.$businessClient->getName().'",
+                        client_id = '.(int)$businessClient->getClientId().',
                         modified_by = '.$_SESSION['id'].',
                         modified_date = "'.date("Y-m-d").'" 
                         WHERE id = '.$businessClient->getId();
